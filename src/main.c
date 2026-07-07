@@ -1,4 +1,7 @@
+# include "raylib.h"
+
 # include "tbci_common.h"
+
 # include "pipeline.h"
 # include "timer.h"
 
