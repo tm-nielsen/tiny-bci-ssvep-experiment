@@ -11,4 +11,6 @@
 
 # include "raylib.h"
 
+# include "timer.h"
+
 # endif

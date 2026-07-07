@@ -26,6 +26,7 @@ endif()
 
 add_executable(${PROJECT_NAME}
     src/main.c
+    src/timer.c
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_WARNING_AS_ERROR ON)
 target_precompile_headers(${PROJECT_NAME} PRIVATE include/pch.h)
