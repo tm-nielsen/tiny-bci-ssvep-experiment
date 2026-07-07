@@ -2,7 +2,7 @@
 # ifndef STORAGE
 
 # include "tbci_context.h"
-# include "../producer/synthetic_producer.h"
+# include "synthetic_producer.h"
 # include "nodes/preprocessing/tbci_bandpass_node.h"
 # include "nodes/preprocessing/tbci_notch_node.h"
 # include "nodes/decoder/tbci_cca_node.h"

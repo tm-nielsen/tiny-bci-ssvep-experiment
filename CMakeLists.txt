@@ -27,13 +27,18 @@ endif()
 add_executable(${PROJECT_NAME}
     src/main.c
     src/timer.c
+    producer/synthetic_producer.c
+    producer/tbci_producer_factory.c
+    producer/tbci_trigger_generator.c
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_WARNING_AS_ERROR ON)
 target_precompile_headers(${PROJECT_NAME} PRIVATE include/pch.h)
 target_include_directories(${PROJECT_NAME} PRIVATE include)
+target_include_directories(${PROJECT_NAME} PRIVATE producer)
 
 
 target_link_libraries(${PROJECT_NAME} raylib)
 
+# TODO: migrate to fetch once CMake is fixed
 add_subdirectory(${SUBMODULE_PATH}/tiny_bci)
 target_link_libraries(${PROJECT_NAME} tiny_bci)

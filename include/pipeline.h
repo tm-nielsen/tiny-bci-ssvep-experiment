@@ -1,6 +1,6 @@
 # pragma once
 # include "storage.h"
-// # include "../producer/tbci_producer_factory.h"
+# include "tbci_producer_factory.h"
 
 static int initializePipeline(bool sliding)
 {
@@ -67,21 +67,21 @@ static int initializePipeline(bool sliding)
     TBCI_Status s = tbci_context_init(&tbciContext, &tbciConfiguration, &tbciInputs, &processedSignalBuffer, &epochQueue, &featuresQueue, &outputQueue);
     if (s != TBCI_OK) return s;
 
-    // producerConfiguration.n_channels = N_CHANNELS;
-    // producerConfiguration.srate = SRATE;
-    // producerConfiguration.freq_hz = 10.0f;
-    // producerConfiguration.amplitude = 1.0f;
-    // producerConfiguration.noise_amplitude = 0.3f;  /* 10% of signal amplitude */
+    producerConfiguration.n_channels = N_CHANNELS;
+    producerConfiguration.srate = SRATE;
+    producerConfiguration.freq_hz = 10.0f;
+    producerConfiguration.amplitude = 1.0f;
+    producerConfiguration.noise_amplitude = 0.3f;  /* 10% of signal amplitude */
 
-    // // tbci_producer_create_synthetic(producer, &producerConfiguration, &tbciInputs, &tbciContext);
+    tbci_producer_create_synthetic(producer, &producerConfiguration, &tbciInputs, &tbciContext);
 
-    // triggerGeneratorConfiguration.trigger_interval_ms = sliding ? 2000u : 1000u;
-    // triggerGeneratorConfiguration.trigger_code = 1u;
-    // triggerGeneratorConfiguration.trial_end_code = sliding ? 10u   : 0u;
-    // triggerGeneratorConfiguration.trial_duration_ms = sliding ? 3000u : 0u;
+    triggerGeneratorConfiguration.trigger_interval_ms = sliding ? 2000u : 1000u;
+    triggerGeneratorConfiguration.trigger_code = 1u;
+    triggerGeneratorConfiguration.trial_end_code = sliding ? 10u   : 0u;
+    triggerGeneratorConfiguration.trial_duration_ms = sliding ? 3000u : 0u;
 
-    // tg_init(&triggerGenerator, &triggerGeneratorConfiguration, &triggerGeneratorState);
-    // syntheticProducer.trigger_gen = &triggerGenerator;
+    tg_init(&triggerGenerator, &triggerGeneratorConfiguration, &triggerGeneratorState);
+    syntheticProducer.trigger_gen = &triggerGenerator;
 
     return TBCI_OK;
 }
