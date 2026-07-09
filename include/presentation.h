@@ -1,8 +1,10 @@
 # pragma once
 # include "raylib.h"
 
-# define WINDOW_WIDTH 1200
-# define WINDOW_HEIGHT 800
+# define RENDER_WIDTH 1200
+# define RENDER_HEIGHT 800
+# define MINIMUM_WINDOW_WIDTH 600
+# define MINIMUM_WINDOW_HEIGHT 400
 
 # define ROW_COUNT 2
 # define MARGIN_TOP 100
@@ -10,10 +12,11 @@
 # define MARGIN_SIDE 100
 # define GRID_GAP 200
 
-# define SAFE_AREA_X (WINDOW_WIDTH - 2 * MARGIN_SIDE)
-# define SAFE_AREA_Y (WINDOW_HEIGHT - (MARGIN_TOP + MARGIN_BOTTOM))
+# define SAFE_AREA_X (RENDER_WIDTH - 2 * MARGIN_SIDE)
+# define SAFE_AREA_Y (RENDER_HEIGHT - (MARGIN_TOP + MARGIN_BOTTOM))
 
-# define BACKGROUND_COLOUR (Color){20, 20, 20, 255}
+# define BACKGROUND_COLOUR (Color){32, 32, 32, 255}
+# define LETTERBOX_COLOUR (Color){0, 0, 0, 255}
 # define STIMULUS_ON_COLOR (Color){255, 255, 255, 255}
 # define STIMULUS_OFF_COLOUR (Color){0, 0, 0, 255}
 

@@ -1,5 +1,9 @@
 # include "presentation.h"
 
+static RenderTexture2D renderTarget;
+static Texture2D renderTexture;
+static Rectangle renderTextureRect;
+
 static float *frequencies;
 static uint16_t frequencyCount;
 
@@ -18,11 +22,23 @@ float getGridSize(float safeArea, uint16_t itemCount)
     return (safeArea - (GRID_GAP * (itemCount - 1))) / itemCount;
 }
 
-void initializePresentation(const float *pFrequencies, uint16_t pFrequencyCount)
+void initializeWindow()
 {
     SetTraceLogLevel(LOG_WARNING);
-    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Tiny BCI SSVEP Experiment");
 
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
+    InitWindow(RENDER_WIDTH, RENDER_HEIGHT, "Tiny BCI SSVEP Experiment");
+    SetWindowMinSize(MINIMUM_WINDOW_WIDTH, MINIMUM_WINDOW_HEIGHT);
+
+    renderTarget = LoadRenderTexture(RENDER_WIDTH, RENDER_HEIGHT);
+    SetTextureFilter(renderTexture, TEXTURE_FILTER_POINT);
+
+    renderTexture = renderTarget.texture;
+    renderTextureRect = (Rectangle){ 0, 0, RENDER_WIDTH, -RENDER_HEIGHT };
+}
+
+void initializePresenters(const float* pFrequencies, uint16_t pFrequencyCount)
+{
     frequencyCount = pFrequencyCount;
     size_t memorySize = frequencyCount * sizeof(float);
     frequencies = malloc(memorySize);
@@ -32,12 +48,19 @@ void initializePresentation(const float *pFrequencies, uint16_t pFrequencyCount)
     float width = getGridSize(SAFE_AREA_X, columnCount);
     float height = getGridSize(SAFE_AREA_Y, ROW_COUNT);
 
-    presenterSpacing = (Rectangle){
+    presenterSpacing = (Rectangle)
+    {
         width + GRID_GAP,
         height + GRID_GAP,
         width,
         height
     };
+}
+
+void initializePresentation(const float *pFrequencies, uint16_t pFrequencyCount)
+{
+    initializeWindow();
+    initializePresenters(pFrequencies, pFrequencyCount);
 }
 
 // ---
@@ -132,18 +155,37 @@ void drawStimulusPresenter(uint16_t index)
 
 void updatePresentation()
 {
+    BeginTextureMode(renderTarget);
+        ClearBackground(BACKGROUND_COLOUR);
+
+        drawSelectionIndicator();
+
+        for (uint16_t i = 0; i < frequencyCount; i++)
+        {
+            drawStimulusPresenter(i);
+        }
+
+        drawTargetIndicator();
+    EndTextureMode();
+
     BeginDrawing();
-    ClearBackground(BACKGROUND_COLOUR);
+        ClearBackground(LETTERBOX_COLOUR);
 
-    drawSelectionIndicator();
+        float scaleX = (float)GetScreenWidth() / RENDER_WIDTH;
+        float scaleY = (float)GetScreenHeight() / RENDER_HEIGHT;
+        float scale = min(scaleX, scaleY);
 
-    for (uint16_t i = 0; i < frequencyCount; i++)
-    {
-        drawStimulusPresenter(i);
-    }
-
-    drawTargetIndicator();
-
+        Rectangle letterboxRect = {
+            (GetScreenWidth() - scale * RENDER_WIDTH) / 2,
+            (GetScreenHeight() - scale * RENDER_HEIGHT) / 2,
+            RENDER_WIDTH * scale,
+            RENDER_HEIGHT * scale
+        };
+        
+        DrawTexturePro(
+            renderTexture, renderTextureRect, letterboxRect,
+            (Vector2) {0, 0}, 0, WHITE
+        );
     EndDrawing();
 }
 
@@ -152,5 +194,6 @@ void updatePresentation()
 void stopPresentation()
 {
     free(frequencies);
+    UnloadRenderTexture(renderTarget);
     CloseWindow();
 }
