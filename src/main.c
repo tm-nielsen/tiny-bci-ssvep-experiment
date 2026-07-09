@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
         if (tryGetTinyBCIInference(&inferenceLabel))
         {
             printf("Output received: %d\n", inferenceLabel);
+            displaySelection(inferenceLabel);
         }
 
         updatePresentation();
