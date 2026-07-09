@@ -1,7 +1,9 @@
 # include "pipeline.h"
+# include "data/eeg_source.h"
+# include "data/trigger_source.h"
 
 void initializeTinyBCIPipelineStorage();
-void setTinyBCIPipelineConfiguration(bool);
+void setTinyBCIPipelineConfiguration();
 void addCCANodesToTinyBCIPipeline(const float *);
 
 int reportStatus(TBCI_Status status, const char *actionLabel)
@@ -15,10 +17,10 @@ int reportStatus(TBCI_Status status, const char *actionLabel)
 
 // ---
 
-int initializeTinyBCIPipeline(bool sliding, const float *frequencies)
+int initializeTinyBCIPipeline(const float *frequencies)
 {
     initializeTinyBCIPipelineStorage();
-    setTinyBCIPipelineConfiguration(sliding);
+    setTinyBCIPipelineConfiguration();
     addCCANodesToTinyBCIPipeline(frequencies);
 
     TBCI_Status initializationStatus = tbci_context_init(
@@ -32,33 +34,33 @@ int initializeTinyBCIPipeline(bool sliding, const float *frequencies)
 
 void initializeTinyBCIPipelineStorage()
 {
-    sb_init(&signalBuffer, signalStorage, signalTimestamps, signalIndices, SIG_CAPACITY, N_CHANNELS);
-    sb_init(&processedSignalBuffer, processedSignalStorage, processedSignalTimestamps, processedSignalIndices, SIG_CAPACITY, N_CHANNELS);
+    sb_init(&signalBuffer, signalStorage, signalTimestamps, signalIndices, SIG_CAPACITY, CHANNEL_COUNT);
+    sb_init(&processedSignalBuffer, processedSignalStorage, processedSignalTimestamps, processedSignalIndices, SIG_CAPACITY, CHANNEL_COUNT);
     tq_init(&triggerQueue, triggerStorage, TRIG_CAPACITY);
     eq_init(&epochQueue, epochStorage, EPOCH_CAPACITY, TOTAL_FRAMES);
-    eq_configure(&epochQueue, epochPool, N_CHANNELS);
+    eq_configure(&epochQueue, epochPool, CHANNEL_COUNT);
     eq_init(&featuresQueue, featuresStorage, EPOCH_CAPACITY, TOTAL_FRAMES);
-    eq_configure(&featuresQueue, featuresPool, N_CHANNELS);
+    eq_configure(&featuresQueue, featuresPool, CHANNEL_COUNT);
     eq_init(&outputQueue, outputStorage, EPOCH_CAPACITY, TOTAL_FRAMES);
-    eq_configure(&outputQueue, outputPool, N_CHANNELS);
+    eq_configure(&outputQueue, outputPool, CHANNEL_COUNT);
 
     tbciInputs.signal = &signalBuffer;
     tbciInputs.triggers = &triggerQueue;
-    tbciInputs.n_channels = N_CHANNELS;
+    tbciInputs.n_channels = CHANNEL_COUNT;
 }
 
-void setTinyBCIPipelineConfiguration(bool sliding)
+void setTinyBCIPipelineConfiguration()
 {
-    tbciConfiguration.paradigm = sliding ? TBCI_PARADIGM_MI : TBCI_PARADIGM_P300;
-    tbciConfiguration.nominal_srate = SRATE;
-    tbciConfiguration.target_srate = SRATE;
-    tbciConfiguration.n_channels = N_CHANNELS;
+    tbciConfiguration.paradigm = TBCI_PARADIGM_SSVEP;
+    tbciConfiguration.nominal_srate = SAMPLE_RATE;
+    tbciConfiguration.target_srate = SAMPLE_RATE;
+    tbciConfiguration.n_channels = CHANNEL_COUNT;
     tbciConfiguration.window_length_ms = PRE_MS + POST_MS;
-    tbciConfiguration.mode = sliding ? SEG_MODE_SLIDING : SEG_MODE_TRIGGERED;
+    tbciConfiguration.mode = SEG_MODE_SLIDING;
     tbciConfiguration.pre_stimulus_ms = PRE_MS;
     tbciConfiguration.post_stimulus_ms = POST_MS;
-    tbciConfiguration.overlap_ms = sliding ? 400u : 0u;
-    tbciConfiguration.trial_end_code = sliding ? 10u : 0u;
+    tbciConfiguration.overlap_ms = 400u;
+    tbciConfiguration.trial_end_code = TRIAL_END_CODE;
     tbciConfiguration.use_preprocessing = true;
     tbciConfiguration.use_feature_extraction = true;
     tbciConfiguration.use_decoder = true;

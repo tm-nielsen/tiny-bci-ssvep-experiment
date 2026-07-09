@@ -26,13 +26,15 @@ endif()
 
 add_executable(${PROJECT_NAME}
     src/main.c
+    src/presentation.c
     src/microsecond_timer.c
     src/pipeline.c
-    src/producer.c
-    src/presentation.c
-    producer/synthetic_producer.c
-    producer/tbci_producer_factory.c
-    producer/tbci_trigger_generator.c
+    # src/producer.c
+    src/data/synthetic_eeg_source.c
+    src/data/trigger_source.c
+    # producer/synthetic_producer.c
+    # producer/tbci_producer_factory.c
+    # producer/tbci_trigger_generator.c
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_WARNING_AS_ERROR ON)
 target_precompile_headers(${PROJECT_NAME} PRIVATE include/pch.h)

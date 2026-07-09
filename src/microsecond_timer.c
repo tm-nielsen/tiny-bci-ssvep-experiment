@@ -27,3 +27,22 @@ uint64_t getCurrentMicrosecondTimestamp()
 }
 
 # endif
+
+bool checkMicrosecondTimer(MicrosecondTimer *timer)
+{
+    uint64_t now = getCurrentMicrosecondTimestamp();
+    if (timer->nextTimeout == 0) timer->nextTimeout = now;
+
+    if (now >= timer->nextTimeout)
+    {
+        timer->nextTimeout += timer->interval;
+        return true;
+    }
+    return false;
+}
+
+void resetMicrosecondTimer(MicrosecondTimer *timer)
+{
+    uint64_t now = getCurrentMicrosecondTimestamp();
+    timer->nextTimeout = now + timer->interval;
+}

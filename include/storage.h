@@ -7,22 +7,22 @@
 # include "nodes/decoder/tbci_cca_node.h"
 # include "nodes/decoder/tbci_cca_model.h"
 
-# define N_CHANNELS 8
+# include "data/eeg_source.h"
+
 # define SIG_CAPACITY 1024
 # define TRIG_CAPACITY 32
 # define EPOCH_CAPACITY 8
-# define SRATE 256.0f
 # define PRE_MS 200
 # define POST_MS 800
 # define TOTAL_FRAMES 256
 
-# define EPOCH_POOL_CAPACITY EPOCH_CAPACITY * TOTAL_FRAMES * N_CHANNELS
+# define EPOCH_POOL_CAPACITY EPOCH_CAPACITY * TOTAL_FRAMES * CHANNEL_COUNT
 
-float signalStorage[SIG_CAPACITY * N_CHANNELS];
+float signalStorage[SIG_CAPACITY * CHANNEL_COUNT];
 uint64_t signalTimestamps[SIG_CAPACITY];
 uint32_t signalIndices[SIG_CAPACITY];
 
-float processedSignalStorage[SIG_CAPACITY * N_CHANNELS];
+float processedSignalStorage[SIG_CAPACITY * CHANNEL_COUNT];
 uint64_t processedSignalTimestamps[SIG_CAPACITY];
 uint32_t processedSignalIndices[SIG_CAPACITY];
 
