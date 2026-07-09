@@ -31,8 +31,10 @@ void initializePresentation(const float *pFrequencies, uint16_t pFrequencyCount)
 
 void drawStimulusPresenter(uint16_t index)
 {
-    bool on = sin(frequencies[index] * TAU * GetTime()) > 0;
-    Color colour = on ? STIMULUS_ON_COLOR : STIMULUS_OFF_COLOUR;
+    double waveValue = sin(frequencies[index] * TAU * GetTime());
+    double weightedValue = (sqrt(fabs(waveValue)) * (waveValue / fabs(waveValue)));
+    float normalizedValue = (float)(weightedValue + 1) / 2.0f;
+    Color colour = ColorLerp(STIMULUS_ON_COLOR, STIMULUS_OFF_COLOUR, normalizedValue);
 
     uint16_t rowIndex = index % columnCount;
     uint16_t columnIndex = index / columnCount;
