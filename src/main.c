@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
             printf("Output received: %d\n", inferenceLabel);
         }
 
-        updatePresentation(now);
+        updatePresentation();
     }
 
     closeTinyBCIProducer();

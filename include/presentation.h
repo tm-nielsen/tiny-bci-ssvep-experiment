@@ -6,4 +6,4 @@
 # define STIMULUS_OFF_COLOUR (Color){0, 0, 0, 255}
 
 void initializePresentation(int, int);
-void updatePresentation(uint64_t);
+void updatePresentation();
