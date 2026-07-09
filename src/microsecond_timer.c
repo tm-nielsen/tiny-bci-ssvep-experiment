@@ -1,6 +1,9 @@
-# include "timer.h"
+# include "microsecond_timer.h"
 
-# if defined(_WIN32)
+# if defined(_WIN32) || defined(_WIN64)
+
+# define WIN32_LEAN_AND_MEAN
+# include <windows.h>
 uint64_t getCurrentMicrosecondTimestamp()
 {
     FILETIME fileTime;
@@ -14,6 +17,8 @@ uint64_t getCurrentMicrosecondTimestamp()
 }
 
 # else
+
+# include <time.h>
 uint64_t getCurrentMicrosecondTimestamp()
 {
     struct timespec ts;

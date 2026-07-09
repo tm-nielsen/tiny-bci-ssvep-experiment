@@ -3,7 +3,7 @@
 # include "tbci_common.h"
 
 # include "pipeline.h"
-# include "timer.h"
+# include "microsecond_timer.h"
 
 
 int main(int argc, char *argv[])
