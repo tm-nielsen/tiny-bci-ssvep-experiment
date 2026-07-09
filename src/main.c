@@ -15,13 +15,13 @@ int main(int argc, char *argv[])
     printf("Tiny BCI Pipeline Running.\n");
 
     initializePresentation(frequencies, N_FREQS);
+    setPresentationTarget(3);
 
     while (!WindowShouldClose())
     {
         if (updateTinyBCIProducer()) break;
         if (updateTinyBCIPipeline()) break;
 
-        
         uint16_t inferenceLabel;
         if (tryGetTinyBCIInference(&inferenceLabel))
         {

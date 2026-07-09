@@ -6,6 +6,8 @@ static uint16_t frequencyCount;
 static uint16_t columnCount;
 static Rectangle presenterSpacing;
 
+static uint16_t targetIndex;
+
 static uint16_t selectionIndex;
 static double selectionTime;
 
@@ -40,15 +42,36 @@ void initializePresentation(const float *pFrequencies, uint16_t pFrequencyCount)
 
 // ---
 
-Rectangle getGridRect(uint16_t index, uint16_t padding)
+Vector2 getGridOrigin(uint16_t index)
 {
     uint16_t rowIndex = index % columnCount;
     uint16_t columnIndex = index / columnCount;
 
+    return (Vector2)
+    {
+        MARGIN_SIDE + presenterSpacing.x * rowIndex,
+        MARGIN_TOP + presenterSpacing.y * columnIndex
+    };
+}
+
+Vector2 getGridCentre(uint16_t index)
+{
+    Vector2 gridOrigin = getGridOrigin(index);
+    return (Vector2)
+    {
+        gridOrigin.x + presenterSpacing.width / 2,
+        gridOrigin.y + presenterSpacing.height / 2
+    };
+}
+
+Rectangle getGridRect(uint16_t index, uint16_t padding)
+{
+    Vector2 gridOrigin = getGridOrigin(index);
+
     return (Rectangle)
     {
-        MARGIN_SIDE + presenterSpacing.x * rowIndex - padding,
-        MARGIN_TOP + presenterSpacing.y * columnIndex - padding,
+        gridOrigin.x - padding,
+        gridOrigin.y - padding,
         presenterSpacing.width + 2 * padding,
         presenterSpacing.height + 2 * padding
     };
@@ -56,18 +79,43 @@ Rectangle getGridRect(uint16_t index, uint16_t padding)
 
 // ---
 
-void drawSelection()
-{
-    if (GetTime() > selectionTime + SELECTION_DISPLAY_TIME) return;
+void setPresentationTarget(uint16_t index) { targetIndex = index; }
 
-    Rectangle borderRect = getGridRect(selectionIndex, SELECTION_DISPLAY_WIDTH);
-    DrawRectangleRec(borderRect, SELECTION_DISPLAY_COLOUR);
+void drawTargetIndicator()
+{
+    Vector2 gridOrigin = getGridCentre(targetIndex);
+    Vector2 arrowTip = gridOrigin;
+    arrowTip.y += presenterSpacing.height / 2;
+    arrowTip.y += TARGET_INDICATION_OFFSET;
+
+    Vector2 arrowBottomLeft = (Vector2)
+    {
+        arrowTip.x - TARGET_INDICATION_SIZE.x / 2,
+        arrowTip.y + TARGET_INDICATION_SIZE.y
+    };
+    Vector2 arrowBottomRight = (Vector2)
+    {
+        arrowBottomLeft.x + TARGET_INDICATION_SIZE.x,
+        arrowBottomLeft.y
+    };
+
+    DrawTriangle(arrowTip, arrowBottomLeft, arrowBottomRight, TARGET_INDICATION_COLOUR);
 }
+
+// ---
 
 void displaySelection(uint16_t index)
 {
     selectionIndex = index;
     selectionTime = GetTime();
+}
+
+void drawSelectionIndicator()
+{
+    if (GetTime() > selectionTime + SELECTION_DISPLAY_TIME) return;
+
+    Rectangle borderRect = getGridRect(selectionIndex, SELECTION_DISPLAY_WIDTH);
+    DrawRectangleRec(borderRect, SELECTION_DISPLAY_COLOUR);
 }
 
 // ---
@@ -85,14 +133,16 @@ void drawStimulusPresenter(uint16_t index)
 void updatePresentation()
 {
     BeginDrawing();
-
     ClearBackground(BACKGROUND_COLOUR);
-    drawSelection();
+
+    drawSelectionIndicator();
 
     for (uint16_t i = 0; i < frequencyCount; i++)
     {
         drawStimulusPresenter(i);
     }
+
+    drawTargetIndicator();
 
     EndDrawing();
 }
