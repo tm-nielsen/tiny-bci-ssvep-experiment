@@ -4,14 +4,17 @@ static float *frequencies;
 static uint16_t frequencyCount;
 
 static uint16_t columnCount;
-static uint16_t presenterWidth;
-static uint16_t presenterHeight;
-static uint16_t presenterSpacingX;
-static uint16_t presenterSpacingY;
+static Rectangle presenterSpacing;
 
 static uint16_t selectionIndex;
 static double selectionTime;
 
+// ---
+
+float getGridSize(float safeArea, uint16_t itemCount)
+{
+    return (safeArea - (GRID_GAP * (itemCount - 1))) / itemCount;
+}
 
 void initializePresentation(const float *pFrequencies, uint16_t pFrequencyCount)
 {
@@ -24,10 +27,15 @@ void initializePresentation(const float *pFrequencies, uint16_t pFrequencyCount)
     memcpy(frequencies, frequencies, memorySize);
 
     columnCount = frequencyCount / ROW_COUNT;
-    presenterWidth = (SAFE_AREA_X - (GRID_GAP * (columnCount - 1))) / columnCount;
-    presenterHeight = (SAFE_AREA_Y - (GRID_GAP * (ROW_COUNT - 1))) / ROW_COUNT;
-    presenterSpacingX = presenterWidth + GRID_GAP;
-    presenterSpacingY = presenterHeight + GRID_GAP;
+    float width = getGridSize(SAFE_AREA_X, columnCount);
+    float height = getGridSize(SAFE_AREA_Y, ROW_COUNT);
+
+    presenterSpacing = (Rectangle){
+        width + GRID_GAP,
+        height + GRID_GAP,
+        width,
+        height
+    };
 }
 
 // ---
@@ -39,10 +47,10 @@ Rectangle getGridRect(uint16_t index, uint16_t padding)
 
     return (Rectangle)
     {
-        (float)(MARGIN_SIDE + presenterSpacingX * rowIndex - padding),
-        (float)(MARGIN_TOP + presenterSpacingY * columnIndex - padding),
-        (float)(presenterWidth + 2 * padding),
-        (float)(presenterHeight + 2 * padding)
+        MARGIN_SIDE + presenterSpacing.x * rowIndex - padding,
+        MARGIN_TOP + presenterSpacing.y * columnIndex - padding,
+        presenterSpacing.width + 2 * padding,
+        presenterSpacing.height + 2 * padding
     };
 }
 
