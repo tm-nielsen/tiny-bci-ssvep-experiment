@@ -1,7 +1,10 @@
 # include "producer.h"
 # include "tbci_producer_factory.h"
+# include "microsecond_timer.h"
 
 TBCI_Producer *producer = (TBCI_Producer *)&syntheticProducer;
+static uint64_t nextTick = 0;
+static const uint64_t tickSpacing = (uint64_t)(1000000.0f / SRATE);
 
 int initializeTinyBCIProducer(bool sliding)
 {
@@ -41,6 +44,12 @@ int initializeTinyBCIProducer(bool sliding)
 
 int updateTinyBCIProducer()
 {
+    uint64_t now = getCurrentMicrosecondTimestamp();
+    if (nextTick == 0) nextTick = now;
+
+    if (now < nextTick) return TBCI_OK;
+    nextTick += tickSpacing;
+
     TBCI_Status producerStatus = producer->tick(producer, &tbciInputs, &tbciContext);
     if (producerStatus)
     {
