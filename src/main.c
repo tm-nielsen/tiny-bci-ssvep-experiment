@@ -14,7 +14,8 @@ int main(int argc, char *argv[])
     if (startTinyBCIPipeline()) return EXIT_FAILURE;
     printf("Tiny BCI Pipeline Running.\n");
 
-    initializePresentation(800, 450);
+    initializePresentation(frequencies, N_FREQS);
+
     while (!WindowShouldClose())
     {
         if (updateTinyBCIProducer()) break;
@@ -32,7 +33,7 @@ int main(int argc, char *argv[])
 
     closeTinyBCIProducer();
     stopTinyBCIPipeline();
-    CloseWindow();
+    stopPresentation();
 
     return EXIT_SUCCESS;
 }
