@@ -1,14 +1,14 @@
 # pragma once
 # include "raylib.h"
 
-# define WINDOW_WIDTH 800
-# define WINDOW_HEIGHT 450
+# define WINDOW_WIDTH 1200
+# define WINDOW_HEIGHT 800
 
 # define ROW_COUNT 2
-# define MARGIN_TOP 20
-# define MARGIN_BOTTOM 80
-# define MARGIN_SIDE 20
-# define GRID_GAP 50
+# define MARGIN_TOP 100
+# define MARGIN_BOTTOM 150
+# define MARGIN_SIDE 100
+# define GRID_GAP 200
 
 # define SAFE_AREA_X (WINDOW_WIDTH - 2 * MARGIN_SIDE)
 # define SAFE_AREA_Y (WINDOW_HEIGHT - (MARGIN_TOP + MARGIN_BOTTOM))
