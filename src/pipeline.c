@@ -132,6 +132,6 @@ bool tryGetTinyBCIInference(uint16_t *out)
 
     TBCI_Epoch epoch;
     eq_pop(&outputQueue, &epoch);
-    *out = epoch.label;
+    *out = epoch.predicted_label;
     return true;
 }
