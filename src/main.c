@@ -1,26 +1,19 @@
-# include "raylib.h"
-
-# include "tbci_common.h"
-
-# include "pipeline.h"
 # include "microsecond_timer.h"
+# include "pipeline.h"
+# include "producer.h"
+# include "presentation.h"
 
 
 int main(int argc, char *argv[])
 {
     const uint32_t targetEpochs = 10;
     const bool sliding = false;
+    const float frequencies[N_FREQS] = {7.0f, 8.0f, 9.0f, 11.0f, 7.5f, 8.5f};
 
-    if (initializePipeline(sliding) != TBCI_OK)
-    {
-        fprintf(stderr, "Failed to initialize Tiny BCI pipeline.\n");
-        return EXIT_FAILURE;
-    }
-    if (tbci_context_start(&tbciContext, TBCI_STATE_INFERENCE) != TBCI_OK)
-    {
-        fprintf(stderr, "Failed to start Tiny BCI pipeline.\n");
-        return EXIT_FAILURE;
-    }
+    if (initializeTinyBCIPipeline(sliding, frequencies)) return EXIT_FAILURE;
+    if (initializeTinyBCIProducer(sliding)) return EXIT_FAILURE;
+
+    if (startTinyBCIPipeline()) return EXIT_FAILURE;
 
     printf("Tiny BCI Pipeline Running.\n");
 
@@ -28,56 +21,32 @@ int main(int argc, char *argv[])
     uint64_t nextTick = getCurrentMicrosecondTimestamp();
     uint64_t tickSpacing = (uint64_t)(1000000.0f / SRATE);
 
-
-    const int screenWidth = 800;
-    const int screenHeight = 450;
-
-    const Color backgroundColour = {20, 20, 20, 255};
-    const Color stimulusColour = {255, 255, 255, 255};
-
-    SetTraceLogLevel(LOG_WARNING);
-    InitWindow(screenWidth, screenHeight, "Tiny BCI SSVEP Experiment");
+    initializePresentation(800, 450);
 
     while (!WindowShouldClose() && (epochsCollected < targetEpochs || targetEpochs == 0))
     {
         uint64_t now = getCurrentMicrosecondTimestamp();
         if (now >= nextTick)
         {
-            TBCI_Status producerStatus = producer->tick(producer, &tbciInputs, &tbciContext);
-            if (producerStatus != TBCI_OK)
-            {
-                fprintf(stderr, "Producer Error.\n");
-                break;
-            }
+            if (updateTinyBCIProducer()) break;
+            if (updateTinyBCIPipeline()) break;
 
-            TBCI_Status pipelineStatus = tbci_context_tick(&tbciContext);
-            if (pipelineStatus != TBCI_OK)
+            
+            uint16_t inferenceLabel;
+            if (tryGetTinyBCIInference(&inferenceLabel))
             {
-                fprintf(stderr, "Pipeline Error.\n");
-                break;
-            }
-
-            while (!eq_is_empty(&outputQueue))
-            {
-                TBCI_Epoch epoch;
-                eq_pop(&outputQueue, &epoch);
-                printf("Output received: %d\n", epoch.label);
+                printf("Output received: %d\n", inferenceLabel);
                 epochsCollected++;
             }
 
             nextTick += tickSpacing;
         }
 
-        BeginDrawing();
-
-        ClearBackground(backgroundColour);
-        DrawRectangle(50, 50, 100, 80, stimulusColour);
-
-        EndDrawing();
+        updatePresentation(now);
     }
 
-    producer->close(producer);
-    tbci_context_stop(&tbciContext);
+    closeTinyBCIProducer();
+    stopTinyBCIPipeline();
 
     printf("\nDone. Collected %zu / %u epochs.\n", epochsCollected, targetEpochs);
 
