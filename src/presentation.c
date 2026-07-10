@@ -16,6 +16,7 @@ static uint16_t selectionIndex;
 static double selectionTime;
 
 // ---
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 float getGridSize(float safeArea, uint16_t itemCount)
 {
@@ -173,7 +174,7 @@ void updatePresentation()
 
         float scaleX = (float)GetScreenWidth() / RENDER_WIDTH;
         float scaleY = (float)GetScreenHeight() / RENDER_HEIGHT;
-        float scale = min(scaleX, scaleY);
+        float scale = MIN(scaleX, scaleY);
 
         Rectangle letterboxRect = {
             (GetScreenWidth() - scale * RENDER_WIDTH) / 2,
