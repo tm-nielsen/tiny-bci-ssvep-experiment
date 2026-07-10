@@ -43,7 +43,7 @@ void initializePresenters(const float* pFrequencies, uint16_t pFrequencyCount)
     frequencyCount = pFrequencyCount;
     size_t memorySize = frequencyCount * sizeof(float);
     frequencies = malloc(memorySize);
-    memcpy(frequencies, frequencies, memorySize);
+    memcpy(frequencies, pFrequencies, memorySize);
 
     columnCount = frequencyCount / ROW_COUNT;
     float width = getGridSize(SAFE_AREA_X, columnCount);
