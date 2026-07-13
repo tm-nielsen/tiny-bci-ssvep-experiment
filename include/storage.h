@@ -4,8 +4,8 @@
 # include "tbci_context.h"
 # include "nodes/preprocessing/tbci_bandpass_node.h"
 # include "nodes/preprocessing/tbci_notch_node.h"
-# include "nodes/decoder/tbci_cca_node.h"
-# include "nodes/features/tbci_cca_model.h"
+# include "nodes/features/tbci_cca_node.h"
+# include "nodes/decoder/tbci_cca_model.h"
 
 # include "data/eeg_source.h"
 
