@@ -16,6 +16,8 @@ static bool hasTarget = false;
 static uint16_t selectionIndex;
 static double selectionTime;
 
+static bool stimulusEnabled = true;
+
 // ---
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
@@ -171,7 +173,8 @@ void updatePresentation()
 
         for (uint16_t i = 0; i < frequencyCount; i++)
         {
-            drawStimulusPresenter(i);
+            if (stimulusEnabled) drawStimulusPresenter(i);
+            else DrawRectangleRec(getGridRect(i, 0), STIMULUS_ON_COLOR);
         }
 
         drawTargetIndicator();
@@ -197,6 +200,9 @@ void updatePresentation()
         );
     EndDrawing();
 }
+
+void pauseStimulus() { stimulusEnabled = false; }
+void resumeStimulus() { stimulusEnabled = true; }
 
 // ---
 

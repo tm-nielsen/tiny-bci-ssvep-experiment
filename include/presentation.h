@@ -34,6 +34,9 @@ void initializePresentation(const float *, uint16_t);
 void updatePresentation();
 void stopPresentation();
 
+void pauseStimulus();
+void resumeStimulus();
+
 void setPresentationTarget(uint16_t);
 void clearPresentationTarget();
 void displaySelection(uint16_t);

@@ -8,11 +8,13 @@
 void onTrialStart(uint16_t target)
 {
     setPresentationTarget(target);
+    resumeStimulus();
 }
 
 void onTrialEnd()
 {
     clearPresentationTarget();
+    pauseStimulus();
 }
 
 
