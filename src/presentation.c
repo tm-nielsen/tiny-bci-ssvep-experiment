@@ -14,7 +14,7 @@ static uint16_t targetIndex;
 static bool hasTarget = false;
 
 static uint16_t selectionIndex;
-static double selectionTime;
+static double selectionTime = -SELECTION_DISPLAY_TIME;
 
 static bool stimulusEnabled = true;
 
