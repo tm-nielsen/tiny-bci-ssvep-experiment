@@ -35,7 +35,7 @@ void initializeTrialConductor(
 void startTrial()
 {
     target = (target + 1) % targetCount;
-    pushTrigger(target);
+    pushTrigger(target + 1);
     state = TRIAL;
 
     if (trialStartCallback != NULL) trialStartCallback(target);
