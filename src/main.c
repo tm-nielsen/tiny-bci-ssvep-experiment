@@ -3,6 +3,7 @@
 # include "trial_conductor.h"
 
 # include "presentation.h"
+# include "microsecond_timer.h"
 
 
 void onTrialStart(uint16_t target)
@@ -46,7 +47,8 @@ int main(int argc, char *argv[])
         uint16_t inferenceLabel;
         if (tryGetTinyBCIInference(&inferenceLabel))
         {
-            printf("Output received: %d\n", inferenceLabel);
+            uint64_t timestamp = getCurrentMicrosecondTimestamp();
+            printf("%llu | Output received: %d\n", timestamp, inferenceLabel);
             displaySelection(inferenceLabel);
         }
 
