@@ -16,6 +16,7 @@ static uint16_t selectionIndex;
 static double selectionTime;
 
 // ---
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 float getGridSize(float safeArea, uint16_t itemCount)
 {
@@ -42,7 +43,7 @@ void initializePresenters(const float* pFrequencies, uint16_t pFrequencyCount)
     frequencyCount = pFrequencyCount;
     size_t memorySize = frequencyCount * sizeof(float);
     frequencies = malloc(memorySize);
-    memcpy(frequencies, frequencies, memorySize);
+    memcpy(frequencies, pFrequencies, memorySize);
 
     columnCount = frequencyCount / ROW_COUNT;
     float width = getGridSize(SAFE_AREA_X, columnCount);
@@ -173,7 +174,7 @@ void updatePresentation()
 
         float scaleX = (float)GetScreenWidth() / RENDER_WIDTH;
         float scaleY = (float)GetScreenHeight() / RENDER_HEIGHT;
-        float scale = min(scaleX, scaleY);
+        float scale = MIN(scaleX, scaleY);
 
         Rectangle letterboxRect = {
             (GetScreenWidth() - scale * RENDER_WIDTH) / 2,
