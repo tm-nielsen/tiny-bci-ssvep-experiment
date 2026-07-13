@@ -2,7 +2,6 @@
 # include "storage.h"
 # include "eeg_source.h"
 
-# define SAMPLE_RATE 256
 # define SAMPLE_INTERVAL (uint64_t)(1000000.0f / SAMPLE_RATE)
 
 # define SIGNAL_FREQUENCY 10.0f

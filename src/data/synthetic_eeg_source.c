@@ -1,7 +1,7 @@
 # include "data/synthetic_eeg_source.h"
 # include "microsecond_timer.h"
 
-static MicrosecondTimer timer = { .interval = SAMPLE_INTERVAL};
+static MicrosecondTimer timer = { .interval = SAMPLE_INTERVAL };
 static float samples[CHANNEL_COUNT];
 static uint32_t sampleIndex = 0;
 

@@ -1,0 +1,34 @@
+# pragma once
+# include "storage.h"
+# include "eeg_source.h"
+
+# define SAMPLE_INTERVAL (uint64_t)(1000000.0f / SAMPLE_RATE)
+
+# define NEUROPAWN_N_IMU             9       /**< Number of IMU channels (IMU board).  */
+# define NEUROPAWN_SAMPLE_RATE       125.0f  /**< Sampling rate in Hz.                 */
+# define NEUROPAWN_START_BYTE        0xA0    /**< Frame start byte.                    */
+# define NEUROPAWN_END_BYTE          0xC0    /**< Frame end byte.                      */
+# define NEUROPAWN_EEG_PAYLOAD_LEN   20      /**< Payload bytes after 0xA0, non-IMU.   */
+# define NEUROPAWN_IMU_PAYLOAD_LEN   56      /**< Payload bytes after 0xA0, IMU board. */
+# define NEUROPAWN_DEFAULT_GAIN      12      /**< Default channel gain.                */
+# define NEUROPAWN_CMD_PAUSE_MS      2000u   /**< Delay between config commands (ms).  */
+
+typedef enum {
+    NEUROPAWN_BOARD_UNKNOWN = 0,
+    NEUROPAWN_BOARD_EEG,
+    NEUROPAWN_BOARD_IMU
+} NeuroPawnBoardType;
+
+typedef struct {
+    uint8_t gain;
+    uint32_t timeout;
+    bool activateChannel[CHANNEL_COUNT];
+    bool activateRightLegDrive[CHANNEL_COUNT];
+} NeuropawnConfiguration;
+
+# define TRUE_8_ARRAY {true, true, true, true, true, true, true, true}
+# define NEUROPAWN_DEFAULT_CONFIGURATION (NeuropawnConfiguration) { 12, 50, TRUE_8_ARRAY, TRUE_8_ARRAY }
+
+void connectNeuropawnEEGSource(const char *, NeuropawnConfiguration);
+void updateNeuropawnEEGSource();
+void disconnectNeuropawnEEGSource();
