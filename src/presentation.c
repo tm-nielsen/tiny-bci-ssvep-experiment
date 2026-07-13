@@ -91,7 +91,7 @@ Vector2 getGridCentre(uint16_t index)
     };
 }
 
-Rectangle getGridRect(uint16_t index, uint16_t padding)
+Rectangle getGridRect(uint16_t index, int16_t padding)
 {
     Vector2 gridOrigin = getGridOrigin(index);
 
@@ -174,7 +174,7 @@ void updatePresentation()
         for (uint16_t i = 0; i < frequencyCount; i++)
         {
             if (stimulusEnabled) drawStimulusPresenter(i);
-            else DrawRectangleRec(getGridRect(i, 0), STIMULUS_ON_COLOR);
+            else DrawRectangleRec(getGridRect(i, -STIMULUS_BREAK_PADDING), STIMULUS_ON_COLOR);
         }
 
         drawTargetIndicator();
