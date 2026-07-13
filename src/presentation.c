@@ -11,6 +11,7 @@ static uint16_t columnCount;
 static Rectangle presenterSpacing;
 
 static uint16_t targetIndex;
+static bool hasTarget = false;
 
 static uint16_t selectionIndex;
 static double selectionTime;
@@ -103,10 +104,17 @@ Rectangle getGridRect(uint16_t index, uint16_t padding)
 
 // ---
 
-void setPresentationTarget(uint16_t index) { targetIndex = index; }
+void setPresentationTarget(uint16_t index)
+{
+    targetIndex = index;
+    hasTarget = true;
+}
+void clearPresentationTarget() { hasTarget = false; }
 
 void drawTargetIndicator()
 {
+    if (!hasTarget) return;
+
     Vector2 gridOrigin = getGridCentre(targetIndex);
     Vector2 arrowTip = gridOrigin;
     arrowTip.y += presenterSpacing.height / 2;

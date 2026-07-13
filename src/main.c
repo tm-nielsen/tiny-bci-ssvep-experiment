@@ -12,7 +12,7 @@ void onTrialStart(uint16_t target)
 
 void onTrialEnd()
 {
-
+    clearPresentationTarget();
 }
 
 

@@ -35,4 +35,5 @@ void updatePresentation();
 void stopPresentation();
 
 void setPresentationTarget(uint16_t);
+void clearPresentationTarget();
 void displaySelection(uint16_t);
