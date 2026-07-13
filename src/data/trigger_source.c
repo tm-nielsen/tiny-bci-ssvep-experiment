@@ -4,7 +4,7 @@
 void pushTrigger(uint16_t value)
 {
     uint64_t timestamp = getCurrentMicrosecondTimestamp();
-    printf("Pushing trigger >%u< at %llu\n", value, timestamp);
+    printf("%llu | Pushing trigger : %u\n", timestamp, value);
 
     TBCI_Trigger trigger = {
         .timestamp_us = timestamp,
