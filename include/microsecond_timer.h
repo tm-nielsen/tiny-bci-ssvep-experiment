@@ -8,3 +8,5 @@ typedef struct {
 
 bool checkMicrosecondTimer(MicrosecondTimer*);
 void resetMicrosecondTimer(MicrosecondTimer*);
+
+MicrosecondTimer createMicrosecondTimer(float);

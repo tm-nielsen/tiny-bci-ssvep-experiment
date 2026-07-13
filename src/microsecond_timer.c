@@ -46,3 +46,13 @@ void resetMicrosecondTimer(MicrosecondTimer *timer)
     uint64_t now = getCurrentMicrosecondTimestamp();
     timer->nextTimeout = now + timer->interval;
 }
+
+// ---
+
+MicrosecondTimer createMicrosecondTimer(float intervalSeconds)
+{
+    return (MicrosecondTimer){
+        .interval = (uint64_t)(intervalSeconds * 1000000),
+        .nextTimeout = getCurrentMicrosecondTimestamp()
+    };
+}

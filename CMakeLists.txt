@@ -26,6 +26,7 @@ endif()
 
 add_executable(${PROJECT_NAME}
     src/main.c
+    src/trial_conductor.c
     src/presentation.c
     src/microsecond_timer.c
     src/pipeline.c
