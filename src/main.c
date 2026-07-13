@@ -12,9 +12,9 @@ void onTrialStart(uint16_t target)
     resumeStimulus();
 }
 
-void onTrialEnd()
+void onTrialEnd(uint16_t nextTarget)
 {
-    clearPresentationTarget();
+    setPresentationTarget(nextTarget);
     pauseStimulus();
 }
 
