@@ -154,32 +154,8 @@ void drawSelectionIndicator()
 
 // ---
 
-void drawStimulusPresenter(uint16_t index)
+void drawLetterboxedTarget()
 {
-    double waveValue = sin(frequencies[index] * TAU * GetTime());
-    double weightedValue = (sqrt(fabs(waveValue)) * (waveValue / fabs(waveValue)));
-    float normalizedValue = (float)(weightedValue + 1) / 2.0f;
-    Color colour = ColorLerp(STIMULUS_ON_COLOR, STIMULUS_OFF_COLOUR, normalizedValue);
-
-    DrawRectangleRec(getGridRect(index, 0), colour);
-}
-
-void updatePresentation()
-{
-    BeginTextureMode(renderTarget);
-        ClearBackground(BACKGROUND_COLOUR);
-
-        drawSelectionIndicator();
-
-        for (uint16_t i = 0; i < frequencyCount; i++)
-        {
-            if (stimulusEnabled) drawStimulusPresenter(i);
-            else DrawRectangleRec(getGridRect(i, -STIMULUS_BREAK_PADDING), STIMULUS_ON_COLOR);
-        }
-
-        drawTargetIndicator();
-    EndTextureMode();
-
     BeginDrawing();
         ClearBackground(LETTERBOX_COLOUR);
 
@@ -199,6 +175,56 @@ void updatePresentation()
             (Vector2) {0, 0}, 0, WHITE
         );
     EndDrawing();
+}
+
+// ---
+
+void drawEntryScreen()
+{
+    BeginTextureMode(renderTarget);
+        ClearBackground(BACKGROUND_COLOUR);
+
+        for (uint16_t i = 0; i < frequencyCount; i++)
+        {
+            DrawRectangleRec(getGridRect(i, -STIMULUS_BREAK_PADDING), STIMULUS_ON_COLOR);
+        }
+        drawTargetIndicator();
+
+        DrawText("Press Spacebar to Start", 150, RENDER_HEIGHT / 2, 64, STIMULUS_ON_COLOR);
+    EndTextureMode();
+
+    drawLetterboxedTarget();
+}
+
+// ---
+
+void drawStimulusPresenter(uint16_t index)
+{
+    double waveValue = sin(frequencies[index] * TAU * GetTime());
+    double weightedValue = (sqrt(fabs(waveValue)) * (waveValue / fabs(waveValue)));
+    float normalizedValue = (float)(weightedValue + 1) / 2.0f;
+    Color colour = ColorLerp(STIMULUS_ON_COLOR, STIMULUS_OFF_COLOUR, normalizedValue);
+
+    DrawRectangleRec(getGridRect(index, 0), colour);
+}
+
+void drawStimulusScreen()
+{
+    BeginTextureMode(renderTarget);
+        ClearBackground(BACKGROUND_COLOUR);
+
+        drawSelectionIndicator();
+
+        for (uint16_t i = 0; i < frequencyCount; i++)
+        {
+            if (stimulusEnabled) drawStimulusPresenter(i);
+            else DrawRectangleRec(getGridRect(i, -STIMULUS_BREAK_PADDING), STIMULUS_ON_COLOR);
+        }
+
+        drawTargetIndicator();
+    EndTextureMode();
+
+    drawLetterboxedTarget();
 }
 
 void pauseStimulus() { stimulusEnabled = false; }

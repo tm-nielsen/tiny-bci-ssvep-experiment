@@ -27,14 +27,25 @@ int main(int argc, char *argv[])
 
     if (initializeTinyBCIPipeline(frequencies)) return EXIT_FAILURE;
 
-    // TODO: wait for user input to "start"
+    initializePresentation(frequencies, N_FREQS);
+    setPresentationTarget(0);
+
+    while (!IsKeyPressed(KEY_SPACE))
+    {
+        drawEntryScreen();
+
+        if (WindowShouldClose())
+        {
+            stopTinyBCIPipeline();
+            stopPresentation();
+            return EXIT_SUCCESS;
+        }
+    }
 
     if (startTinyBCIPipeline()) return EXIT_FAILURE;
     printf("Tiny BCI Pipeline Running.\n");
 
-    initializePresentation(frequencies, N_FREQS);
     initializeTrialConductor(N_FREQS, trialDuration, breakDuration, onTrialStart, onTrialEnd);
-
     resetSyntheticEEGSource();
 
     while (!WindowShouldClose())
@@ -52,7 +63,7 @@ int main(int argc, char *argv[])
             displaySelection(inferenceLabel);
         }
 
-        updatePresentation();
+        drawStimulusScreen();
     }
 
     stopTinyBCIPipeline();
