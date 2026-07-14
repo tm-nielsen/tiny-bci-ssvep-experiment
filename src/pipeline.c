@@ -140,5 +140,10 @@ bool tryGetTinyBCIInference(TinyBCIInference *out)
         .targetLabel = epoch.label,
         .confidence = epoch.confidence
     };
+    for (int i = 0; i < N_FREQS; i++)
+    {
+        out->confidences[i] = epoch.samples[i];
+    }
+
     return true;
 }

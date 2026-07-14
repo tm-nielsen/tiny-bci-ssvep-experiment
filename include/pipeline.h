@@ -12,6 +12,7 @@ typedef struct {
     int16_t predictedLabel;
     uint16_t targetLabel;
     float confidence;
+    float confidences[N_FREQS];
 } TinyBCIInference;
 
 bool tryGetTinyBCIInference(TinyBCIInference *);
