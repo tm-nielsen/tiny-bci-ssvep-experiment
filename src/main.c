@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
     const float frequencies[N_FREQS] = {7.0f, 8.0f, 9.0f, 11.0f, 7.5f, 8.5f};
     const float trialDuration = 6.0f;
     const float breakDuration = 3.0f;
+    const float selectionDisplayConfidenceThreshold = 0.5f;
 
     initializeTrialConductor(N_FREQS, trialDuration, breakDuration, onTrialStart, onTrialEnd);
     initializePresentation(frequencies, N_FREQS);
@@ -53,12 +54,18 @@ int main(int argc, char *argv[])
 
         if (updateTinyBCIPipeline()) break;
 
-        uint16_t inferenceLabel;
-        if (tryGetTinyBCIInference(&inferenceLabel))
+        TinyBCIInference inference;
+        if (tryGetTinyBCIInference(&inference))
         {
             uint64_t timestamp = getCurrentMicrosecondTimestamp();
-            printf("%llu | Output received: %d\n", timestamp, inferenceLabel);
-            displaySelection(inferenceLabel);
+            printf("%llu | Output received: %d, %.0f%%\n", timestamp,
+                inference.predictedLabel, inference.confidence * 100
+            );
+
+            if (inference.confidence > selectionDisplayConfidenceThreshold)
+            {
+                displaySelection(inference.predictedLabel);
+            }
         }
 
         drawStimulusScreen();

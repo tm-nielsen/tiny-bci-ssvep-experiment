@@ -8,4 +8,10 @@ int startTinyBCIPipelineInState(TBCI_State);
 int updateTinyBCIPipeline();
 int stopTinyBCIPipeline();
 
-bool tryGetTinyBCIInference(uint16_t *);
+typedef struct {
+    int16_t predictedLabel;
+    uint16_t targetLabel;
+    float confidence;
+} TinyBCIInference;
+
+bool tryGetTinyBCIInference(TinyBCIInference *);

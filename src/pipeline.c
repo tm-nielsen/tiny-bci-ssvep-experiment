@@ -126,13 +126,19 @@ int stopTinyBCIPipeline()
 
 // ---
 
-bool tryGetTinyBCIInference(uint16_t *out)
+bool tryGetTinyBCIInference(TinyBCIInference *out)
 {
     if (eq_is_empty(&outputQueue))
         return false;
 
     TBCI_Epoch epoch;
     eq_pop(&outputQueue, &epoch);
-    *out = epoch.predicted_label;
+
+    *out = (TinyBCIInference)
+    {
+        .predictedLabel = epoch.predicted_label,
+        .targetLabel = epoch.label,
+        .confidence = epoch.confidence
+    };
     return true;
 }
