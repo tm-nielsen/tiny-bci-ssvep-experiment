@@ -55,10 +55,10 @@ void setTinyBCIPipelineConfiguration()
     tbciConfiguration.nominal_srate = SAMPLE_RATE;
     tbciConfiguration.target_srate = SAMPLE_RATE;
     tbciConfiguration.n_channels = CHANNEL_COUNT;
-    tbciConfiguration.window_length_ms = PRE_MS + POST_MS;
+    tbciConfiguration.window_length_ms = WINDOW_LENGTH_MS;
     tbciConfiguration.mode = SEG_MODE_SLIDING;
-    tbciConfiguration.pre_stimulus_ms = PRE_MS;
-    tbciConfiguration.post_stimulus_ms = POST_MS;
+    tbciConfiguration.pre_stimulus_ms = 0;
+    tbciConfiguration.post_stimulus_ms = WINDOW_LENGTH_MS;
     tbciConfiguration.overlap_ms = 400u;
     tbciConfiguration.trial_end_code = TRIAL_END_CODE;
     tbciConfiguration.use_preprocessing = true;
@@ -126,13 +126,24 @@ int stopTinyBCIPipeline()
 
 // ---
 
-bool tryGetTinyBCIInference(uint16_t *out)
+bool tryGetTinyBCIInference(TinyBCIInference *out)
 {
     if (eq_is_empty(&outputQueue))
         return false;
 
     TBCI_Epoch epoch;
     eq_pop(&outputQueue, &epoch);
-    *out = epoch.predicted_label;
+
+    *out = (TinyBCIInference)
+    {
+        .predictedLabel = epoch.predicted_label,
+        .targetLabel = epoch.label,
+        .confidence = epoch.confidence
+    };
+    for (int i = 0; i < N_FREQS; i++)
+    {
+        out->confidences[i] = epoch.samples[i];
+    }
+
     return true;
 }
