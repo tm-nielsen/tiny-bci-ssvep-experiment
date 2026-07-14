@@ -5,12 +5,13 @@ static void (*trialStartCallback)(uint16_t) = NULL;
 static void (*trialEndCallback)(uint16_t) = NULL;
 
 static MicrosecondTimer trialDurationTimer;
+static MicrosecondTimer preTrialStimulusWindowTimer;
 static MicrosecondTimer breakTimer;
 
 static uint16_t targetCount = 0;
 static uint16_t target = 0;
 
-enum State { BREAK, TRIAL };
+enum State { BREAK, TRIAL_WAIT, TRIAL };
 static uint16_t state = BREAK;
 
 
@@ -23,6 +24,7 @@ void initializeTrialConductor(
 
     uint64_t microsecondsPerTrial = (uint64_t)(trialDuration * 1000000);
     trialDurationTimer = createMicrosecondTimer(trialDuration);
+    preTrialStimulusWindowTimer = (MicrosecondTimer){ .interval = WINDOW_LENGTH_MS * 1000 };
     breakTimer = createMicrosecondTimer(breakDuration);
 
     trialStartCallback = onTrialStart;
@@ -33,11 +35,16 @@ void initializeTrialConductor(
 
 void startTrial()
 {
-    pushTrigger(target + 1);
-    state = TRIAL;
-
+    state = TRIAL_WAIT;
     if (trialStartCallback != NULL) trialStartCallback(target);
     resetMicrosecondTimer(&trialDurationTimer);
+    resetMicrosecondTimer(&preTrialStimulusWindowTimer);
+}
+
+void sendTrialTrigger()
+{
+    pushTrigger(target + 1);
+    state = TRIAL;
 }
 
 void endTrial()
@@ -52,12 +59,16 @@ void endTrial()
 
 void updateTrialConductor()
 {
-    if (state == BREAK)
+    switch (state)
     {
-        if (checkMicrosecondTimer(&breakTimer)) startTrial();
-    }
-    else
-    {
-        if (checkMicrosecondTimer(&trialDurationTimer)) endTrial();
+        case BREAK:
+            if (checkMicrosecondTimer(&breakTimer)) startTrial();
+            break;
+        case TRIAL_WAIT:
+            if (checkMicrosecondTimer(&preTrialStimulusWindowTimer)) sendTrialTrigger();
+            break;
+        case TRIAL:
+            if (checkMicrosecondTimer(&trialDurationTimer)) endTrial();
+            break;
     }
 }
