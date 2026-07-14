@@ -29,6 +29,7 @@ add_executable(${PROJECT_NAME}
     src/trial_conductor.c
     src/presentation.c
     src/microsecond_timer.c
+    src/storage.c
     src/pipeline.c
 
     src/data/trigger_source.c
