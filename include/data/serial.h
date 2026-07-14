@@ -10,7 +10,7 @@
 #   define INVALID_HANDLE_VALUE (-1)
 
 #   ifdef CRTSCTS
-#       define TERMIOS_C_ANTIFLAGS PARENB | CSTOPB | CRTSCTS
+#       define TERMIOS_C_ANTIFLAGS (PARENB | CSTOPB | CRTSCTS)
 #   else
 #       define TERMIOS_C_ANTIFLAGS PARENB | CSTOPB
 #   endif
