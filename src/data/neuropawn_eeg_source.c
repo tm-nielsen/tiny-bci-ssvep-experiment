@@ -127,20 +127,29 @@ void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config)
     eegScale = (4.0f / 32767.0f / config.gain * 1000000.0f);
     char cmd[32];
 
+    sleepMilliseconds(NEUROPAWN_CMD_PAUSE_MS);
+
     /* 1. per-channel enable / disable */
     printf("neuropawn: configuring channels (gain %u)...\n", config.gain);
     for (size_t channelIndex = 0; channelIndex < CHANNEL_COUNT; channelIndex++)
     {
         int channelLabel = (int)channelIndex + 1;
         if (config.activateChannel[channelIndex])
+        {
             snprintf(cmd, sizeof cmd, "chon_%d_%u", channelLabel, config.gain);
+            printf("neuropawn: enabling channel %d\n", channelLabel);
+        }
         else
+        {
             snprintf(cmd, sizeof cmd, "choff_%d", channelLabel);
+            printf("neuropawn: disabling channel %d\n", channelLabel);
+        }
         sendCommand(cmd);
         
         /* 2. optional right-leg-drive */
         if (config.activateRightLegDrive[channelIndex]) {
             snprintf(cmd, sizeof cmd, "rldadd_%d", channelLabel);
+            printf("neuropawn: enabling right leg drive for channel %d\n", channelLabel);
             sendCommand(cmd);
         }
     }
@@ -149,7 +158,7 @@ void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config)
     printf("neuropawn: detecting board type from incoming packets...\n");
     NeuroPawnBoardType boardType = detectBoardType();
     if (boardType == NEUROPAWN_BOARD_UNKNOWN) {
-        fprintf(stderr, "neuropawn: detection failed — no valid packets. "
+        fprintf(stderr, "neuropawn: detection failed - no valid packets. "
                         "Enable at least one channel and retry.\n");
         serialClose(&handle);
         exit(EXIT_SUCCESS);
@@ -174,7 +183,7 @@ void updateNeuropawnEEGSource()
 
         if (readFrame())
         {
-            fprintf(stderr, "Failed to read frame from neuropawn board\n");
+            // fprintf(stderr, "Failed to read frame from neuropawn board\n"); // packet loss
             return;
         }
         parseEXG();

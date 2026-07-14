@@ -27,7 +27,8 @@ typedef struct {
 } NeuropawnConfiguration;
 
 # define TRUE_8_ARRAY {true, true, true, true, true, true, true, true}
-# define NEUROPAWN_DEFAULT_CONFIGURATION (NeuropawnConfiguration) { 12, 50, TRUE_8_ARRAY, TRUE_8_ARRAY }
+# define FALSE_8_ARRAY {false, false, false, false, false, false, false, false}
+# define NEUROPAWN_DEFAULT_CONFIGURATION (NeuropawnConfiguration) { 12, 50, TRUE_8_ARRAY, FALSE_8_ARRAY }
 
 void connectNeuropawnEEGSource(const char *, NeuropawnConfiguration);
 void updateNeuropawnEEGSource();
