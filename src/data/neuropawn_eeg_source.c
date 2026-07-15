@@ -97,9 +97,15 @@ ReadStatus readFrame()
 {
     if (payloadCursor == 0)
     {
+        uint16_t scanAttempts = 8192;
         while (payload[0] != NEUROPAWN_START_BYTE)
         {
             serialRead(&handle, payload, 1);
+            if (scanAttempts-- <= 0)
+            {
+                fprintf(stderr, "neuropawn: failed to locate start byte\n");
+                return READ_STATUS_INVALID;
+            }
         }
         payloadCursor = 1;
     }
@@ -113,6 +119,7 @@ ReadStatus readFrame()
         if (payload[payloadLength - 1] != NEUROPAWN_END_BYTE)
         {
             fprintf(stderr, "neuropawn: dropped packet due to misaligned frame\n");
+            serialRead(&handle, payload, 1); // offset frame
             resetPayload();
             return READ_STATUS_INVALID;
         }
