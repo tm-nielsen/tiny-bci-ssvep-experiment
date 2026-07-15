@@ -2,6 +2,11 @@
 
 # if defined(_WIN32) || defined(_WIN64)
 # else
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
+#include <sys/select.h>
+#include <time.h>
 
 int serialOpen(SerialHandle *handle, const char *port, uint32_t readTimeout)
 {
@@ -39,12 +44,12 @@ int serialOpen(SerialHandle *handle, const char *port, uint32_t readTimeout)
 
 // ---
 
-int serialWrite(SerialHandle *handle, uint8_t *buffer, DWORD bufferLength)
+int serialWrite(SerialHandle *handle, uint8_t *buffer, size_t bufferLength)
 {
     return write(*handle, buffer, bufferLength);
 }
 
-int serialRead(SerialHandle *handle, uint8_t *buffer, DWORD bufferLength)
+int serialRead(SerialHandle *handle, uint8_t *buffer, size_t bufferLength)
 {
     fd_set readfds;
     FD_ZERO(&readfds);
@@ -64,7 +69,7 @@ int serialRead(SerialHandle *handle, uint8_t *buffer, DWORD bufferLength)
     return (int)n;
 }
 
-void serialFlush(SerialHandle *handle) { tcflush(*handle, TCI_FLUSH); }
+void serialFlush(SerialHandle *handle) { tcflush(*handle, TCIFLUSH); }
 void serialClose(SerialHandle *handle) { close(*handle); }
 
 // --
