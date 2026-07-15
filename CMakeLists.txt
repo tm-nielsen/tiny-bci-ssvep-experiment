@@ -36,6 +36,7 @@ add_executable(${PROJECT_NAME}
     src/data/synthetic_eeg_source.c
     src/data/serial_unix.c
     src/data/serial_windows.c
+    src/data/serial_utils.c
     src/data/neuropawn_eeg_source.c
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_WARNING_AS_ERROR ON)

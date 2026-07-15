@@ -25,3 +25,7 @@ void serialFlush(SerialHandle *);
 void serialClose(SerialHandle *);
 
 void sleepMilliseconds(uint32_t);
+
+# define SERIAL_DATA_WAIT_ITERATION_TIME_MS 100
+# define SERIAL_DATA_WAIT_MAXIMUM_ITERATIONS 20
+int awaitSerialData(SerialHandle *);

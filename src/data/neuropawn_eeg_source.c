@@ -17,7 +17,14 @@ void sendCommand(const char *command)
 {
     serialWrite(&handle, (uint8_t *)command, strlen(command));
     sleepMilliseconds(NEUROPAWN_CMD_PAUSE_MS);
+    if (awaitSerialData(&handle))
+    {
+        printf("neuropawn: configuration command failed, retrying\n");
+        sendCommand(command);
+    }
 }
+
+// ---
 
 NeuroPawnBoardType scanFrameSize(const uint8_t *buffer, size_t bufferLength)
 {
@@ -128,6 +135,7 @@ void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config)
     char cmd[32];
 
     sleepMilliseconds(NEUROPAWN_CMD_PAUSE_MS);
+    awaitSerialData(&handle);
 
     /* 1. per-channel enable / disable */
     printf("neuropawn: configuring channels (gain %u)...\n", config.gain);
