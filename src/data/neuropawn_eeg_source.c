@@ -3,13 +3,16 @@
 # include "microsecond_timer.h"
 
 static SerialHandle handle = INVALID_HANDLE_VALUE;
+
 static uint8_t payload[NEUROPAWN_IMU_PAYLOAD_LEN];
 static uint8_t payloadLength;
-static float eegScale;
+static uint8_t payloadCursor = 0;
 
-static MicrosecondTimer timer = { .interval = SAMPLE_INTERVAL };
+static float eegScale;
 static float samples[CHANNEL_COUNT];
 static uint32_t sampleIndex = 0;
+static uint8_t expectedSampleIndex = 0;
+static bool sampleIndexExpectationSet = false;
 
 // ---
 
@@ -78,40 +81,58 @@ NeuroPawnBoardType detectBoardType()
 
 // ---
 
-int alignFrame()
+void resetPayload()
 {
-    uint8_t scanByte = 0;
-    uint16_t maximumScanAttempts = 8192;
-    uint16_t attemptCounter = 0;
-
-    while (attemptCounter++ < maximumScanAttempts)
-    {
-        int readCount = serialRead(&handle, &scanByte, 1);
-        if (readCount == 1 && scanByte == NEUROPAWN_START_BYTE) break;
-    }
-    if (attemptCounter == maximumScanAttempts) return EXIT_FAILURE;
-    return EXIT_SUCCESS;
+    for (int i = 0; i < payloadLength; i++) payload[i] = 0;
+    payloadCursor = 0;
 }
 
-int readFrame()
+typedef enum {
+    READ_STATUS_READY,
+    READ_STATUS_PENDING,
+    READ_STATUS_INVALID
+} ReadStatus;
+
+ReadStatus readFrame()
 {
-    if (alignFrame()) return EXIT_FAILURE;
-
-    size_t cursor = 0;
-    uint8_t attempts = 200;
-    while (cursor < payloadLength && attempts-- > 0)
+    if (payloadCursor == 0)
     {
-        int readCount = serialRead(&handle, payload + cursor, payloadLength - cursor);
-        if (readCount > 0) cursor += (size_t)readCount;
+        while (payload[0] != NEUROPAWN_START_BYTE)
+        {
+            serialRead(&handle, payload, 1);
+        }
+        payloadCursor = 1;
     }
-    if (cursor < payloadLength) return EXIT_FAILURE;
-    if (payload[payloadLength - 1] != NEUROPAWN_END_BYTE) return EXIT_FAILURE;
 
-    return EXIT_SUCCESS;
+    int readCount = serialRead(&handle, payload + payloadCursor, payloadLength - payloadCursor);
+    if (readCount > 0) payloadCursor += readCount;
+
+    if (payloadCursor < payloadLength) return READ_STATUS_PENDING;
+    else
+    {
+        if (payload[payloadLength - 1] != NEUROPAWN_END_BYTE)
+        {
+            fprintf(stderr, "neuropawn: dropped packet due to misaligned frame\n");
+            resetPayload();
+            return READ_STATUS_INVALID;
+        }
+        return READ_STATUS_READY;
+    }
 }
 
 void parseEXG()
 {
+    if (payload[0] != NEUROPAWN_START_BYTE)
+    {
+        fprintf(stderr, "neuropawn: start byte mismatch in payload, frame is misaligned\n");
+    }
+    if (sampleIndexExpectationSet && payload[1] != expectedSampleIndex)
+    {
+        fprintf(stderr, "neuropawn: payload index %u doesn't match expected index of %u\n", payload[1], expectedSampleIndex);
+    }
+    expectedSampleIndex = payload[1] + 1;
+    sampleIndexExpectationSet = true;
+
     for (size_t channelIndex = 0; channelIndex < CHANNEL_COUNT; channelIndex++)
     {
         int16_t raw = (int16_t)(((uint16_t)payload[1 + 2 * channelIndex] << 8) |
@@ -177,27 +198,26 @@ void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config)
         : NEUROPAWN_EEG_PAYLOAD_LEN;
 
     serialFlush(&handle);
-    readFrame();
 
     const char * typeString = (boardType == NEUROPAWN_BOARD_IMU) ? "IMU" : "non-IMU";
     printf("neuropawn: connected on %s (%s board)\n", port, typeString);
 }
 
+void resetNeuropawnEEGSource()
+{
+    resetPayload();
+    serialFlush(&handle);
+}
+
 void updateNeuropawnEEGSource()
 {
-    if (checkMicrosecondTimer(&timer))
-    {
-        uint64_t timestamp = getCurrentMicrosecondTimestamp();
+    if (readFrame() != READ_STATUS_READY) return;
 
-        if (readFrame())
-        {
-            // fprintf(stderr, "Failed to read frame from neuropawn board\n"); // packet loss
-            return;
-        }
-        parseEXG();
+    parseEXG();
+    uint64_t timestamp = getCurrentMicrosecondTimestamp();
+    in_push_signal(&tbciInputs, samples, timestamp, sampleIndex++);
 
-        in_push_signal(&tbciInputs, samples, timestamp, sampleIndex++);
-    }
+    resetPayload();
 }
 
 void disconnectNeuropawnEEGSource() { serialClose(&handle); }
