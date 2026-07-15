@@ -19,50 +19,50 @@
 
 # define EPOCH_POOL_CAPACITY EPOCH_CAPACITY * TOTAL_FRAMES * CHANNEL_COUNT
 
-float signalStorage[];
-uint64_t signalTimestamps[];
-uint32_t signalIndices[];
+extern float *signalStorage;
+extern uint64_t *signalTimestamps;
+extern uint32_t *signalIndices;
 
-float processedSignalStorage[];
-uint64_t processedSignalTimestamps[];
-uint32_t processedSignalIndices[];
+extern float *processedSignalStorage;
+extern uint64_t *processedSignalTimestamps;
+extern uint32_t *processedSignalIndices;
 
-TBCI_Trigger triggerStorage[];
+extern TBCI_Trigger *triggerStorage;
 
-TBCI_Epoch epochStorage[];
-float epochPool[];
-TBCI_Epoch featuresStorage[];
-float featuresPool[];
-TBCI_Epoch outputStorage[];
-float outputPool[];
+extern TBCI_Epoch *epochStorage;
+extern float *epochPool;
+extern TBCI_Epoch *featuresStorage;
+extern float *featuresPool;
+extern TBCI_Epoch *outputStorage;
+extern float *outputPool;
 
-TBCI_SignalBuffer signalBuffer;
-TBCI_SignalBuffer processedSignalBuffer;
+extern TBCI_SignalBuffer signalBuffer;
+extern TBCI_SignalBuffer processedSignalBuffer;
 
-TBCI_TriggerQueue triggerQueue;
-TBCI_EpochQueue epochQueue;
-TBCI_EpochQueue featuresQueue;
-TBCI_EpochQueue outputQueue;
+extern TBCI_TriggerQueue triggerQueue;
+extern TBCI_EpochQueue epochQueue;
+extern TBCI_EpochQueue featuresQueue;
+extern TBCI_EpochQueue outputQueue;
 
-TBCI_Input tbciInputs;
-TBCI_Config tbciConfiguration;
-TBCI_Context tbciContext;
+extern TBCI_Input tbciInputs;
+extern TBCI_Config tbciConfiguration;
+extern TBCI_Context tbciContext;
 
 // CCA constants
 # define N_FREQS 6
 # define N_HARMONICS 2
 # define N_COMPONENTS (N_HARMONICS * 2)
 # define REF_CAP (N_FREQS * N_COMPONENTS * TOTAL_FRAMES)
-float ref_signals[];
+extern float *refSignals;
 
 // Nodes
-TBCI_NotchNode notchNode;
-TBCI_NotchConfig notchConfiguration;
-TBCI_BandpassNode bandpassNode;
-TBCI_BandpassConfig bandpassConfiguration;
-TBCI_CCANode ccaNode;
-TBCI_CCAConfig ccaConfiguration;
-TBCI_CCAModel ccaModel;
-TBCI_CCAModelConfig ccaModelConfiguration;
+extern TBCI_NotchNode notchNode;
+extern TBCI_NotchConfig notchConfiguration;
+extern TBCI_BandpassNode bandpassNode;
+extern TBCI_BandpassConfig bandpassConfiguration;
+extern TBCI_CCANode ccaNode;
+extern TBCI_CCAConfig ccaConfiguration;
+extern TBCI_CCAModel ccaModel;
+extern TBCI_CCAModelConfig ccaModelConfiguration;
 
 #endif
