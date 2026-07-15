@@ -7,6 +7,7 @@
 # include "nodes/preprocessing/tbci_notch_node.h"
 # include "nodes/features/tbci_cca_node.h"
 # include "nodes/decoder/tbci_cca_model.h"
+# include "nodes/decoder/tbci_label_encoder_node.h"
 
 # include "data/eeg_source.h"
 
@@ -19,22 +20,23 @@
 
 # define EPOCH_POOL_CAPACITY EPOCH_CAPACITY * TOTAL_FRAMES * CHANNEL_COUNT
 
-float signalStorage[];
-uint64_t signalTimestamps[];
-uint32_t signalIndices[];
+float signalStorage[SIG_CAPACITY * CHANNEL_COUNT];
+uint64_t signalTimestamps[SIG_CAPACITY];
+uint32_t signalIndices[SIG_CAPACITY];
 
-float processedSignalStorage[];
-uint64_t processedSignalTimestamps[];
-uint32_t processedSignalIndices[];
+float processedSignalStorage[SIG_CAPACITY * CHANNEL_COUNT];
+uint64_t processedSignalTimestamps[SIG_CAPACITY];
+uint32_t processedSignalIndices[SIG_CAPACITY];
 
-TBCI_Trigger triggerStorage[];
+TBCI_Trigger triggerStorage[TRIG_CAPACITY];
 
-TBCI_Epoch epochStorage[];
-float epochPool[];
-TBCI_Epoch featuresStorage[];
-float featuresPool[];
-TBCI_Epoch outputStorage[];
-float outputPool[];
+TBCI_Epoch epochStorage[EPOCH_CAPACITY];
+float epochPool[EPOCH_POOL_CAPACITY];
+TBCI_Epoch featuresStorage[EPOCH_CAPACITY];
+float featuresPool[EPOCH_POOL_CAPACITY];
+TBCI_Epoch outputStorage[EPOCH_CAPACITY];
+float outputPool[EPOCH_POOL_CAPACITY];
+
 
 TBCI_SignalBuffer signalBuffer;
 TBCI_SignalBuffer processedSignalBuffer;
@@ -53,7 +55,7 @@ TBCI_Context tbciContext;
 # define N_HARMONICS 2
 # define N_COMPONENTS (N_HARMONICS * 2)
 # define REF_CAP (N_FREQS * N_COMPONENTS * TOTAL_FRAMES)
-float ref_signals[];
+float ref_signals[REF_CAP];
 
 // Nodes
 TBCI_NotchNode notchNode;
@@ -64,5 +66,7 @@ TBCI_CCANode ccaNode;
 TBCI_CCAConfig ccaConfiguration;
 TBCI_CCAModel ccaModel;
 TBCI_CCAModelConfig ccaModelConfiguration;
+TBCI_LabelEncoderNode labelEncoderNode;
+TBCI_LabelEncoderConfig labelEncoderConfiguration;
 
 #endif
