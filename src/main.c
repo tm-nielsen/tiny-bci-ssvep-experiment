@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
         if (tryGetTinyBCIInference(&inference))
         {
             uint64_t timestamp = getCurrentMicrosecondTimestamp();
-            printf("%lu | Output received: %d (%.0f%% confidence)\n", timestamp,
+            printf("%" PRIu64 " | Output received: %d (%.0f%% confidence)\n", timestamp,
                 inference.predictedLabel, inference.confidence * 100
             );
 
