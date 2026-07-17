@@ -5,7 +5,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     src/data/lsl_trigger_outlet.c
 )
 
-option(USE_LSL_TIMESTAMPS "Use EEG  timestamps from source, marking triggers with lsl_local_clock" ON)
+option(USE_LSL_TIMESTAMPS "Use EEG  timestamps from source, marking triggers with lsl_local_clock" OFF)
 if (${USE_LSL_TIMESTAMPS})
     target_compile_definitions(${PROJECT_NAME} PRIVATE USE_LSL_TIMESTAMPS)
 endif()
