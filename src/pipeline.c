@@ -77,7 +77,7 @@ void addCCANodesToTinyBCIPipeline(const float *frequencies)
     notchConfiguration.n_harmonics = 2;
     notch_init(&notchNode, &notchConfiguration);
 
-    bp_configure(&bandpassConfiguration,1.0f, 30.0f, 3);
+    bp_configure(&bandpassConfiguration,2.0f, 45.0f, 3);
     bp_init(&bandpassNode, &bandpassConfiguration);
 
     /* Register CCA node and model */

@@ -53,7 +53,7 @@ TBCI_Context tbciContext;
 
 // CCA constants
 # define N_FREQS 6
-# define N_HARMONICS 2
+# define N_HARMONICS 3
 # define N_COMPONENTS (N_HARMONICS * 2)
 # define REF_CAP (N_FREQS * N_COMPONENTS * TOTAL_FRAMES)
 float ref_signals[REF_CAP];
