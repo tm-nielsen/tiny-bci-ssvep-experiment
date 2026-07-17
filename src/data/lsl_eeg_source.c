@@ -3,12 +3,18 @@
 # include "pipeline.h"
 # include "lsl_c.h"
 
+# ifndef USE_LSL_TIMESTAMPS
+#   include "microsecond_timer.h"
+# endif
+
+
 static float samples[CHANNEL_COUNT];
 static uint32_t sampleIndex = 0;
 
 static lsl_inlet inlet = NULL;
 static bool isConnected = false;
 
+// ---
 
 bool validateStreamInfo(lsl_streaminfo *info)
 {
@@ -64,6 +70,8 @@ void connectLslEEGSource()
     isConnected = true;
 }
 
+// ---
+
 void updateLslEEGSource()
 {
     if (!isConnected)
@@ -84,8 +92,12 @@ void updateLslEEGSource()
 
     if (lslTimestamp > 0.0)
     {
-        uint64_t lslTimestampMicroseconds = (uint64_t)(lslTimestamp * 1000000);
-        in_push_signal(&tbciInputs, samples, lslTimestampMicroseconds, sampleIndex++);
+# ifdef USE_LSL_TIMESTAMPS
+        uint64_t microsecondTimestamp = (uint64_t)(lslTimestamp * 1000000);
+# else
+        uint64_t microsecondTimestamp = getCurrentMicrosecondTimestamp();
+# endif
+        in_push_signal(&tbciInputs, samples, microsecondTimestamp, sampleIndex++);
     }
 }
 
