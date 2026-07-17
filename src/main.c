@@ -1,19 +1,29 @@
 # include "pipeline.h"
-# include "data/synthetic_eeg_source.h"
-# include "trial_conductor.h"
-
 # include "presentation.h"
+# include "trial_conductor.h"
 # include "microsecond_timer.h"
+
+# include "data/trigger_source.h"
+# include "data/lsl_trigger_outlet.h"
+
+# include "data/lsl_eeg_source.h"
+void initializeEEGSource() { connectLslEEGSource(); }
+void updateEEGSource() { updateLslEEGSource(); }
+void cleanUpEEGSource() { disconnectLslEEGSource(); }
 
 
 void onTrialStart(uint16_t target)
 {
+    pushTrigger(target + 1);
+    pushLslTrigger(target + 1);
     setPresentationTarget(target);
     resumeStimulus();
 }
 
 void onTrialEnd(uint16_t nextTarget)
 {
+    pushTrigger(TRIAL_END_CODE);
+    pushLslTrigger(TRIAL_END_CODE);
     setPresentationTarget(nextTarget);
     pauseStimulus();
 }
@@ -30,26 +40,31 @@ int main(int argc, char *argv[])
     initializePresentation(frequencies, N_FREQS);
     setPresentationTarget(0);
 
+    initializeEEGSource();
+    openLslTriggerOutlet("tBCI_Experiment_Triggers");
+
+    if (initializeTinyBCIPipeline(frequencies)) return EXIT_FAILURE;
+
     while (!IsKeyPressed(KEY_SPACE))
     {
         drawEntryScreen();
+        updateEEGSource();
 
         if (WindowShouldClose())
         {
+            cleanUpEEGSource();
+            closeLslTriggerOutlet();
             stopPresentation();
             return EXIT_SUCCESS;
         }
     }
 
-    if (initializeTinyBCIPipeline(frequencies)) return EXIT_FAILURE;
     if (startTinyBCIPipeline()) return EXIT_FAILURE;
-    printf("Tiny BCI Pipeline Running.\n");
-
-    resetSyntheticEEGSource();
+    printf("---\nTiny BCI Pipeline Running.\n\n");
 
     while (!WindowShouldClose())
     {
-        updateSyntheticEEGSource();
+        updateEEGSource();
         updateTrialConductor();
 
         if (updateTinyBCIPipeline()) break;
@@ -71,6 +86,8 @@ int main(int argc, char *argv[])
         drawStimulusScreen();
     }
 
+    cleanUpEEGSource();
+    closeLslTriggerOutlet();
     stopTinyBCIPipeline();
     stopPresentation();
 
