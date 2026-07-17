@@ -31,6 +31,10 @@ void initializeTrialConductor(
     trialEndCallback = onTrialEnd;
 }
 
+uint16_t getTarget()
+{
+    return target + 1;
+}
 // ---
 
 void startTrial()
@@ -56,6 +60,7 @@ void endTrial()
     if (trialEndCallback != NULL) trialEndCallback(target);
     resetMicrosecondTimer(&breakTimer);
 }
+
 
 void updateTrialConductor()
 {

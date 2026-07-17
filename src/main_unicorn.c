@@ -1,10 +1,13 @@
+#include <unistd.h>
+
 # include "pipeline.h"
-# include "data/synthetic_eeg_source.h"
+# include "data/unicorn_eeg_source.h"
 # include "trial_conductor.h"
 
 # include "presentation.h"
 # include "microsecond_timer.h"
 
+#define PORT "/dev/cu.UN-20230805"
 
 void onTrialStart(uint16_t target)
 {
@@ -21,10 +24,10 @@ void onTrialEnd(uint16_t nextTarget)
 
 int main(int argc, char *argv[])
 {
-    const float frequencies[N_FREQS] = {9.0f, 7.5f, 8.0f, 7.0f, 11.0f, 8.5f};
+    const float frequencies[N_FREQS] = {9.0f, 7.5f, 8.0f, 7.0f, 11.0f, 8.5f}; //15, 10, 12, 8.5
     const float trialDuration = 12.0f;
     const float breakDuration = 3.0f;
-    const float selectionDisplayConfidenceThreshold = 0.5f;
+    const float selectionDisplayConfidenceThreshold = 0.80f;
 
     initializeTrialConductor(N_FREQS, trialDuration, breakDuration, onTrialStart, onTrialEnd);
     initializePresentation(frequencies, N_FREQS);
@@ -45,11 +48,11 @@ int main(int argc, char *argv[])
     if (startTinyBCIPipeline()) return EXIT_FAILURE;
     printf("Tiny BCI Pipeline Running.\n");
 
-    resetSyntheticEEGSource();
-
+    initializeUnicornEEGSource(PORT);
+    resetUnicornEEGSource();
     while (!WindowShouldClose())
     {
-        updateSyntheticEEGSource();
+        updateUnicornEEGSource();
         updateTrialConductor();
 
         if (updateTinyBCIPipeline()) break;
@@ -58,9 +61,13 @@ int main(int argc, char *argv[])
         if (tryGetTinyBCIInference(&inference))
         {
             uint64_t timestamp = getCurrentMicrosecondTimestamp();
-            printf("%llu | Output received: %d (%.0f%% confidence)\n", timestamp,
+            printf("%llu | Output received: %d (%.0f%% confidence)\t [", timestamp,
                 inference.predictedLabel, inference.confidence * 100
             );
+
+            for (int i=0; i<N_FREQS; i++)
+                printf("%f", inference.confidences[i]);
+            printf("]\n");
 
             // TODO code integration
             /* log to file */

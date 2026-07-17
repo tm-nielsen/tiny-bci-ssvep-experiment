@@ -1,6 +1,10 @@
 # include "pipeline.h"
+#include <sys/time.h>
 # include "data/eeg_source.h"
 # include "data/trigger_source.h"
+
+FILE *inferenceLog = NULL;
+
 
 void initializeTinyBCIPipelineStorage();
 void setTinyBCIPipelineConfiguration();
@@ -19,6 +23,26 @@ int reportStatus(TBCI_Status status, const char *actionLabel)
 
 int initializeTinyBCIPipeline(const float *frequencies)
 {
+    // TODO code integration
+    /* open inference log */
+    time_t now = time(NULL);
+    struct tm *t = localtime(&now);
+    char timestamp[32];
+    strftime(timestamp, sizeof(timestamp), "%Y%m%d_%H%M%S", t);
+    char log_path[256];
+    snprintf(log_path, sizeof(log_path), "tbci_inference_%s_%s_%s.csv",
+             tbciConfiguration.log_subject,
+             tbciConfiguration.log_session,
+             timestamp);
+    inferenceLog = fopen(log_path, "w");
+    if (inferenceLog) {
+        fprintf(inferenceLog, "timestamp_us,true_label,predicted_label,confidence");
+        for (int i = 0; i < N_FREQS; i++)
+            fprintf(inferenceLog, ",prob_%d", i);
+        fprintf(inferenceLog, "\n");
+        printf("Inference log: %s\n", log_path);
+    }
+
     initializeTinyBCIPipelineStorage();
     setTinyBCIPipelineConfiguration();
     addCCANodesToTinyBCIPipeline(frequencies);
@@ -51,6 +75,7 @@ void initializeTinyBCIPipelineStorage()
 void setTinyBCIPipelineConfiguration()
 {
     tbciConfiguration.paradigm = TBCI_PARADIGM_SSVEP;
+    tbciConfiguration.trial_end_code = TRIAL_END_CODE;
     tbciConfiguration.nominal_srate = SAMPLE_RATE;
     tbciConfiguration.target_srate = SAMPLE_RATE;
     tbciConfiguration.n_channels = CHANNEL_COUNT;
@@ -64,7 +89,7 @@ void setTinyBCIPipelineConfiguration()
     tbciConfiguration.use_feature_extraction = true;
     tbciConfiguration.use_decoder = true;
     tbciConfiguration.log_enabled = true; /* set true to enable CSV logging */
-    tbciConfiguration.log_processed = true;
+    tbciConfiguration.log_processed = false;
     tbciConfiguration.log_subject[0] = '\0';
     tbciConfiguration.log_session[0] = '\0';
 }
@@ -121,6 +146,10 @@ int updateTinyBCIPipeline()
 
 int stopTinyBCIPipeline()
 {
+    if (inferenceLog) {
+        fclose(inferenceLog);
+        inferenceLog = NULL;
+    }
     TBCI_Status status = tbci_context_stop(&tbciContext);
     return reportStatus(status, "stop");
 }
