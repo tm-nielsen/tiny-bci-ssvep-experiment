@@ -28,7 +28,6 @@ int initializeTinyBCIPipeline(const float *frequencies)
         &tbciInputs, &processedSignalBuffer,
         &epochQueue, &featuresQueue, &outputQueue
     );
-    tbciInputs.signal = &signalBuffer;
     return reportStatus(initializationStatus, "initialize");
 }
 
@@ -59,12 +58,13 @@ void setTinyBCIPipelineConfiguration()
     tbciConfiguration.mode = SEG_MODE_SLIDING;
     tbciConfiguration.pre_stimulus_ms = 0;
     tbciConfiguration.post_stimulus_ms = WINDOW_LENGTH_MS;
-    tbciConfiguration.overlap_ms = 400u;
+    tbciConfiguration.overlap_ms = WINDOW_OVERLAP_MS;
     tbciConfiguration.trial_end_code = TRIAL_END_CODE;
     tbciConfiguration.use_preprocessing = true;
     tbciConfiguration.use_feature_extraction = true;
     tbciConfiguration.use_decoder = true;
     tbciConfiguration.log_enabled = true; /* set true to enable CSV logging */
+    tbciConfiguration.log_processed = true;
     tbciConfiguration.log_subject[0] = '\0';
     tbciConfiguration.log_session[0] = '\0';
 }
@@ -72,11 +72,12 @@ void setTinyBCIPipelineConfiguration()
 void addCCANodesToTinyBCIPipeline(const float *frequencies)
 {
     /* register notch & bandpass node in preprocessing group */
-    notchConfiguration.freq_hz = 50.0f;
+    notchConfiguration.freq_hz = 60.0f;
+    notchConfiguration.q_factor = 10.f;
+    notchConfiguration.n_harmonics = 2;
     notch_init(&notchNode, &notchConfiguration);
 
-    bandpassConfiguration.low_hz = 1.0f;
-    bandpassConfiguration.high_hz = 40.0f;
+    bp_configure(&bandpassConfiguration,1.0f, 30.0f, 3);
     bp_init(&bandpassNode, &bandpassConfiguration);
 
     /* Register CCA node and model */

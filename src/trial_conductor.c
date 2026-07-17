@@ -37,13 +37,13 @@ void startTrial()
 {
     state = TRIAL_WAIT;
     if (trialStartCallback != NULL) trialStartCallback(target);
-    resetMicrosecondTimer(&trialDurationTimer);
     resetMicrosecondTimer(&preTrialStimulusWindowTimer);
 }
 
 void sendTrialTrigger()
 {
     pushTrigger(target + 1);
+    resetMicrosecondTimer(&trialDurationTimer);  /* start counting from trigger, not from startTrial */
     state = TRIAL;
 }
 

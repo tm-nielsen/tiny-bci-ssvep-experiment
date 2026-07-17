@@ -25,6 +25,7 @@ void updateSyntheticEEGSource()
             float sineInput = tau * SIGNAL_FREQUENCY * currentSeconds + phaseOffset;
             samples[channelIndex] = SIGNAL_AMPLITUDE * (float)sin(sineInput);
 
+            samples[channelIndex] += NOISE_60HZ_AMPLITUDE * (float)sin(tau * 60.0f * currentSeconds);
             if (NOISE_AMPLITUDE > 0)
             {
                 float noise = ((float)rand() / (float)RAND_MAX) * 2.0f - 1.0f;
