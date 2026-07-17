@@ -50,3 +50,8 @@ target_link_libraries(${PROJECT_NAME} raylib)
 # TODO: migrate to fetch once CMake is fixed
 add_subdirectory(${SUBMODULE_PATH}/tiny_bci)
 target_link_libraries(${PROJECT_NAME} tiny_bci)
+
+option(INCLUDE_LSL "Build with LSL support" ON)
+if (${INCLUDE_LSL})
+  include(LSL.cmake)
+endif()
