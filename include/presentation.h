@@ -17,8 +17,9 @@
 
 # define BACKGROUND_COLOUR (Color){32, 32, 32, 255}
 # define LETTERBOX_COLOUR (Color){0, 0, 0, 255}
-# define STIMULUS_ON_COLOR (Color){255, 255, 255, 255}
-# define STIMULUS_OFF_COLOUR (Color){0, 0, 0, 255}
+# define STIMULUS_BACKGROUND_COLOUR (Color){255, 255, 255, 255}
+# define STIMULUS_TEXTURE_COLOUR (Color){255, 255, 255, 255}
+# define STIMULUS_TEXTURE_PATH "assets/stimulus-texture.png"
 # define STIMULUS_BREAK_PADDING 50
 
 # define TARGET_INDICATION_OFFSET 20
