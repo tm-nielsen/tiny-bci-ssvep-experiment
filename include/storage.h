@@ -9,7 +9,6 @@
 # include "nodes/decoder/tbci_cca_model.h"
 # include "nodes/decoder/tbci_label_encoder_node.h"
 # include "nodes/decoder/tbci_trial_averaging_node.h"
-
 # include "data/eeg_source.h"
 
 # define SIG_CAPACITY 1024
@@ -57,6 +56,9 @@ extern TBCI_Context tbciContext;
 # define N_COMPONENTS (N_HARMONICS * 2)
 # define REF_CAP (N_FREQS * N_COMPONENTS * TOTAL_FRAMES)
 extern float *refSignals;
+
+// Logger
+extern FILE *inferenceLog;
 
 // Nodes
 extern TBCI_NotchNode notchNode;

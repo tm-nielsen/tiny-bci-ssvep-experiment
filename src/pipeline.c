@@ -3,8 +3,6 @@
 # include "data/eeg_source.h"
 # include "data/trigger_source.h"
 
-FILE *inferenceLog = NULL;
-
 
 void initializeTinyBCIPipelineStorage();
 void setTinyBCIPipelineConfiguration();

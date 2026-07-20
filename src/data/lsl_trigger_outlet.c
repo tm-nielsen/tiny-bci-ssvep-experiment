@@ -32,7 +32,7 @@ void pushLslTrigger(uint16_t value)
         openLslTriggerOutlet(TRIGGER_STREAM_NAME_DEFAULT);
     }
 
-    uint16_t sample[1] = {value};
+    int16_t sample[1] = {(int16_t)value};
     int32_t pushError = lsl_push_sample_s(outlet, sample);
 
     if (pushError != lsl_no_error)
