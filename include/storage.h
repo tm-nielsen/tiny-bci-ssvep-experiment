@@ -8,6 +8,7 @@
 # include "nodes/features/tbci_cca_node.h"
 # include "nodes/decoder/tbci_cca_model.h"
 # include "nodes/decoder/tbci_label_encoder_node.h"
+# include "nodes/decoder/tbci_trial_averaging_node.h"
 
 # include "data/eeg_source.h"
 
@@ -72,5 +73,7 @@ TBCI_CCAModel ccaModel;
 TBCI_CCAModelConfig ccaModelConfiguration;
 TBCI_LabelEncoderNode labelEncoderNode;
 TBCI_LabelEncoderConfig labelEncoderConfiguration;
+TBCI_TrialAveragingNode trialAveragingNode;
+TBCI_TrialAveragingConfig trialAveragingConfiguration;
 
 #endif
