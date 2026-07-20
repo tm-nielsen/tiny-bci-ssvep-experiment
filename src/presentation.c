@@ -10,6 +10,9 @@ static uint16_t frequencyCount;
 static uint16_t columnCount;
 static Rectangle presenterSpacing;
 
+static Texture2D stimulusTexture;
+static Rectangle stimulusTextureSourceRect;
+
 static uint16_t targetIndex;
 static bool hasTarget = false;
 
@@ -39,6 +42,12 @@ void initializeWindow()
 
     renderTexture = renderTarget.texture;
     renderTextureRect = (Rectangle){ 0, 0, RENDER_WIDTH, -RENDER_HEIGHT };
+
+    stimulusTexture = LoadTexture(STIMULUS_TEXTURE_PATH);
+    stimulusTextureSourceRect = (Rectangle)
+    {
+        0, 0, (float)stimulusTexture.width, (float)stimulusTexture.height
+    };
 }
 
 void initializePresenters(const float* pFrequencies, uint16_t pFrequencyCount)
@@ -186,11 +195,11 @@ void drawEntryScreen()
 
         for (uint16_t i = 0; i < frequencyCount; i++)
         {
-            DrawRectangleRec(getGridRect(i, -STIMULUS_BREAK_PADDING), STIMULUS_ON_COLOR);
+            DrawRectangleRec(getGridRect(i, -STIMULUS_BREAK_PADDING), STIMULUS_BACKGROUND_COLOUR);
         }
         drawTargetIndicator();
 
-        DrawText("Press Spacebar to Start", 150, RENDER_HEIGHT / 2, 64, STIMULUS_ON_COLOR);
+        DrawText("Press Spacebar to Start", 150, RENDER_HEIGHT / 2, 64, STIMULUS_BACKGROUND_COLOUR);
     EndTextureMode();
 
     drawLetterboxedTarget();
@@ -200,12 +209,16 @@ void drawEntryScreen()
 
 void drawStimulusPresenter(uint16_t index)
 {
+    Rectangle gridRect = getGridRect(index, 0);
+    DrawRectangleRec(gridRect, STIMULUS_BACKGROUND_COLOUR);
+
     double waveValue = sin(frequencies[index] * TAU * GetTime());
     double weightedValue = (sqrt(fabs(waveValue)) * (waveValue / fabs(waveValue)));
     float normalizedValue = (float)(weightedValue + 1) / 2.0f;
-    Color colour = ColorLerp(STIMULUS_ON_COLOR, STIMULUS_OFF_COLOUR, normalizedValue);
 
-    DrawRectangleRec(getGridRect(index, 0), colour);
+    Color textureColor = STIMULUS_TEXTURE_COLOUR;
+    textureColor.a = (uint8_t)(normalizedValue * 255);
+    DrawTexturePro(stimulusTexture, stimulusTextureSourceRect, gridRect, (Vector2){0, 0}, 0, textureColor);
 }
 
 void drawStimulusScreen()
@@ -218,7 +231,7 @@ void drawStimulusScreen()
         for (uint16_t i = 0; i < frequencyCount; i++)
         {
             if (stimulusEnabled) drawStimulusPresenter(i);
-            else DrawRectangleRec(getGridRect(i, -STIMULUS_BREAK_PADDING), STIMULUS_ON_COLOR);
+            else DrawRectangleRec(getGridRect(i, -STIMULUS_BREAK_PADDING), STIMULUS_BACKGROUND_COLOUR);
         }
 
         drawTargetIndicator();
