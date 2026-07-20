@@ -24,7 +24,7 @@ void onTrialEnd(uint16_t nextTarget)
 
 int main(int argc, char *argv[])
 {
-    const float frequencies[N_FREQS] = {9.0f, 7.5f, 8.0f, 7.0f, 11.0f, 8.5f}; //15, 10, 12, 8.5
+    const float frequencies[N_FREQS] = {7.5f, 8.57f, 10.0f, 12.0f}; //15, 10, 12, 8.5
     const float trialDuration = 12.0f;
     const float breakDuration = 3.0f;
     const float selectionDisplayConfidenceThreshold = 0.80f;
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
                 fprintf(inferenceLog, "%llu,%d,%d,%.6f",
                         timestamp,
                         getTarget(),      /* true label — current stimulus */
-                        inference.predictedLabel,
+                        inference.predictedLabel + 1,
                         inference.confidence);
                 for (int i = 0; i < N_FREQS; i++)
                     fprintf(inferenceLog, ",%.6f", inference.confidences[i]);
