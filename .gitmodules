@@ -1,3 +1,3 @@
 [submodule "thirdparty/tiny_bci"]
 	path = thirdparty/tiny_bci
-	url = https://github.com/BCI-Games/TinyBCI
+	url = git@github.com:BCI-Games/TinyBCI.git

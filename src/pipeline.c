@@ -113,7 +113,7 @@ void addCCANodesToTinyBCIPipeline(const float *frequencies)
         ccaConfiguration.freqs[i] = frequencies[i];
     }
 
-    cca_init(&ccaNode, &ccaConfiguration, ref_signals, REF_CAP);
+    cca_init(&ccaNode, &ccaConfiguration, refSignals, REF_CAP);
 
     ccaModelConfiguration.temperature = 0.3f;
     ccaModelConfiguration.n_freqs = N_FREQS;

@@ -36,16 +36,16 @@ int serialOpen(SerialHandle *handle, const char *port, uint32_t readTimeout)
 
 int serialWrite(SerialHandle *handle, uint8_t *buffer, size_t bufferLength)
 {
-    DWORD readCount = 0;
-    return ReadFile(*handle, buffer, (DWORD)bufferLength, &readCount, NULL);
-    return readCount;
+    DWORD writeCount = 0;
+    WriteFile(*handle, buffer, (DWORD)bufferLength, &writeCount, NULL);
+    return writeCount;
 }
 
 int serialRead(SerialHandle *handle, uint8_t *buffer, size_t bufferLength)
 {
-    DWORD writeCount = 0;
-    WriteFile(*handle, buffer, (DWORD)bufferLength, &writeCount, NULL);
-    return writeCount;
+    DWORD readCount = 0;
+    ReadFile(*handle, buffer, (DWORD)bufferLength, &readCount, NULL);
+    return readCount;
 }
 
 void serialFlush(SerialHandle *handle) { PurgeComm(*handle, PURGE_RXCLEAR); }

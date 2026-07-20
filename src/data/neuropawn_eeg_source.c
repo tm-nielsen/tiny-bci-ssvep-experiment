@@ -3,21 +3,30 @@
 # include "microsecond_timer.h"
 
 static SerialHandle handle = INVALID_HANDLE_VALUE;
+
 static uint8_t payload[NEUROPAWN_IMU_PAYLOAD_LEN];
 static uint8_t payloadLength;
-static float eegScale;
+static uint8_t payloadCursor = 0;
 
-static MicrosecondTimer timer = { .interval = SAMPLE_INTERVAL };
+static float eegScale;
 static float samples[CHANNEL_COUNT];
 static uint32_t sampleIndex = 0;
+static uint8_t expectedSampleIndex = 0;
+static bool sampleIndexExpectationSet = false;
+
+typedef enum {
+    READ_STATUS_READY,
+    READ_STATUS_PENDING,
+    READ_STATUS_INVALID
+} ReadStatus;
+
+typedef enum {
+    EXG_STATUS_VALID,
+    EXG_STATUS_MISALIGNED,
+    EXG_STATUS_UNEXPECTED_SAMPLE_INDEX
+} EXGStatus;
 
 // ---
-
-void sendCommand(const char *command)
-{
-    serialWrite(&handle, (uint8_t *)command, strlen(command));
-    sleepMilliseconds(NEUROPAWN_CMD_PAUSE_MS);
-}
 
 NeuroPawnBoardType scanFrameSize(const uint8_t *buffer, size_t bufferLength)
 {
@@ -71,36 +80,68 @@ NeuroPawnBoardType detectBoardType()
 
 // ---
 
-int alignFrame()
+void resetPayload()
 {
-    uint8_t scanByte = 0;
-    uint16_t maximumScanAttempts = 8192;
-    uint16_t attemptCounter = 0;
+    for (int i = 0; i < payloadLength; i++) payload[i] = 0;
+    payloadCursor = 0;
+}
 
-    while (attemptCounter++ < maximumScanAttempts)
+int findStartByte()
+{
+    uint16_t scanAttempts = 200;
+    while (payload[0] != NEUROPAWN_START_BYTE)
     {
-        int readCount = serialRead(&handle, &scanByte, 1);
-        if (readCount == 1 && scanByte == NEUROPAWN_START_BYTE) break;
+        serialRead(&handle, payload, 1);
+        if (scanAttempts-- <= 0)
+        {
+            fprintf(stderr, "neuropawn: failed to locate start byte\n");
+            return EXIT_FAILURE;
+        }
     }
-    if (attemptCounter == maximumScanAttempts) return EXIT_FAILURE;
     return EXIT_SUCCESS;
 }
 
-int readFrame()
+ReadStatus readFrame()
 {
-    if (alignFrame()) return EXIT_FAILURE;
-
-    size_t cursor = 0;
-    uint8_t attempts = 200;
-    while (cursor < payloadLength && attempts-- > 0)
+    if (payloadCursor == 0)
     {
-        int readCount = serialRead(&handle, payload + cursor, payloadLength - cursor);
-        if (readCount > 0) cursor += (size_t)readCount;
+        if (findStartByte()) return READ_STATUS_INVALID;
+        payloadCursor = 1;
     }
-    if (cursor < payloadLength) return EXIT_FAILURE;
-    if (payload[payloadLength - 1] != NEUROPAWN_END_BYTE) return EXIT_FAILURE;
 
-    return EXIT_SUCCESS;
+    int readCount = serialRead(&handle, payload + payloadCursor, payloadLength - payloadCursor);
+    if (readCount > 0) payloadCursor += readCount;
+
+    if (payloadCursor < payloadLength) return READ_STATUS_PENDING;
+    else
+    {
+        if (payload[payloadLength - 1] != NEUROPAWN_END_BYTE)
+        {
+            fprintf(stderr, "neuropawn: dropped packet due to misaligned frame\n");
+            serialRead(&handle, payload, 1); // offset frame
+            resetPayload();
+            return READ_STATUS_INVALID;
+        }
+        return READ_STATUS_READY;
+    }
+}
+
+EXGStatus validateEXGFrame()
+{
+    if (payload[0] != NEUROPAWN_START_BYTE || payload[payloadLength - 1] != NEUROPAWN_END_BYTE)
+    {
+        fprintf(stderr, "neuropawn: payload invalid, frame is misaligned\n");
+        return EXG_STATUS_MISALIGNED;
+    }
+    if (sampleIndexExpectationSet && payload[1] != expectedSampleIndex)
+    {
+        fprintf(stderr, "neuropawn: payload index %u doesn't match expected index of %u\n", payload[1], expectedSampleIndex);
+        expectedSampleIndex = payload[1] + 1;
+        return EXG_STATUS_UNEXPECTED_SAMPLE_INDEX;
+    }
+    expectedSampleIndex = payload[1] + 1;
+    sampleIndexExpectationSet = true;
+    return EXG_STATUS_VALID;
 }
 
 void parseEXG()
@@ -115,6 +156,77 @@ void parseEXG()
 
 // ---
 
+int awaitFrame()
+{
+    uint16_t scanAttempts = 400;
+    resetPayload();
+    serialFlush(&handle);
+    while (readFrame() != READ_STATUS_READY)
+    {
+        if (scanAttempts-- < 0) return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
+}
+
+int awaitEXGChannelData(uint8_t channelIndex, bool requireValues)
+{
+    if (awaitSerialData(&handle)) return EXIT_FAILURE;
+    if (awaitFrame()) return EXIT_FAILURE;
+    if (!requireValues) return EXIT_SUCCESS;
+    
+    if (payload[1 + 2 * channelIndex] || payload[2 + 2 * channelIndex]) return EXIT_SUCCESS;
+    return EXIT_FAILURE;
+}
+
+void sendCommand(const char *command)
+{
+    serialWrite(&handle, (uint8_t *)command, strlen(command));
+}
+
+void configureChannel(const char* cmd, uint8_t channelIndex, bool expectNonZeroSamples)
+{
+    sendCommand(cmd);
+    sleepMilliseconds(NEUROPAWN_CMD_PAUSE_MS);
+    while (awaitEXGChannelData(channelIndex, expectNonZeroSamples))
+    {
+        fprintf(stderr, "neuropawn: failed to configure channel, retrying\n");
+        sendCommand(cmd);
+    }
+}
+
+// ---
+
+void configureChannels(NeuropawnConfiguration config)
+{
+    char cmd[32];
+
+    for (uint8_t channelIndex = 0; channelIndex < CHANNEL_COUNT; channelIndex++)
+    {
+        int channelLabel = (int)channelIndex + 1;
+        bool channelEnabled = config.activateChannel[channelIndex];
+        
+        /* per-channel enable / disable */
+        if (channelEnabled)
+        {
+            snprintf(cmd, sizeof cmd, "chon_%d_%u", channelLabel, config.gain);
+            printf("neuropawn: enabling channel %d\n", channelLabel);
+        }
+        else
+        {
+            snprintf(cmd, sizeof cmd, "choff_%d", channelLabel);
+            printf("neuropawn: disabling channel %d\n", channelLabel);
+        }
+        configureChannel(cmd, channelIndex, channelEnabled);
+        
+        /* optional right-leg-drive */
+        if (config.activateRightLegDrive[channelIndex]) {
+            snprintf(cmd, sizeof cmd, "rldadd_%d", channelLabel);
+            printf("neuropawn: enabling right leg drive for channel %d\n", channelLabel);
+            configureChannel(cmd, channelIndex, channelEnabled);
+        }
+    }
+}
+
 void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config)
 {
     if (SAMPLE_RATE != NEUROPAWN_SAMPLE_RATE)
@@ -123,34 +235,25 @@ void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config)
         exit(EXIT_FAILURE);
     }
 
-    if (serialOpen(&handle, port, config.timeout)) return;
-    eegScale = (4.0f / 32767.0f / config.gain * 1000000.0f);
-    char cmd[32];
+    printf("neuropawn: attempting to connect on %s\n", port);
 
-    /* 1. per-channel enable / disable */
-    printf("neuropawn: configuring channels (gain %u)...\n", config.gain);
-    for (size_t channelIndex = 0; channelIndex < CHANNEL_COUNT; channelIndex++)
+    if (serialOpen(&handle, port, config.timeout)) exit(EXIT_SUCCESS);
+    eegScale = (4.0f / 32767.0f / config.gain * 1000000.0f);
+
+    sleepMilliseconds(NEUROPAWN_CMD_PAUSE_MS);
+    awaitSerialData(&handle);
+
+    printf("neuropawn: detecting board type from incoming packets...\n");
+    if (findStartByte())
     {
-        int channelLabel = (int)channelIndex + 1;
-        if (config.activateChannel[channelIndex])
-            snprintf(cmd, sizeof cmd, "chon_%d_%u", channelLabel, config.gain);
-        else
-            snprintf(cmd, sizeof cmd, "choff_%d", channelLabel);
-        sendCommand(cmd);
-        
-        /* 2. optional right-leg-drive */
-        if (config.activateRightLegDrive[channelIndex]) {
-            snprintf(cmd, sizeof cmd, "rldadd_%d", channelLabel);
-            sendCommand(cmd);
-        }
+        fprintf(stderr, "neuropawn: failed to locate start of frame from which to scan\n");
+        exit(EXIT_FAILURE);
     }
 
-    /* 3. auto-detect board type from packet stride */
-    printf("neuropawn: detecting board type from incoming packets...\n");
     NeuroPawnBoardType boardType = detectBoardType();
-    if (boardType == NEUROPAWN_BOARD_UNKNOWN) {
-        fprintf(stderr, "neuropawn: detection failed — no valid packets. "
-                        "Enable at least one channel and retry.\n");
+    if (boardType == NEUROPAWN_BOARD_UNKNOWN)
+    {
+        fprintf(stderr, "neuropawn: detection failed - no valid packets.\n");
         serialClose(&handle);
         exit(EXIT_SUCCESS);
     }
@@ -158,29 +261,33 @@ void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config)
     payloadLength = boardType == NEUROPAWN_BOARD_IMU
         ? NEUROPAWN_IMU_PAYLOAD_LEN
         : NEUROPAWN_EEG_PAYLOAD_LEN;
-
-    serialFlush(&handle);
-    readFrame();
-
     const char * typeString = (boardType == NEUROPAWN_BOARD_IMU) ? "IMU" : "non-IMU";
     printf("neuropawn: connected on %s (%s board)\n", port, typeString);
+
+    printf("neuropawn: configuring channels (gain %u)...\n", config.gain);
+    configureChannels(config);
+}
+
+void resetNeuropawnEEGSource()
+{
+    resetPayload();
+    serialFlush(&handle);
 }
 
 void updateNeuropawnEEGSource()
 {
-    if (checkMicrosecondTimer(&timer))
+    if (readFrame() != READ_STATUS_READY) return;
+    if (validateEXGFrame() != EXG_STATUS_VALID)
     {
-        uint64_t timestamp = getCurrentMicrosecondTimestamp();
-
-        if (readFrame())
-        {
-            fprintf(stderr, "Failed to read frame from neuropawn board\n");
-            return;
-        }
-        parseEXG();
-
-        in_push_signal(&tbciInputs, samples, timestamp, sampleIndex++);
+        resetPayload();
+        return;
     }
+
+    parseEXG();
+    uint64_t timestamp = getCurrentMicrosecondTimestamp();
+    in_push_signal(&tbciInputs, samples, timestamp, sampleIndex++);
+
+    resetPayload();
 }
 
 void disconnectNeuropawnEEGSource() { serialClose(&handle); }

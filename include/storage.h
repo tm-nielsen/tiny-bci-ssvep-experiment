@@ -22,58 +22,54 @@
 
 # define EPOCH_POOL_CAPACITY EPOCH_CAPACITY * TOTAL_FRAMES * CHANNEL_COUNT
 
-extern FILE *inferenceLog;
+extern float *signalStorage;
+extern uint64_t *signalTimestamps;
+extern uint32_t *signalIndices;
 
+extern float *processedSignalStorage;
+extern uint64_t *processedSignalTimestamps;
+extern uint32_t *processedSignalIndices;
 
-float signalStorage[SIG_CAPACITY * CHANNEL_COUNT];
-uint64_t signalTimestamps[SIG_CAPACITY];
-uint32_t signalIndices[SIG_CAPACITY];
+extern TBCI_Trigger *triggerStorage;
 
-float processedSignalStorage[SIG_CAPACITY * CHANNEL_COUNT];
-uint64_t processedSignalTimestamps[SIG_CAPACITY];
-uint32_t processedSignalIndices[SIG_CAPACITY];
+extern TBCI_Epoch *epochStorage;
+extern float *epochPool;
+extern TBCI_Epoch *featuresStorage;
+extern float *featuresPool;
+extern TBCI_Epoch *outputStorage;
+extern float *outputPool;
 
-TBCI_Trigger triggerStorage[TRIG_CAPACITY];
+extern TBCI_SignalBuffer signalBuffer;
+extern TBCI_SignalBuffer processedSignalBuffer;
 
-TBCI_Epoch epochStorage[EPOCH_CAPACITY];
-float epochPool[EPOCH_POOL_CAPACITY];
-TBCI_Epoch featuresStorage[EPOCH_CAPACITY];
-float featuresPool[EPOCH_POOL_CAPACITY];
-TBCI_Epoch outputStorage[EPOCH_CAPACITY];
-float outputPool[EPOCH_POOL_CAPACITY];
+extern TBCI_TriggerQueue triggerQueue;
+extern TBCI_EpochQueue epochQueue;
+extern TBCI_EpochQueue featuresQueue;
+extern TBCI_EpochQueue outputQueue;
 
-
-TBCI_SignalBuffer signalBuffer;
-TBCI_SignalBuffer processedSignalBuffer;
-
-TBCI_TriggerQueue triggerQueue;
-TBCI_EpochQueue epochQueue;
-TBCI_EpochQueue featuresQueue;
-TBCI_EpochQueue outputQueue;
-
-TBCI_Input tbciInputs;
-TBCI_Config tbciConfiguration;
-TBCI_Context tbciContext;
+extern TBCI_Input tbciInputs;
+extern TBCI_Config tbciConfiguration;
+extern TBCI_Context tbciContext;
 
 // CCA constants
 # define N_FREQS 4
 # define N_HARMONICS 3
 # define N_COMPONENTS (N_HARMONICS * 2)
 # define REF_CAP (N_FREQS * N_COMPONENTS * TOTAL_FRAMES)
-float ref_signals[REF_CAP];
+extern float *refSignals;
 
 // Nodes
-TBCI_NotchNode notchNode;
-TBCI_NotchConfig notchConfiguration;
-TBCI_BandpassNode bandpassNode;
-TBCI_BandpassConfig bandpassConfiguration;
-TBCI_CCANode ccaNode;
-TBCI_CCAConfig ccaConfiguration;
-TBCI_CCAModel ccaModel;
-TBCI_CCAModelConfig ccaModelConfiguration;
-TBCI_LabelEncoderNode labelEncoderNode;
-TBCI_LabelEncoderConfig labelEncoderConfiguration;
-TBCI_TrialAveragingNode trialAveragingNode;
-TBCI_TrialAveragingConfig trialAveragingConfiguration;
+extern TBCI_NotchNode notchNode;
+extern TBCI_NotchConfig notchConfiguration;
+extern TBCI_BandpassNode bandpassNode;
+extern TBCI_BandpassConfig bandpassConfiguration;
+extern TBCI_CCANode ccaNode;
+extern TBCI_CCAConfig ccaConfiguration;
+extern TBCI_CCAModel ccaModel;
+extern TBCI_CCAModelConfig ccaModelConfiguration;
+extern TBCI_LabelEncoderNode labelEncoderNode;
+extern TBCI_LabelEncoderConfig labelEncoderConfiguration;
+extern TBCI_TrialAveragingNode trialAveragingNode;
+extern TBCI_TrialAveragingConfig trialAveragingConfiguration;
 
 #endif
