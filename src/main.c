@@ -32,6 +32,7 @@ void onTrialEnd(uint16_t nextTarget)
 int main(int argc, char *argv[])
 {
     const float frequencies[N_FREQS] = {7.0f, 8.0f, 9.0f, 11.0f, 7.5f, 8.5f};
+    const float signalStabilizationTime = 5.0f;
     const float trialDuration = 6.0f;
     const float breakDuration = 3.0f;
     const float selectionDisplayConfidenceThreshold = 0.5f;
@@ -45,9 +46,25 @@ int main(int argc, char *argv[])
 
     if (initializeTinyBCIPipeline(frequencies)) return EXIT_FAILURE;
 
+    MicrosecondTimer stabilizationTimer = createMicrosecondTimer(signalStabilizationTime);
+    resetMicrosecondTimer(&stabilizationTimer);
+    while (!checkMicrosecondTimer(&stabilizationTimer))
+    {
+        drawMessageScreen("Awaiting Signal Stabilization...");
+        updateEEGSource();
+
+        if (WindowShouldClose())
+        {
+            cleanUpEEGSource();
+            closeLslTriggerOutlet();
+            stopPresentation();
+            return EXIT_SUCCESS;
+        }
+    }
+
     while (!IsKeyPressed(KEY_SPACE))
     {
-        drawEntryScreen();
+        drawMessageScreen("Press Spacebar to Start");
         updateEEGSource();
 
         if (WindowShouldClose())

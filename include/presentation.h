@@ -6,6 +6,8 @@
 # define MINIMUM_WINDOW_WIDTH 600
 # define MINIMUM_WINDOW_HEIGHT 400
 
+# define MESSAGE_SCREEN_FONT_SIZE 64
+
 # define ROW_COUNT 2
 # define MARGIN_TOP 100
 # define MARGIN_BOTTOM 150
@@ -33,7 +35,7 @@
 # define TAU 6.28318530717958647692528676655900576839433879875021
 
 void initializePresentation(const float *, uint16_t);
-void drawEntryScreen();
+void drawMessageScreen();
 void drawStimulusScreen();
 void stopPresentation();
 

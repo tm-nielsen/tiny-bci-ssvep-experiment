@@ -188,7 +188,7 @@ void drawLetterboxedTarget()
 
 // ---
 
-void drawEntryScreen()
+void drawMessageScreen(const char* message)
 {
     BeginTextureMode(renderTarget);
         ClearBackground(BACKGROUND_COLOUR);
@@ -199,7 +199,12 @@ void drawEntryScreen()
         }
         drawTargetIndicator();
 
-        DrawText("Press Spacebar to Start", 150, RENDER_HEIGHT / 2, 64, STIMULUS_BACKGROUND_COLOUR);
+        int textWidth = MeasureText(message, MESSAGE_SCREEN_FONT_SIZE);
+        DrawText(
+            message,
+            (RENDER_WIDTH - textWidth) / 2, RENDER_HEIGHT / 2,
+            MESSAGE_SCREEN_FONT_SIZE, STIMULUS_BACKGROUND_COLOUR
+        );
     EndTextureMode();
 
     drawLetterboxedTarget();
