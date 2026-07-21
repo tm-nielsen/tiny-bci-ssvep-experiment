@@ -221,6 +221,23 @@ void drawStimulusPresenter(uint16_t index)
     DrawTexturePro(stimulusTexture, stimulusTextureSourceRect, gridRect, (Vector2){0, 0}, 0, textureColor);
 }
 
+void drawFixationDots(void)
+{
+    for (uint16_t i = 0; i < frequencyCount; i++)
+    {
+        Rectangle rect = getGridRect(i, 0);
+        int cx = (int)(rect.x + rect.width  / 2.0f);
+        int cy = (int)(rect.y + rect.height / 2.0f);
+
+        Color color = FIXATION_DOT_COLORS[i % 6];
+
+        if (i == targetIndex)
+            DrawCircleLines(cx, cy, FIXATION_DOT_RADIUS + 4, color);
+
+        DrawCircle(cx, cy, FIXATION_DOT_RADIUS, color);
+    }
+}
+
 void drawStimulusScreen()
 {
     BeginTextureMode(renderTarget);
@@ -234,6 +251,7 @@ void drawStimulusScreen()
             else DrawRectangleRec(getGridRect(i, -STIMULUS_BREAK_PADDING), STIMULUS_BACKGROUND_COLOUR);
         }
 
+        drawFixationDots();
         drawTargetIndicator();
     EndTextureMode();
 

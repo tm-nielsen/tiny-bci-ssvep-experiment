@@ -113,11 +113,11 @@ void addCCANodesToTinyBCIPipeline(const float *frequencies)
 
     cca_init(&ccaNode, &ccaConfiguration, refSignals, REF_CAP);
 
-    ccaModelConfiguration.temperature = 0.3f;
+    ccaModelConfiguration.temperature = 0.1f;
     ccaModelConfiguration.n_freqs = N_FREQS;
     cca_model_init(&ccaModel, &ccaModelConfiguration);
 
-    trialAveragingConfiguration.n_reps = 1;
+    trialAveragingConfiguration.n_reps = 3;
     ta_init(&trialAveragingNode, &trialAveragingConfiguration);
 
     group_add_node(&tbciContext.preprocessing.group, (TBCI_Node *)&notchNode);

@@ -1,3 +1,5 @@
+#include <unistd.h>
+
 # include "pipeline.h"
 # include "presentation.h"
 # include "trial_conductor.h"
@@ -5,11 +7,11 @@
 
 # include "data/trigger_source.h"
 # include "data/lsl_trigger_outlet.h"
+# include "data/synthetic_eeg_source.h"
 
-# include "data/lsl_eeg_source.h"
-void initializeEEGSource() { connectLslEEGSource(); }
-void updateEEGSource() { updateLslEEGSource(); }
-void cleanUpEEGSource() { disconnectLslEEGSource(); }
+void initializeEEGSource() {resetSyntheticEEGSource();} // { connectLslEEGSource(); }
+void updateEEGSource() {updateSyntheticEEGSource();} //{ updateLslEEGSource(); }
+void cleanUpEEGSource() {cleanUpSyntheticEEGSource();} // { disconnectLslEEGSource(); }
 
 
 void onTrialStart(uint16_t target)
@@ -62,6 +64,16 @@ int main(int argc, char *argv[])
     if (startTinyBCIPipeline()) return EXIT_FAILURE;
     printf("---\nTiny BCI Pipeline Running.\n\n");
 
+
+    printf("Settling filter — please wait 5 seconds...\n");
+    MicrosecondTimer settleTimer = createMicrosecondTimer(5.0f);
+    while (!checkMicrosecondTimer(&settleTimer)) {
+        updateEEGSource();
+        updateTinyBCIPipeline();  /* tick pipeline so filter runs */
+    }
+    printf("Filter settled — starting.\n");
+    resetTrialConductorTimers();
+
     while (!WindowShouldClose())
     {
         updateEEGSource();
@@ -73,9 +85,13 @@ int main(int argc, char *argv[])
         if (tryGetTinyBCIInference(&inference))
         {
             uint64_t timestamp = getCurrentMicrosecondTimestamp();
-            printf("%" PRIu64 " | Output received: %d (%.0f%% confidence)\n", timestamp,
+            printf("%" PRIu64 " | Output received: %d (%.0f%% confidence) [", timestamp,
                 inference.predictedLabel, inference.confidence * 100
             );
+
+            for (int i=0; i<N_FREQS; i++)
+                printf("%f", inference.confidences[i]);
+            printf("]\n");
 
             // TODO code integration
             /* log to file */

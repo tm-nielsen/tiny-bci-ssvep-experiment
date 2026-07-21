@@ -30,6 +30,16 @@
 # define SELECTION_DISPLAY_COLOUR (Color){120, 200, 120, 255}
 # define SELECTION_DISPLAY_TIME 0.5f
 
+# define FIXATION_DOT_RADIUS 10
+# define FIXATION_DOT_COLORS (Color[]){ \
+{255, 100, 100, 255}, \
+{100, 255, 100, 255}, \
+{100, 100, 255, 255}, \
+{255, 150, 100, 255}, \
+{200, 100, 255, 255}, \
+{100, 255, 255, 255}  \
+}
+
 # define TAU 6.28318530717958647692528676655900576839433879875021
 
 void initializePresentation(const float *, uint16_t);

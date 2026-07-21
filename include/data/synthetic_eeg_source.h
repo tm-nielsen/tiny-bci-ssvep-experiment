@@ -11,3 +11,4 @@
 
 void resetSyntheticEEGSource();
 void updateSyntheticEEGSource();
+void cleanUpSyntheticEEGSource();

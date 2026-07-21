@@ -36,3 +36,8 @@ void updateSyntheticEEGSource()
         in_push_signal(&tbciInputs, samples, now, sampleIndex++);
     }
 }
+
+void cleanUpSyntheticEEGSource()
+{
+    resetSyntheticEEGSource();
+}
