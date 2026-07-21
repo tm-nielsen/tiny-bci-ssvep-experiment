@@ -249,5 +249,6 @@ void stopPresentation()
 {
     free(frequencies);
     UnloadRenderTexture(renderTarget);
+    UnloadTexture(stimulusTexture);
     CloseWindow();
 }
