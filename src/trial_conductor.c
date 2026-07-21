@@ -61,5 +61,13 @@ void updateTrialConductor()
         case TRIAL:
             if (checkMicrosecondTimer(&trialDurationTimer)) endTrial();
             break;
+        default: ;
     }
+}
+
+void resetTrialConductorTimers(void)
+{
+    state  = BREAK;
+    target = 0;
+    resetMicrosecondTimer(&breakTimer);
 }
