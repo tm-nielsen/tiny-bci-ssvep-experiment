@@ -34,7 +34,7 @@ void onAllTrialsCompleted() { allTrialsCompleted = true; }
 
 int main(int argc, char *argv[])
 {
-    const float frequencies[N_FREQS] = {7.0f, 8.0f, 9.0f, 11.0f, 7.5f, 8.5f};
+    const float frequencies[N_FREQS] = {7.5f, 8.57f, 10.0f, 12.0f};
 
 
     const uint16_t stimulusRounds = 4;
