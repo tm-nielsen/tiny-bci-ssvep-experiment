@@ -29,7 +29,11 @@ void onTrialEnd(uint16_t nextTarget)
 }
 
 bool allTrialsCompleted = false;
-void onAllTrialsCompleted() { allTrialsCompleted = true; }
+void onAllTrialsCompleted()
+{
+    allTrialsCompleted = true;
+    clearPresentationTarget();
+}
 
 
 int main(int argc, char *argv[])
@@ -91,8 +95,14 @@ int main(int argc, char *argv[])
     if (startTinyBCIPipeline()) return EXIT_FAILURE;
     printf("---\nTiny BCI Pipeline Running.\n\n");
 
-    while (!WindowShouldClose() && !allTrialsCompleted)
+    while (!WindowShouldClose())
     {
+        if (allTrialsCompleted)
+        {
+            drawMessageScreen("Experiment Complete");
+            continue;
+        }
+
         updateEEGSource();
         updateTrialConductor();
 
