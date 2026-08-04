@@ -3,47 +3,67 @@
 
 static void (*trialStartCallback)(uint16_t) = NULL;
 static void (*trialEndCallback)(uint16_t) = NULL;
+static void (*stimulusRoundCompletedCallback)(void) = NULL;
+static void (*allTrialsCompletedCallback)(void) = NULL;
 
-static MicrosecondTimer trialDurationTimer;
+static MicrosecondTimer stimulusTimer;
 static MicrosecondTimer breakTimer;
 
 static uint16_t targetCount = 0;
 static uint16_t target = 0;
 
-enum State { BREAK, TRIAL };
+static uint16_t stimulusRoundsToBeCompleted = 0;
+
+enum State { BREAK, STIMULUS };
 static uint16_t state = BREAK;
 
 
 void initializeTrialConductor(
-    uint16_t pTargetCount,
-    float trialDuration, float breakDuration,
-    void (*onTrialStart)(uint16_t), void (*onTrialEnd)(uint16_t))
+    uint16_t pTargetCount, uint16_t stimulusRoundsToComplete,
+    float stimulusDuration, float breakDuration)
 {
     targetCount = pTargetCount;
-
-    uint64_t microsecondsPerTrial = (uint64_t)(trialDuration * 1000000);
-    trialDurationTimer = createMicrosecondTimer(trialDuration);
+    stimulusRoundsToBeCompleted = stimulusRoundsToComplete;
+    stimulusTimer = createMicrosecondTimer(stimulusDuration);
     breakTimer = createMicrosecondTimer(breakDuration);
+}
 
-    trialStartCallback = onTrialStart;
-    trialEndCallback = onTrialEnd;
+void setTrialStartCallback(void (*onTrialStart)) { trialStartCallback = onTrialStart; }
+void setTrialEndCallback(void (*onTrialEnd)) { trialEndCallback = onTrialEnd; }
+
+void setStimulusRoundCompleteCallback(void (*onStimulusRoundCompleted))
+{
+    stimulusRoundCompletedCallback = onStimulusRoundCompleted;
+}
+void setAllTrialsCompletedCallback(void (*onTrialsCompleted))
+{
+    allTrialsCompletedCallback = onTrialsCompleted;
 }
 
 // ---
 
 void startTrial()
 {
-    state = TRIAL;
+    state = STIMULUS;
     if (trialStartCallback != NULL) trialStartCallback(target);
-    resetMicrosecondTimer(&trialDurationTimer);
+    resetMicrosecondTimer(&stimulusTimer);
 }
 
 void endTrial()
 {
     state = BREAK;
     target = (target + 1) % targetCount;
-    if (trialEndCallback != NULL) trialEndCallback(target);
     resetMicrosecondTimer(&breakTimer);
+
+    if (trialEndCallback != NULL) trialEndCallback(target);
+    if (target == 0) 
+    {
+        if (stimulusRoundCompletedCallback != NULL) stimulusRoundCompletedCallback();
+        if (--stimulusRoundsToBeCompleted <= 0)
+        {
+            if (allTrialsCompletedCallback != NULL) allTrialsCompletedCallback();
+        }
+    }
 }
 
 void updateTrialConductor()
@@ -53,8 +73,16 @@ void updateTrialConductor()
         case BREAK:
             if (checkMicrosecondTimer(&breakTimer)) startTrial();
             break;
-        case TRIAL:
-            if (checkMicrosecondTimer(&trialDurationTimer)) endTrial();
+        case STIMULUS:
+            if (checkMicrosecondTimer(&stimulusTimer)) endTrial();
             break;
     }
+}
+
+// ---
+
+void resetTrialConductor()
+{
+    resetMicrosecondTimer(&breakTimer);
+    resetMicrosecondTimer(&stimulusTimer);
 }

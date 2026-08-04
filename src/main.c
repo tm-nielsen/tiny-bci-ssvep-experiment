@@ -28,16 +28,28 @@ void onTrialEnd(uint16_t nextTarget)
     pauseStimulus();
 }
 
+bool allTrialsCompleted = false;
+void onAllTrialsCompleted() { allTrialsCompleted = true; }
+
 
 int main(int argc, char *argv[])
 {
     const float frequencies[N_FREQS] = {7.0f, 8.0f, 9.0f, 11.0f, 7.5f, 8.5f};
-    const float signalStabilizationTime = 5.0f;
-    const float trialDuration = 6.0f;
-    const float breakDuration = 3.0f;
-    const float selectionDisplayConfidenceThreshold = 0.5f;
 
-    initializeTrialConductor(N_FREQS, trialDuration, breakDuration, onTrialStart, onTrialEnd);
+
+    const uint16_t stimulusRounds = 4;
+
+    const float signalStabilizationTime = 5.0f;
+    const float stimulusDuration = 6.0f;
+    const float breakDuration = 3.0f;
+
+    const float selectionDisplayConfidenceThreshold = 0.9f;
+
+    initializeTrialConductor(N_FREQS, stimulusRounds, stimulusDuration, breakDuration);
+    setTrialStartCallback(onTrialStart);
+    setTrialEndCallback(onTrialEnd);
+    setAllTrialsCompletedCallback(onAllTrialsCompleted);
+
     initializePresentation(frequencies, N_FREQS);
     setPresentationTarget(0);
 
@@ -79,7 +91,7 @@ int main(int argc, char *argv[])
     if (startTinyBCIPipeline()) return EXIT_FAILURE;
     printf("---\nTiny BCI Pipeline Running.\n\n");
 
-    while (!WindowShouldClose())
+    while (!WindowShouldClose() && !allTrialsCompleted)
     {
         updateEEGSource();
         updateTrialConductor();
