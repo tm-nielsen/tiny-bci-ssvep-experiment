@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.26)
 
 project(tiny_bci_ssvep_experiment)
 
@@ -55,3 +55,16 @@ option(INCLUDE_LSL "Build with LSL support" ON)
 if (${INCLUDE_LSL})
   include(LSL.cmake)
 endif()
+
+
+set(CONFIGURATION_PATH_SUFFIX_EXPRESSION "$<$<BOOL:${CMAKE_CONFIGURATION_TYPES}>:/$<CONFIG>>")
+set(FULL_RUNTIME_OUTPUT_PATH_EXPRESSION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}${CONFIGURATION_PATH_SUFFIX_EXPRESSION}")
+set(RUNTIME_ASSET_OUTPUT_PATH_EXPRESSION "${FULL_RUNTIME_OUTPUT_PATH_EXPRESSION}/assets")
+
+add_custom_target(copy_assets
+  COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+    "${CMAKE_SOURCE_DIR}/assets/"
+    "${RUNTIME_ASSET_OUTPUT_PATH_EXPRESSION}"
+  COMMENT "Copying assets to output folder: ${RUNTIME_ASSET_OUTPUT_PATH_EXPRESSION}"
+)
+add_dependencies(${PROJECT_NAME} copy_assets)
