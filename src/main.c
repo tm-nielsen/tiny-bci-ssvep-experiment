@@ -3,6 +3,8 @@
 # include "trial_conductor.h"
 # include "microsecond_timer.h"
 
+# include "inference_logger.h"
+
 # include "data/trigger_source.h"
 # include "data/lsl_trigger_outlet.h"
 
@@ -12,8 +14,10 @@ void updateEEGSource() { updateLslEEGSource(); }
 void cleanUpEEGSource() { disconnectLslEEGSource(); }
 
 
+static uint16_t currentTargetLabel = 0;
 void onTrialStart(uint16_t target)
 {
+    currentTargetLabel = target;
     pushTrigger(target + 1);
     pushLslTrigger(target + 1);
     setPresentationTarget(target);
@@ -28,7 +32,7 @@ void onTrialEnd(uint16_t nextTarget)
     pauseStimulus();
 }
 
-bool allTrialsCompleted = false;
+static bool allTrialsCompleted = false;
 void onAllTrialsCompleted()
 {
     allTrialsCompleted = true;
@@ -94,6 +98,7 @@ int main(int argc, char *argv[])
             return EXIT_SUCCESS;
         }
     }
+    initializeInferenceLogger();
 
     while (!WindowShouldClose())
     {
@@ -112,11 +117,13 @@ int main(int argc, char *argv[])
         if (tryGetTinyBCIInference(&inference))
         {
             uint64_t timestamp = getCurrentMicrosecondTimestamp();
-            printf("%" PRIu64 " | Output received: %d (%.0f%% confidence)\n [", timestamp,
+            printf("%" PRIu64 " | Output received: %d (%.0f%% confidence) [", timestamp,
                 inference.predictedLabel, inference.confidence * 100
             );
             for (int i = 0; i < N_FREQS; i++) printf(" %.2f", inference.confidences[i]);
             printf(" ]\n");
+
+            logInference(inference, timestamp, currentTargetLabel);
 
             if (inference.confidence > selectionDisplayConfidenceThreshold)
             {
@@ -129,6 +136,7 @@ int main(int argc, char *argv[])
 
     cleanUpEEGSource();
     closeLslTriggerOutlet();
+    closeInferenceLogger();
     stopTinyBCIPipeline();
     stopPresentation();
 
