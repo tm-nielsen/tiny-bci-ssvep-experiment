@@ -12,8 +12,8 @@ void initializeInferenceLogger()
 
     char filepath[256];
     snprintf(filepath, sizeof(filepath), "tbci_inference_%s_%s_%s.csv",
-        tbciConfiguration.log_subject,
-        tbciConfiguration.log_session,
+        tbciContext.core_config.log_subject,
+        tbciContext.core_config.log_session,
         timeString
     );
 
