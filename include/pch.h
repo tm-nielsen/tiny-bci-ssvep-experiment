@@ -2,6 +2,8 @@
 # ifndef PCH_H
 # define PCH_H
 
+# define _CRT_SECURE_NO_WARNINGS
+
 # include <stddef.h>
 # include <stdint.h>
 # include <stdbool.h>

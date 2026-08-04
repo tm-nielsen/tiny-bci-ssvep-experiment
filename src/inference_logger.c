@@ -17,7 +17,8 @@ void initializeInferenceLogger()
         timeString
     );
 
-    if (fopen_s(&logFile, filepath, "w")) exit(EXIT_FAILURE);
+    logFile = fopen(filepath, "w");
+
     if (logFile) {
         fprintf(logFile, "timestamp_us,true_label,predicted_label,confidence");
         for (int i = 0; i < N_FREQS; i++)
@@ -25,6 +26,11 @@ void initializeInferenceLogger()
             fprintf(logFile, ",prob_%d", i);
         }
         printf("Inference Logger: logging to '%s'\n", filepath);
+    }
+    else
+    {
+        fprintf(stderr, "Failed to open inference logger file.\n");
+        exit(EXIT_FAILURE);
     }
 }
 
