@@ -59,6 +59,7 @@ int main(int argc, char *argv[])
 
     initializePresentation(frequencies, N_FREQS);
     setPresentationTarget(0);
+    disableTextureStimulus();
 
     initializeEEGSource();
     openLslTriggerOutlet("tBCI_Experiment_Triggers");
