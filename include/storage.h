@@ -8,17 +8,21 @@
 # include "nodes/features/tbci_cca_node.h"
 # include "nodes/decoder/tbci_cca_model.h"
 
-# include "data/eeg_source.h"
-
 # define SIG_CAPACITY 1024
 # define TRIG_CAPACITY 32
 # define EPOCH_CAPACITY 8
 
 # define WINDOW_LENGTH_MS 2000
 # define WINDOW_OVERLAP_MS 1000
-# define TOTAL_FRAMES (size_t)(SAMPLE_RATE * WINDOW_LENGTH_MS / 1000)
 
-# define EPOCH_POOL_CAPACITY EPOCH_CAPACITY * TOTAL_FRAMES * CHANNEL_COUNT
+// ---
+
+void allocateDynamicStorage(uint8_t, uint32_t);
+void deallocateDynamicStorage();
+
+// ---
+
+extern size_t totalFrames;
 
 extern float *signalStorage;
 extern uint64_t *signalTimestamps;
@@ -53,7 +57,7 @@ extern TBCI_Context tbciContext;
 # define N_FREQS 4
 # define N_HARMONICS 3
 # define N_COMPONENTS (N_HARMONICS * 2)
-# define REF_CAP (N_FREQS * N_COMPONENTS * TOTAL_FRAMES)
+extern size_t referenceSignalsCapacity;
 extern float *refSignals;
 
 // Nodes
