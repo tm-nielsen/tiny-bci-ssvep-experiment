@@ -1,10 +1,10 @@
 # pragma once
 # include "storage.h"
-# include "eeg_source.h"
 
 # define SAMPLE_INTERVAL (uint64_t)(1000000.0f / SAMPLE_RATE)
 
 # define NEUROPAWN_N_IMU             9       /**< Number of IMU channels (IMU board).       */
+# define NEUROPAWN_EEG_CHANNEL_COUNT 8
 # define NEUROPAWN_SAMPLE_RATE       125.0f  /**< Sampling rate in Hz.                      */
 # define NEUROPAWN_START_BYTE        0xA0    /**< Frame start byte.                         */
 # define NEUROPAWN_END_BYTE          0xC0    /**< Frame end byte.                           */
@@ -22,8 +22,8 @@ typedef enum {
 typedef struct {
     uint8_t gain;
     uint32_t timeout;
-    bool activateChannel[CHANNEL_COUNT];
-    bool activateRightLegDrive[CHANNEL_COUNT];
+    bool activateChannel[NEUROPAWN_EEG_CHANNEL_COUNT];
+    bool activateRightLegDrive[NEUROPAWN_EEG_CHANNEL_COUNT];
 } NeuropawnConfiguration;
 
 # define TRUE_8_ARRAY {true, true, true, true, true, true, true, true}
