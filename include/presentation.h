@@ -20,7 +20,8 @@
 # define BACKGROUND_COLOUR (Color){32, 32, 32, 255}
 # define LETTERBOX_COLOUR (Color){0, 0, 0, 255}
 # define STIMULUS_BACKGROUND_COLOUR (Color){255, 255, 255, 255}
-# define STIMULUS_TEXTURE_COLOUR (Color){255, 255, 255, 255}
+# define STIMULUS_ON_COLOUR (Color){255, 255, 255, 255}
+# define STIMULUS_OFF_COLOUR (Color){0, 0, 0, 255}
 # define STIMULUS_TEXTURE_PATH "assets/stimulus-texture.png"
 # define STIMULUS_BREAK_PADDING 50
 
@@ -35,12 +36,15 @@
 # define TAU 6.28318530717958647692528676655900576839433879875021
 
 void initializePresentation(const float *, uint16_t);
-void drawMessageScreen();
+void drawMessageScreen(const char*);
 void drawStimulusScreen();
 void stopPresentation();
 
 void pauseStimulus();
 void resumeStimulus();
+
+void disableTextureStimulus();
+void enableTextureStimulus();
 
 void setPresentationTarget(uint16_t);
 void clearPresentationTarget();

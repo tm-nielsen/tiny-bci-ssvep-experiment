@@ -20,6 +20,7 @@ static uint16_t selectionIndex;
 static double selectionTime = -SELECTION_DISPLAY_TIME;
 
 static bool stimulusEnabled = true;
+static bool textureEnabled = true;
 
 // ---
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
@@ -221,9 +222,17 @@ void drawStimulusPresenter(uint16_t index)
     double weightedValue = (sqrt(fabs(waveValue)) * (waveValue / fabs(waveValue)));
     float normalizedValue = (float)(weightedValue + 1) / 2.0f;
 
-    Color textureColor = STIMULUS_TEXTURE_COLOUR;
-    textureColor.a = (uint8_t)(normalizedValue * 255);
-    DrawTexturePro(stimulusTexture, stimulusTextureSourceRect, gridRect, (Vector2){0, 0}, 0, textureColor);
+    if (textureEnabled)
+    {
+        Color textureColor = STIMULUS_ON_COLOUR;
+        textureColor.a = (uint8_t)(normalizedValue * 255);
+        DrawTexturePro(stimulusTexture, stimulusTextureSourceRect, gridRect, (Vector2){0, 0}, 0, textureColor);
+    }
+    else
+    {
+        Color stimulusColor = ColorLerp(STIMULUS_OFF_COLOUR, STIMULUS_ON_COLOUR, normalizedValue);
+        DrawRectangleRec(gridRect, stimulusColor);
+    }
 }
 
 void drawStimulusScreen()
@@ -247,6 +256,9 @@ void drawStimulusScreen()
 
 void pauseStimulus() { stimulusEnabled = false; }
 void resumeStimulus() { stimulusEnabled = true; }
+
+void disableTextureStimulus() { textureEnabled = false; }
+void enableTextureStimulus() { textureEnabled = true; }
 
 // ---
 

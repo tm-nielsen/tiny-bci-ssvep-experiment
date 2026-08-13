@@ -1,7 +1,8 @@
 # pragma once
 # include "storage.h"
 
-int initializeTinyBCIPipeline(const float *);
+int initializeTinyBCIPipeline(const float *, uint8_t, uint32_t);
+void cleanUpTinyBCIPipeline();
 
 int startTinyBCIPipeline();
 int startTinyBCIPipelineInState(TBCI_State);

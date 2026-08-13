@@ -9,7 +9,7 @@ static uint8_t payloadLength;
 static uint8_t payloadCursor = 0;
 
 static float eegScale;
-static float samples[CHANNEL_COUNT];
+static float samples[NEUROPAWN_EEG_CHANNEL_COUNT];
 static uint32_t sampleIndex = 0;
 static uint8_t expectedSampleIndex = 0;
 static bool sampleIndexExpectationSet = false;
@@ -146,7 +146,7 @@ EXGStatus validateEXGFrame()
 
 void parseEXG()
 {
-    for (size_t channelIndex = 0; channelIndex < CHANNEL_COUNT; channelIndex++)
+    for (size_t channelIndex = 0; channelIndex < NEUROPAWN_EEG_CHANNEL_COUNT; channelIndex++)
     {
         int16_t raw = (int16_t)(((uint16_t)payload[1 + 2 * channelIndex] << 8) |
                                  (uint16_t)payload[2 + 2 * channelIndex]);
@@ -200,7 +200,7 @@ void configureChannels(NeuropawnConfiguration config)
 {
     char cmd[32];
 
-    for (uint8_t channelIndex = 0; channelIndex < CHANNEL_COUNT; channelIndex++)
+    for (uint8_t channelIndex = 0; channelIndex < NEUROPAWN_EEG_CHANNEL_COUNT; channelIndex++)
     {
         int channelLabel = (int)channelIndex + 1;
         bool channelEnabled = config.activateChannel[channelIndex];
@@ -229,12 +229,6 @@ void configureChannels(NeuropawnConfiguration config)
 
 void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config)
 {
-    if (SAMPLE_RATE != NEUROPAWN_SAMPLE_RATE)
-    {
-        fprintf(stderr, "Sample rate must be configured to match in 'eeg_source.h'\n");
-        exit(EXIT_FAILURE);
-    }
-
     printf("neuropawn: attempting to connect on %s\n", port);
 
     if (serialOpen(&handle, port, config.timeout)) exit(EXIT_SUCCESS);

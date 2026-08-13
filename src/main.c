@@ -13,6 +13,9 @@ void initializeEEGSource() { connectLslEEGSource(); }
 void updateEEGSource() { updateLslEEGSource(); }
 void cleanUpEEGSource() { disconnectLslEEGSource(); }
 
+uint8_t getChannelCount() { return getLslEEGSourceChannelCount(); }
+uint32_t getSampleRate() { return getLslEEGSourceSampleRate(); }
+
 
 static uint16_t currentTargetLabel = 0;
 void onTrialStart(uint16_t target)
@@ -59,11 +62,15 @@ int main(int argc, char *argv[])
 
     initializePresentation(frequencies, N_FREQS);
     setPresentationTarget(0);
+    disableTextureStimulus();
 
     initializeEEGSource();
     openLslTriggerOutlet("tBCI_Experiment_Triggers");
 
-    if (initializeTinyBCIPipeline(frequencies)) return EXIT_FAILURE;
+    uint8_t channelCount = getChannelCount();
+    uint32_t sampleRate = getSampleRate();
+    if (initializeTinyBCIPipeline(frequencies, channelCount, sampleRate)) return EXIT_FAILURE;
+
     if (startTinyBCIPipeline()) return EXIT_FAILURE;
     printf("---\nTiny BCI Pipeline Running.\n\n");
 
@@ -135,9 +142,9 @@ int main(int argc, char *argv[])
     }
 
     cleanUpEEGSource();
+    cleanUpTinyBCIPipeline();
     closeLslTriggerOutlet();
     closeInferenceLogger();
-    stopTinyBCIPipeline();
     stopPresentation();
 
     return EXIT_SUCCESS;

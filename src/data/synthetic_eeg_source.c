@@ -1,15 +1,19 @@
 # include "data/synthetic_eeg_source.h"
 # include "microsecond_timer.h"
 
-static MicrosecondTimer timer = { .interval = SAMPLE_INTERVAL };
-static float samples[CHANNEL_COUNT];
+static MicrosecondTimer timer;
+static float* samples = NULL;
 static uint32_t sampleIndex = 0;
+static uint8_t channelCount = 0;
 
 static float tau = (float)(2 * TBCI_M_PI);
 
-void resetSyntheticEEGSource()
+
+void initializeSyntheticEEGSource(uint8_t pChannelCount, uint32_t sampleRate)
 {
-    resetMicrosecondTimer(&timer);
+    channelCount = pChannelCount;
+    timer = createMicrosecondTimer(1.0f / sampleRate);
+    samples = malloc(channelCount * sizeof(float));
 }
 
 void updateSyntheticEEGSource()
@@ -19,9 +23,9 @@ void updateSyntheticEEGSource()
         uint64_t now = getCurrentMicrosecondTimestamp();
 
         float currentSeconds = (float)now / 1000000.0f;
-        for (uint16_t channelIndex = 0; channelIndex < CHANNEL_COUNT; channelIndex++)
+        for (uint16_t channelIndex = 0; channelIndex < channelCount; channelIndex++)
         {
-            float phaseOffset = channelIndex * (tau / CHANNEL_COUNT);
+            float phaseOffset = channelIndex * (tau / channelCount);
             float sineInput = tau * SIGNAL_FREQUENCY * currentSeconds + phaseOffset;
             samples[channelIndex] = SIGNAL_AMPLITUDE * (float)sin(sineInput);
 
@@ -35,4 +39,14 @@ void updateSyntheticEEGSource()
 
         in_push_signal(&tbciInputs, samples, now, sampleIndex++);
     }
+}
+
+void cleanUpSyntheticEEGSource()
+{
+    free(samples);
+}
+
+void resetSyntheticEEGSource()
+{
+    resetMicrosecondTimer(&timer);
 }

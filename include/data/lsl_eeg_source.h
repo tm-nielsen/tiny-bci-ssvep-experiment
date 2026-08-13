@@ -9,4 +9,7 @@ void connectLslEEGSource();
 void updateLslEEGSource();
 void disconnectLslEEGSource();
 
+uint8_t getLslEEGSourceChannelCount();
+uint32_t getLslEEGSourceSampleRate();
+
 # endif
