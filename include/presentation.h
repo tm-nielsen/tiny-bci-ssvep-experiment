@@ -36,7 +36,7 @@
 # define TAU 6.28318530717958647692528676655900576839433879875021
 
 void initializePresentation(const float *, uint16_t);
-void drawMessageScreen();
+void drawMessageScreen(const char*);
 void drawStimulusScreen();
 void stopPresentation();
 
