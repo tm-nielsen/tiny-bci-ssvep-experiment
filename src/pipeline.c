@@ -1,9 +1,8 @@
 # include "pipeline.h"
-# include "data/eeg_source.h"
 # include "data/trigger_source.h"
 
-void initializeTinyBCIPipelineStorage();
-void setTinyBCIPipelineConfiguration();
+void initializeTinyBCIPipelineStorage(uint8_t, uint32_t);
+void setTinyBCIPipelineConfiguration(uint8_t, float);
 void addCCANodesToTinyBCIPipeline(const float *);
 
 int reportStatus(TBCI_Status status, const char *actionLabel)
@@ -17,10 +16,10 @@ int reportStatus(TBCI_Status status, const char *actionLabel)
 
 // ---
 
-int initializeTinyBCIPipeline(const float *frequencies)
+int initializeTinyBCIPipeline(const float *frequencies, uint8_t channelCount, uint32_t sampleRate)
 {
-    initializeTinyBCIPipelineStorage();
-    setTinyBCIPipelineConfiguration();
+    initializeTinyBCIPipelineStorage(channelCount, sampleRate);
+    setTinyBCIPipelineConfiguration(channelCount, sampleRate * 1.0f);
     addCCANodesToTinyBCIPipeline(frequencies);
 
     TBCI_Status initializationStatus = tbci_context_init(
@@ -32,29 +31,31 @@ int initializeTinyBCIPipeline(const float *frequencies)
     return reportStatus(initializationStatus, "initialize");
 }
 
-void initializeTinyBCIPipelineStorage()
+void initializeTinyBCIPipelineStorage(uint8_t channelCount, uint32_t sampleRate)
 {
-    sb_init(&signalBuffer, signalStorage, signalTimestamps, signalIndices, SIG_CAPACITY, CHANNEL_COUNT);
-    sb_init(&processedSignalBuffer, processedSignalStorage, processedSignalTimestamps, processedSignalIndices, SIG_CAPACITY, CHANNEL_COUNT);
+    allocateDynamicStorage(channelCount, sampleRate);
+
+    sb_init(&signalBuffer, signalStorage, signalTimestamps, signalIndices, SIG_CAPACITY, channelCount);
+    sb_init(&processedSignalBuffer, processedSignalStorage, processedSignalTimestamps, processedSignalIndices, SIG_CAPACITY, channelCount);
     tq_init(&triggerQueue, triggerStorage, TRIG_CAPACITY);
-    eq_init(&epochQueue, epochStorage, EPOCH_CAPACITY, TOTAL_FRAMES);
-    eq_configure(&epochQueue, epochPool, CHANNEL_COUNT);
-    eq_init(&featuresQueue, featuresStorage, EPOCH_CAPACITY, TOTAL_FRAMES);
-    eq_configure(&featuresQueue, featuresPool, CHANNEL_COUNT);
-    eq_init(&outputQueue, outputStorage, EPOCH_CAPACITY, TOTAL_FRAMES);
-    eq_configure(&outputQueue, outputPool, CHANNEL_COUNT);
+    eq_init(&epochQueue, epochStorage, EPOCH_CAPACITY, totalFrames);
+    eq_configure(&epochQueue, epochPool, channelCount);
+    eq_init(&featuresQueue, featuresStorage, EPOCH_CAPACITY, totalFrames);
+    eq_configure(&featuresQueue, featuresPool, channelCount);
+    eq_init(&outputQueue, outputStorage, EPOCH_CAPACITY, totalFrames);
+    eq_configure(&outputQueue, outputPool, channelCount);
 
     tbciInputs.signal = &signalBuffer;
     tbciInputs.triggers = &triggerQueue;
-    tbciInputs.n_channels = CHANNEL_COUNT;
+    tbciInputs.n_channels = channelCount;
 }
 
-void setTinyBCIPipelineConfiguration()
+void setTinyBCIPipelineConfiguration(uint8_t channelCount, float sampleRate)
 {
     tbciConfiguration.paradigm = TBCI_PARADIGM_SSVEP;
-    tbciConfiguration.nominal_srate = SAMPLE_RATE;
-    tbciConfiguration.target_srate = SAMPLE_RATE;
-    tbciConfiguration.n_channels = CHANNEL_COUNT;
+    tbciConfiguration.nominal_srate = sampleRate;
+    tbciConfiguration.target_srate = sampleRate;
+    tbciConfiguration.n_channels = channelCount;
     tbciConfiguration.window_length_ms = WINDOW_LENGTH_MS;
     tbciConfiguration.mode = SEG_MODE_SLIDING;
     tbciConfiguration.pre_stimulus_ms = 0;
@@ -91,7 +92,7 @@ void addCCANodesToTinyBCIPipeline(const float *frequencies)
         ccaConfiguration.freqs[i] = frequencies[i];
     }
 
-    cca_init(&ccaNode, &ccaConfiguration, refSignals, REF_CAP);
+    cca_init(&ccaNode, &ccaConfiguration, refSignals, referenceSignalsCapacity);
 
     ccaModelConfiguration.temperature = 0.1f;
     ccaModelConfiguration.n_freqs = N_FREQS;
@@ -101,6 +102,14 @@ void addCCANodesToTinyBCIPipeline(const float *frequencies)
     group_add_node(&tbciContext.preprocessing.group, (TBCI_Node *)&bandpassNode);
     group_add_node(&tbciContext.features.group, (TBCI_Node *)&ccaNode);
     group_add_node(&tbciContext.decoder.group, (TBCI_Node *)&ccaModel);
+}
+
+// ---
+
+void cleanUpTinyBCIPipeline()
+{
+    stopTinyBCIPipeline();
+    deallocateDynamicStorage();
 }
 
 // ---
