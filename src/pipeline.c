@@ -79,9 +79,7 @@ void addCCANodesToTinyBCIPipeline(const float *frequencies)
     notchConfiguration.n_harmonics = 2;
     notch_init(&notchNode, &notchConfiguration);
 
-    bandpassConfiguration.low_hz = 1.0f;
-    bandpassConfiguration.high_hz = 40.0f;
-    bp_configure(&bandpassConfiguration, 2.0f, 45.0f, 3);
+    bp_configure(&bandpassConfiguration,2.0f, 45.0f, 3);
     bp_init(&bandpassNode, &bandpassConfiguration);
 
     /* Register CCA node and model */
@@ -98,10 +96,14 @@ void addCCANodesToTinyBCIPipeline(const float *frequencies)
     ccaModelConfiguration.n_freqs = N_FREQS;
     cca_model_init(&ccaModel, &ccaModelConfiguration);
 
+    trialAveragingConfiguration.n_reps = 3;
+    ta_init(&trialAveragingNode, &trialAveragingConfiguration);
+
     group_add_node(&tbciContext.preprocessing.group, (TBCI_Node *)&notchNode);
     group_add_node(&tbciContext.preprocessing.group, (TBCI_Node *)&bandpassNode);
     group_add_node(&tbciContext.features.group, (TBCI_Node *)&ccaNode);
     group_add_node(&tbciContext.decoder.group, (TBCI_Node *)&ccaModel);
+    group_add_node(&tbciContext.decoder.group, (TBCI_Node *)&trialAveragingNode);
 }
 
 // ---

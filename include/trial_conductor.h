@@ -9,3 +9,6 @@ void setAllTrialsCompletedCallback(void (*onAllTrialsCompleted));
 
 void updateTrialConductor();
 void resetTrialConductor();
+void resetTrialConductorTimers(void);
+
+uint16_t getTarget();

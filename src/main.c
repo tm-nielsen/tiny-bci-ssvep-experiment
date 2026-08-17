@@ -7,14 +7,14 @@
 
 # include "data/trigger_source.h"
 # include "data/lsl_trigger_outlet.h"
+# include "data/synthetic_eeg_source.h"
 
-# include "data/lsl_eeg_source.h"
-void initializeEEGSource() { connectLslEEGSource(); }
-void updateEEGSource() { updateLslEEGSource(); }
-void cleanUpEEGSource() { disconnectLslEEGSource(); }
+void initializeEEGSource() {resetSyntheticEEGSource();} // { connectLslEEGSource(); }
+void updateEEGSource() {updateSyntheticEEGSource();} //{ updateLslEEGSource(); }
+void cleanUpEEGSource() {cleanUpSyntheticEEGSource();} // { disconnectLslEEGSource(); }
 
-uint8_t getChannelCount() { return getLslEEGSourceChannelCount(); }
-uint32_t getSampleRate() { return getLslEEGSourceSampleRate(); }
+uint8_t getChannelCount() { return getSyntheticEEGSourceChannelCount(); }
+uint32_t getSampleRate() { return getSyntheticEEGSourceSampleRate(); }
 
 
 static uint16_t currentTargetLabel = 0;
@@ -45,7 +45,7 @@ void onAllTrialsCompleted()
 
 int main(int argc, char *argv[])
 {
-    const float frequencies[N_FREQS] = {7.5f, 8.57f, 10.0f, 12.0f};
+    const float frequencies[N_FREQS] = {9.0f, 7.5f, 8.0f, 7.0f, 11.0f, 8.57f};
 
     const uint16_t stimulusRounds = 4;
 
@@ -109,12 +109,6 @@ int main(int argc, char *argv[])
 
     while (!WindowShouldClose())
     {
-        if (allTrialsCompleted)
-        {
-            drawMessageScreen("Experiment Complete");
-            continue;
-        }
-
         updateEEGSource();
         updateTrialConductor();
 
