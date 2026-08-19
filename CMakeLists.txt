@@ -4,24 +4,6 @@ project(tiny_bci_ssvep_experiment)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
-set(SUBMODULE_PATH ${CMAKE_SOURCE_DIR}/thirdparty)
-
-
-set(RAYLIB_VERSION 6.0)
-find_package(raylib ${RAYLIB_VERSION} QUIET) # QUIET or REQUIRED
-if (NOT raylib_FOUND) # If there's none, fetch and build raylib
-  include(FetchContent)
-  FetchContent_Declare(
-    raylib
-    DOWNLOAD_EXTRACT_TIMESTAMP OFF
-    URL https://github.com/raysan5/raylib/archive/refs/tags/${RAYLIB_VERSION}.tar.gz
-  )
-  FetchContent_GetProperties(raylib)
-  if (NOT raylib_POPULATED) # Have we downloaded raylib yet?
-    set(FETCHCONTENT_QUIET NO)
-    FetchContent_MakeAvailable(raylib)
-  endif()
-endif()
 
 
 add_executable(${PROJECT_NAME}
@@ -46,11 +28,34 @@ target_include_directories(${PROJECT_NAME} PRIVATE include)
 target_include_directories(${PROJECT_NAME} PRIVATE producer)
 
 
+include(FetchContent)
+FetchContent_Declare(
+  tiny_bci
+  GIT_REPOSITORY https://github.com/BCI-Games/TinyBCI.git
+  GIT_TAG 1590909aaba5bdf6d082996b6a4ba9559a55afcc
+)
+FetchContent_MakeAvailable(tiny_bci)
+target_link_libraries(${PROJECT_NAME} tiny_bci)
+
+
+set(RAYLIB_VERSION 6.0)
+find_package(raylib ${RAYLIB_VERSION} QUIET) # QUIET or REQUIRED
+if (NOT raylib_FOUND) # If there's none, fetch and build raylib
+  include(FetchContent)
+  FetchContent_Declare(
+    raylib
+    DOWNLOAD_EXTRACT_TIMESTAMP OFF
+    URL https://github.com/raysan5/raylib/archive/refs/tags/${RAYLIB_VERSION}.tar.gz
+  )
+  FetchContent_GetProperties(raylib)
+  if (NOT raylib_POPULATED) # Have we downloaded raylib yet?
+    set(FETCHCONTENT_QUIET NO)
+    FetchContent_MakeAvailable(raylib)
+  endif()
+endif()
+
 target_link_libraries(${PROJECT_NAME} raylib)
 
-# TODO: migrate to fetch once CMake is fixed
-add_subdirectory(${SUBMODULE_PATH}/tiny_bci)
-target_link_libraries(${PROJECT_NAME} tiny_bci)
 
 option(INCLUDE_LSL "Build with LSL support" ON)
 if (${INCLUDE_LSL})
