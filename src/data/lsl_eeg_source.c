@@ -6,6 +6,8 @@
 #   include "microsecond_timer.h"
 # endif
 
+# define LSL_EEG_PREDICATE "type='EEG' or type='eeg'"
+
 
 static uint32_t sampleRate = 0;
 static uint8_t channelCount = 0;
@@ -20,20 +22,26 @@ static bool isConnected = false;
 
 void connectLslEEGSource()
 {
-    lsl_streaminfo scanResult;
-    int resultCount = lsl_resolve_byprop(&scanResult, 1, "type", "EEG", 1, LSL_SCAN_TIMEOUT);
+    lsl_streaminfo scanResults[2];
+    int resultCount = lsl_resolve_bypred(scanResults, 2, LSL_EEG_PREDICATE, 1, LSL_SCAN_TIMEOUT);
 
     if (resultCount < 1)
     {
         printf("Failed to locate LSL EEG Source\n");
         exit(EXIT_SUCCESS);
     }
+    else if (resultCount > 1)
+    {
+        printf("Cannot choose between 2 or more EEG streams\n");
+        exit(EXIT_SUCCESS);
+    }
 
-    channelCount = (uint8_t)lsl_get_channel_count(scanResult);
-    sampleRate = (uint32_t)lsl_get_nominal_srate(scanResult);
+    lsl_streaminfo targetStream = scanResults[0];
+    channelCount = (uint8_t)lsl_get_channel_count(targetStream);
+    sampleRate = (uint32_t)lsl_get_nominal_srate(targetStream);
 
-    inlet = lsl_create_inlet(scanResult, 360, LSL_NO_PREFERENCE, 1);
-    lsl_destroy_streaminfo(scanResult);
+    inlet = lsl_create_inlet(targetStream, 360, LSL_NO_PREFERENCE, 1);
+    lsl_destroy_streaminfo(targetStream);
 
     if (inlet == NULL)
     {
