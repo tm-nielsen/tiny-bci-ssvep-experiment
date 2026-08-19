@@ -6,8 +6,6 @@
 #   include "microsecond_timer.h"
 # endif
 
-# define LSL_EEG_PREDICATE "type='EEG' or type='eeg'"
-
 
 static uint32_t sampleRate = 0;
 static uint8_t channelCount = 0;
