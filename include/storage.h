@@ -7,13 +7,15 @@
 # include "nodes/preprocessing/tbci_notch_node.h"
 # include "nodes/features/tbci_cca_node.h"
 # include "nodes/decoder/tbci_cca_model.h"
+# include "nodes/decoder/tbci_label_encoder_node.h"
+# include "nodes/decoder/tbci_trial_averaging_node.h"
 
 # define SIG_CAPACITY 1024
 # define TRIG_CAPACITY 32
 # define EPOCH_CAPACITY 8
 
 # define WINDOW_LENGTH_MS 2000
-# define WINDOW_OVERLAP_MS 1000
+# define WINDOW_OVERLAP_MS 1900
 
 // ---
 
@@ -69,5 +71,7 @@ extern TBCI_CCANode ccaNode;
 extern TBCI_CCAConfig ccaConfiguration;
 extern TBCI_CCAModel ccaModel;
 extern TBCI_CCAModelConfig ccaModelConfiguration;
+extern TBCI_TrialAveragingNode trialAveragingNode;
+extern TBCI_TrialAveragingConfig trialAveragingConfiguration;
 
 #endif
