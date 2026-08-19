@@ -60,6 +60,17 @@ void connectLslEEGSource()
     }
     isConnected = true;
 
+    int32_t infoError = 0;
+    lsl_streaminfo inletInfo = lsl_get_fullinfo(inlet, LSL_SCAN_TIMEOUT, &infoError);
+    if (infoError == lsl_no_error)
+    {
+        const char* streamName = lsl_get_name(inletInfo);
+        printf("Connected to LSL EEG stream \"%s\"", streamName);
+        printf(" with %d channels sampling at %d Hz\n", channelCount, sampleRate);
+        printf("---\n");
+    }
+    lsl_destroy_streaminfo(inletInfo);
+
     samples = malloc(channelCount * sizeof(float));
 }
 
