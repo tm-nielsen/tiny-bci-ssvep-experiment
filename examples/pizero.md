@@ -273,6 +273,13 @@ particular can take a long time (potentially an hour+) on this hardware — if
 impractical, consider cross-compiling on a faster machine and copying the built
 `liblsl` over instead.
 
+If you need GitHub authentication, an access token is recommended.
+
+```bash
+cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_FRONTEND=OFF -DTINY_BCI_GIT_TOKEN=ghp_xxxxxxxx
+cmake --build . -- -j1
+```
+
 ---
 
 ## 6. Connecting the Unicorn EEG Headset over Bluetooth (RFCOMM)
