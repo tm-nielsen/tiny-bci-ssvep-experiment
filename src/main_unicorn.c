@@ -1,5 +1,7 @@
 # include <inttypes.h>
 # include <unistd.h>
+
+# include "inference_logger.h"
 # include "pipeline.h"
 # include "presentation.h"
 # include "trial_conductor.h"
@@ -10,8 +12,18 @@
 
 # define PORT "/dev/cu.UN-20230805"
 
+void initializeEEGSource() { initializeUnicornEEGSource(PORT); } // { connectLslEEGSource(); }
+void updateEEGSource() { updateUnicornEEGSource(); } //{ updateLslEEGSource(); }
+void cleanUpEEGSource() { closeUnicornEEGSource(); } // { disconnectLslEEGSource(); }
+
+uint8_t getChannelCount() { return getUnicornEEGSourceChannelCount(); }
+uint32_t getSampleRate() { return getUnicornEEGSourceSampleRate(); }
+
+
+static uint16_t currentTargetLabel = 0;
 void onTrialStart(uint16_t target)
 {
+    currentTargetLabel = target;
     pushTrigger(target + 1);
     pushLslTrigger(target + 1);
     setPresentationTarget(target);
@@ -26,53 +38,84 @@ void onTrialEnd(uint16_t nextTarget)
     pauseStimulus();
 }
 
+static bool allTrialsCompleted = false;
+void onAllTrialsCompleted()
+{
+    allTrialsCompleted = true;
+    clearPresentationTarget();
+}
+
 
 int main(int argc, char *argv[])
 {
-    const float frequencies[N_FREQS] = {9.0f, 7.5f, 8.0f, 7.0f, 11.0f, 8.57f}; //15, 10, 12, 8.5
-    const float trialDuration = 20.0f;
-    const float breakDuration = 3.0f;
-    const float selectionDisplayConfidenceThreshold = 0.99f;
+    const float frequencies[N_FREQS] = {9.0f, 7.5f, 8.0f, 7.0f, 11.0f, 8.57f};
 
-    initializeTrialConductor(N_FREQS, trialDuration, breakDuration, onTrialStart, onTrialEnd);
+    const uint16_t stimulusRounds = 4;
+
+    const float filterStabilizationDelay = 5.0f;
+    const float stimulusDuration = 6.0f;
+    const float breakDuration = 3.0f;
+
+    const float selectionDisplayConfidenceThreshold = 0.9f;
+
+    initializeTrialConductor(N_FREQS, stimulusRounds, stimulusDuration, breakDuration);
+    setTrialStartCallback(onTrialStart);
+    setTrialEndCallback(onTrialEnd);
+    setAllTrialsCompletedCallback(onAllTrialsCompleted);
+
     initializePresentation(frequencies, N_FREQS);
     setPresentationTarget(0);
+    disableTextureStimulus();
+
+    initializeEEGSource();
+    resetUnicornEEGSource();
+    setRuntimeConnectionStatus(true);
 
     openLslTriggerOutlet("tBCI_Experiment_Triggers");
 
-    while (!IsKeyPressed(KEY_SPACE))
+    uint8_t channelCount = getChannelCount();
+    uint32_t sampleRate = getSampleRate();
+    if (initializeTinyBCIPipeline(frequencies, channelCount, sampleRate)) return EXIT_FAILURE;
+
+    if (startTinyBCIPipeline()) return EXIT_FAILURE;
+    printf("---\nTiny BCI Pipeline Running.\n\n");
+
+    MicrosecondTimer stabilizationTimer = createMicrosecondTimer(filterStabilizationDelay);
+    resetMicrosecondTimer(&stabilizationTimer);
+    while (!checkMicrosecondTimer(&stabilizationTimer))
     {
-        drawEntryScreen();
+        drawMessageScreen("Awaiting Filter Stabilization...");
+        updateEEGSource();
+        updateTinyBCIPipeline();
 
         if (WindowShouldClose())
         {
+            cleanUpEEGSource();
             closeLslTriggerOutlet();
             stopPresentation();
             return EXIT_SUCCESS;
         }
     }
+    printf("Filter settled.\n");
 
-    if (initializeTinyBCIPipeline(frequencies)) return EXIT_FAILURE;
-    if (startTinyBCIPipeline()) return EXIT_FAILURE;
-    printf("---\nTiny BCI Pipeline Running.\n\n");
+    while (!IsKeyPressed(KEY_SPACE))
+    {
+        drawMessageScreen("Press Spacebar to Start");
+        updateEEGSource();
 
-    initializeUnicornEEGSource(PORT);
-    resetUnicornEEGSource();
-
-    /* settle filter with real data before starting trials */
-    printf("Settling filter — please wait 5 seconds...\n");
-    MicrosecondTimer settleTimer = createMicrosecondTimer(5.0f);
-    while (!checkMicrosecondTimer(&settleTimer)) {
-        updateUnicornEEGSource();
-        updateTinyBCIPipeline();  /* tick pipeline so filter runs */
+        if (WindowShouldClose())
+        {
+            cleanUpEEGSource();
+            closeLslTriggerOutlet();
+            stopPresentation();
+            return EXIT_SUCCESS;
+        }
     }
-    printf("Filter settled — starting.\n");
-    resetTrialConductorTimers();
-
+    initializeInferenceLogger();
 
     while (!WindowShouldClose())
     {
-        updateUnicornEEGSource();
+        updateEEGSource();
         updateTrialConductor();
 
         if (updateTinyBCIPipeline()) break;
@@ -84,24 +127,10 @@ int main(int argc, char *argv[])
             printf("%" PRIu64 " | Output received: %d (%.0f%% confidence) [", timestamp,
                 inference.predictedLabel, inference.confidence * 100
             );
+            for (int i = 0; i < N_FREQS; i++) printf(" %.2f", inference.confidences[i]);
+            printf(" ]\n");
 
-            for (int i=0; i<N_FREQS; i++)
-                printf(", %f", inference.confidences[i]);
-            printf("]\n");
-
-            // TODO code integration
-            /* log to file */
-            if (inferenceLog) {
-                fprintf(inferenceLog, "%llu,%d,%d,%.6f",
-                        timestamp,
-                        getTarget(),      /* true label — current stimulus */
-                        inference.predictedLabel + 1,
-                        inference.confidence);
-                for (int i = 0; i < N_FREQS; i++)
-                    fprintf(inferenceLog, ",%.6f", inference.confidences[i]);
-                fprintf(inferenceLog, "\n");
-                fflush(inferenceLog);
-            }
+            logInference(inference, timestamp, currentTargetLabel);
 
             if (inference.confidence > selectionDisplayConfidenceThreshold)
             {
@@ -112,7 +141,10 @@ int main(int argc, char *argv[])
         drawStimulusScreen();
     }
 
-    stopTinyBCIPipeline();
+    cleanUpEEGSource();
+    cleanUpTinyBCIPipeline();
+    closeLslTriggerOutlet();
+    closeInferenceLogger();
     stopPresentation();
 
     return EXIT_SUCCESS;
