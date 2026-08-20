@@ -1,6 +1,6 @@
 # pragma once
 # include "storage.h"
-# include "../thirdparty/tiny_bci/producer/unicorn_producer.h"
+# include "unicorn_producer.h"
 
 # define SAMPLE_RATE 250.0
 # define SAMPLE_INTERVAL (uint64_t)(1000000.0f / SAMPLE_RATE)

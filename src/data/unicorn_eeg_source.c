@@ -1,7 +1,7 @@
 # include "data/unicorn_eeg_source.h"
+# include "microsecond_timer.h"
+# include "data/synthetic_eeg_source.h"
 
-#include "microsecond_timer.h"
-#include "data/synthetic_eeg_source.h"
 
 static UnicornProducer producer;
 static UnicornProducerConfig config;
