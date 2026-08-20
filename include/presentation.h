@@ -1,7 +1,7 @@
 # pragma once
 # include "raylib.h"
 
-# define RENDER_WIDTH 800
+# define RENDER_WIDTH 1200
 # define RENDER_HEIGHT 800
 # define MINIMUM_WINDOW_WIDTH 600
 # define MINIMUM_WINDOW_HEIGHT 600
@@ -47,6 +47,7 @@
 
 void initializePresentation(const float *, uint16_t);
 void drawMessageScreen(const char*);
+void setRuntimeConnectionStatus(bool connected);
 void drawStimulusScreen();
 void stopPresentation();
 

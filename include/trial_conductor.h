@@ -1,4 +1,5 @@
 # pragma once
+#include <stdint.h>
 
 void initializeTrialConductor(uint16_t, uint16_t, float, float);
 
