@@ -16,7 +16,8 @@
 
 # define WINDOW_LENGTH_MS 2000
 # define WINDOW_OVERLAP_MS 1900
-# define TOTAL_FRAMES (size_t)(SAMPLE_RATE * WINDOW_LENGTH_MS / 1000)
+
+// ---
 
 void allocateDynamicStorage(uint8_t, uint32_t);
 void deallocateDynamicStorage();

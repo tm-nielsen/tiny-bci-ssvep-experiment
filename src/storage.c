@@ -56,10 +56,7 @@ TBCI_CCANode ccaNode;
 TBCI_CCAConfig ccaConfiguration;
 TBCI_CCAModel ccaModel;
 TBCI_CCAModelConfig ccaModelConfiguration;
-TBCI_LabelEncoderNode labelEncoderNode;
-TBCI_LabelEncoderConfig labelEncoderConfiguration;
-TBCI_TrialAveragingNode trialAveragingNode;
-TBCI_TrialAveragingConfig trialAveragingConfiguration;
+
 // ---
 
 void allocateDynamicStorage(uint8_t channelCount, uint32_t sampleRate)
