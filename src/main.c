@@ -1,20 +1,23 @@
+#include <inttypes.h>
+
 # include "pipeline.h"
 # include "presentation.h"
 # include "trial_conductor.h"
 # include "microsecond_timer.h"
 
 # include "inference_logger.h"
+#include "data/lsl_eeg_source.h"
 
 # include "data/trigger_source.h"
 # include "data/lsl_trigger_outlet.h"
 # include "data/synthetic_eeg_source.h"
 
-void initializeEEGSource() {resetSyntheticEEGSource();} // { connectLslEEGSource(); }
-void updateEEGSource() {updateSyntheticEEGSource();} //{ updateLslEEGSource(); }
-void cleanUpEEGSource() {cleanUpSyntheticEEGSource();} // { disconnectLslEEGSource(); }
+void initializeEEGSource() { connectLslEEGSource(); } // { connectLslEEGSource(); }
+void updateEEGSource() { updateLslEEGSource(); } //{ updateLslEEGSource(); }
+void cleanUpEEGSource() { disconnectLslEEGSource(); } // { disconnectLslEEGSource(); }
 
-uint8_t getChannelCount() { return getSyntheticEEGSourceChannelCount(); }
-uint32_t getSampleRate() { return getSyntheticEEGSourceSampleRate(); }
+uint8_t getChannelCount() { return getLslEEGSourceChannelCount(); }
+uint32_t getSampleRate() { return getLslEEGSourceSampleRate(); }
 
 
 static uint16_t currentTargetLabel = 0;
@@ -65,6 +68,7 @@ int main(int argc, char *argv[])
     disableTextureStimulus();
 
     initializeEEGSource();
+    setRuntimeConnectionStatus(true);
     openLslTriggerOutlet("tBCI_Experiment_Triggers");
 
     uint8_t channelCount = getChannelCount();

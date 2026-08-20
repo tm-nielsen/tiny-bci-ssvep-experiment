@@ -21,7 +21,7 @@ static bool isConnected = false;
 void connectLslEEGSource()
 {
     lsl_streaminfo scanResult;
-    int resultCount = lsl_resolve_byprop(&scanResult, 1, "type", "EEG", 1, LSL_SCAN_TIMEOUT);
+    int resultCount = lsl_resolve_byprop(&scanResult, 1, "type", "eeg", 1, LSL_SCAN_TIMEOUT);
 
     if (resultCount < 1)
     {

@@ -3,6 +3,8 @@ include_guard(GLOBAL)
 target_sources(${PROJECT_NAME} PRIVATE
     src/data/lsl_eeg_source.c
     src/data/lsl_trigger_outlet.c
+    src/data/lsl_trigger_inlet.c
+    src/data/lsl_inference_channel.c
 )
 
 option(USE_LSL_TIMESTAMPS "Use EEG  timestamps from source, marking triggers with lsl_local_clock" OFF)
