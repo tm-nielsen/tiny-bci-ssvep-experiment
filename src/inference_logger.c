@@ -43,12 +43,12 @@ void logInference(TinyBCIInference inference, uint64_t timestamp, uint16_t trueL
     }
 
     fprintf(logFile, "\n%" PRIu64 ",%d,%d,%.6f",
-        timestamp, trueLabel,
+        timestamp, trueLabel + 1,
         inference.predictedLabel + 1, inference.confidence
     );
     for (int i = 0; i < N_FREQS; i++)
     {
-        fprintf(logFile, "%.6f", inference.confidences[i]);
+        fprintf(logFile, ",%.6f", inference.confidences[i]);
     }
     fflush(logFile);
 }
