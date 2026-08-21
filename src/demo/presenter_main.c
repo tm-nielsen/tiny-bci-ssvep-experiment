@@ -41,7 +41,7 @@ int main(void)
 
     initializePresentation(frequencies, N_FREQS);
     setPresentationTarget(0);
-    disableTextureStimulus();
+    //disableTextureStimulus();
 
     openLslTriggerOutlet("tBCI_Experiment_Triggers");
     MicrosecondTimer inferenceRetryTimer = createMicrosecondTimer(INFERENCE_RETRY_INTERVAL_S);
@@ -53,6 +53,7 @@ int main(void)
         if (!isLslInferenceConnected() && checkMicrosecondTimer(&inferenceRetryTimer)) {
             if (openLslInferenceInlet(INFERENCE_STREAM_NAME_DEFAULT) == 0) {
                 printf("---\nConnected to runtime app\n\n");
+                setRuntimeConnectionStatus(isLslInferenceConnected());
             } else {
                 printf("---\nFailed to connect to runtime app, retrying...\n\n");
             }
@@ -60,7 +61,6 @@ int main(void)
         }
         if (WindowShouldClose()) goto shutdown;
     }
-    setRuntimeConnectionStatus(isLslInferenceConnected());
 
     while (!WindowShouldClose()) {
         updateTrialConductor();
