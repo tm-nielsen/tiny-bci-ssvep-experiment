@@ -1,11 +1,11 @@
 # include "pipeline.h"
+# include "triggers.h"
 # include "presentation.h"
 # include "trial_conductor.h"
 # include "microsecond_timer.h"
 
 # include "inference_logger.h"
 
-# include "data/trigger_source.h"
 # include "lsl/lsl_trigger_outlet.h"
 
 # include "lsl/lsl_eeg_source.h"

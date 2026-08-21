@@ -13,9 +13,9 @@ set(SOURCES
   src/microsecond_timer.c
   src/storage.c
   src/pipeline.c
+  src/triggers.c
   src/inference_logger.c
 
-  src/data/trigger_source.c
   src/data/synthetic_eeg_source.c
   src/data/serial_unix.c
   src/data/serial_windows.c
