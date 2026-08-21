@@ -6,7 +6,7 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 set(SOURCES
-    src/demo/presenter_main.c
+    src/main.c
     src/trial_conductor.c
     src/microsecond_timer.c
     src/storage.c

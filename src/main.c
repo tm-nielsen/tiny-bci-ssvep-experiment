@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     const float stimulusDuration = 6.0f;
     const float breakDuration = 3.0f;
 
-    const float selectionDisplayConfidenceThreshold = 0.9f;
+    const float selectionDisplayConfidenceThreshold = 0.99f;
 
     initializeTrialConductor(N_FREQS, stimulusRounds, stimulusDuration, breakDuration);
     setTrialStartCallback(onTrialStart);
@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
     initializePresentation(frequencies, N_FREQS);
     setPresentationTarget(0);
     disableTextureStimulus();
+    initializeInferenceLogger();
 
     initializeEEGSource();
     setRuntimeConnectionStatus(true);
@@ -109,7 +110,6 @@ int main(int argc, char *argv[])
             return EXIT_SUCCESS;
         }
     }
-    initializeInferenceLogger();
 
     while (!WindowShouldClose())
     {
