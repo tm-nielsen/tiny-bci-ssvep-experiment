@@ -1,9 +1,11 @@
 include_guard(GLOBAL)
 
-target_sources(${PROJECT_NAME} PRIVATE
+set(LSL_SOURCES
     src/data/lsl_eeg_source.c
     src/data/lsl_trigger_outlet.c
 )
+
+target_sources(${PROJECT_NAME} PRIVATE ${LSL_SOURCES})
 
 option(USE_LSL_TIMESTAMPS "Use EEG  timestamps from source, marking triggers with lsl_local_clock" OFF)
 if (${USE_LSL_TIMESTAMPS})
