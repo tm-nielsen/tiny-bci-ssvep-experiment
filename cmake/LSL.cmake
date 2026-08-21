@@ -1,8 +1,16 @@
 include_guard(GLOBAL)
 
 set(LSL_SOURCES
+    src/lsl/lsl_inlet_helpers.c
+    src/lsl/lsl_outlet_helpers.c
+    src/lsl/lsl_data_source.c
+
     src/lsl/lsl_eeg_source.c
+
     src/lsl/lsl_trigger_outlet.c
+    src/lsl/lsl_trigger_source.c
+    src/lsl/lsl_inference_outlet.c
+    src/lsl/lsl_inference_source.c
 )
 
 target_sources(${PROJECT_NAME} PRIVATE ${LSL_SOURCES})
