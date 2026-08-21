@@ -34,7 +34,7 @@ int main(void)
     const float frequencies[N_FREQS] = {9.0f, 7.5f, 8.0f, 7.0f, 11.0f, 8.57f};
 
     initializeEEGSource();
-    resetUnicornEEGSource();
+    //resetUnicornEEGSource();
     openLslInferenceOutlet("tBCI_Inference_Results");
     openLslTriggerInlet("tBCI_Experiment_Triggers", onTriggerReceived);
 
@@ -47,6 +47,8 @@ int main(void)
     if (startTinyBCIPipeline()) return EXIT_FAILURE;
 
     printf("---\ntinyBCI Runtime running headless\n\n");
+
+    initializeInferenceLogger();
 
     // filter stabilization delay, no display, just poll EEG + pipeline
     MicrosecondTimer stabilizationTimer = createMicrosecondTimer(5.0f);
@@ -68,8 +70,6 @@ int main(void)
             resetMicrosecondTimer(&triggerRetryTimer);
         }
     }
-
-    initializeInferenceLogger();
 
     for (;;) {
         updateEEGSource();

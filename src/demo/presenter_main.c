@@ -5,7 +5,11 @@
 #include "data/lsl_trigger_outlet.h"
 #include "data/lsl_inference_channel.h"
 
-static const float selectionDisplayConfidenceThreshold = 0.5f;
+static const float selectionDisplayConfidenceThreshold = 0.95f;
+static const int nTrials = 4;
+static const float stimulusDuration = 6.0f;
+static const float breakDuration = 3.0f;
+
 #define INFERENCE_RETRY_INTERVAL_S 5.0f
 
 
@@ -28,9 +32,9 @@ void onAllTrialsCompleted() { allTrialsCompleted = true; clearPresentationTarget
 
 int main(void)
 {
-    const float frequencies[N_FREQS] = {9.0f, 7.5f, 8.0f, 7.0f, 11.0f, 8.57f}; // updated by team
+    const float frequencies[N_FREQS] = {9.0f, 7.5f, 8.0f, 7.0f, 11.0f, 8.57f};
 
-    initializeTrialConductor(N_FREQS, 4, 6.0f, 3.0f);
+    initializeTrialConductor(N_FREQS, nTrials, stimulusDuration, breakDuration);
     setTrialStartCallback(onTrialStart);
     setTrialEndCallback(onTrialEnd);
     setAllTrialsCompletedCallback(onAllTrialsCompleted);
