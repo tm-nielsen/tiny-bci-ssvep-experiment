@@ -1,4 +1,4 @@
-# include "data/lsl_trigger_outlet.h"
+# include "lsl/lsl_trigger_outlet.h"
 # include "lsl_c.h"
 
 static lsl_outlet outlet = NULL;

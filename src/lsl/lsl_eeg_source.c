@@ -1,4 +1,4 @@
-# include "data/lsl_eeg_source.h"
+# include "lsl/lsl_eeg_source.h"
 # include "pipeline.h"
 # include "lsl_c.h"
 

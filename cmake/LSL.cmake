@@ -1,8 +1,8 @@
 include_guard(GLOBAL)
 
 set(LSL_SOURCES
-    src/data/lsl_eeg_source.c
-    src/data/lsl_trigger_outlet.c
+    src/lsl/lsl_eeg_source.c
+    src/lsl/lsl_trigger_outlet.c
 )
 
 target_sources(${PROJECT_NAME} PRIVATE ${LSL_SOURCES})
