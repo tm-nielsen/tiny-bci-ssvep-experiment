@@ -16,4 +16,15 @@ void closeLslOutlet(lsl_outlet *outlet);
 lsl_inlet connectLslInlet(const char* predicate);
 void closeLslInlet(lsl_inlet *inlet);
 
+typedef struct {
+    lsl_inlet inlet;
+    void *sampleBuffer;
+    int32_t sampleBufferLength;
+    bool bufferMemoryAllocated;
+} LSLDataSource;
+
+LSLDataSource createAndConnectLSLDataSource(const char* streamResolutionPredicate);
+bool pollLSLDataSource(LSLDataSource *source);
+void closeLSLDataSource(LSLDataSource *source);
+
 # endif

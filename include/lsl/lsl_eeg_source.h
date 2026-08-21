@@ -2,7 +2,7 @@
 # ifndef LSL_EEG_SOURCE
 # define LSL_EEG_SOURCE
 
-# define LSL_EEG_PREDICATE "type='EEG' or type='eeg'"
+# define EEG_STREAM_PREDICATE "type='EEG' or type='eeg'"
 
 void connectLslEEGSource();
 void updateLslEEGSource();
