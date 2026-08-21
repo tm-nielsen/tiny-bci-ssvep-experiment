@@ -14,20 +14,8 @@ void openLslTriggerOutlet(const char *streamName)
 
 void pushLslTrigger(uint16_t value)
 {
-    if (outlet == NULL)
-    {
-        printf("Attempting to start LSL trigger stream\n");
-        openLslTriggerOutlet(TRIGGER_STREAM_NAME_DEFAULT);
-    }
-
     int16_t sample[1] = {value};
-    int32_t pushError = lsl_push_sample_s(outlet, sample);
-
-    if (pushError != lsl_no_error)
-    {
-        printf("Error pushing trigger value to LSL stream\n");
-        exit(EXIT_SUCCESS);
-    }
+    pushLslSample(outlet, sample);
 }
 
 void closeLslTriggerOutlet() {

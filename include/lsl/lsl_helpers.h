@@ -10,6 +10,7 @@ lsl_outlet openIrregularRateLslOutlet(
     lsl_channel_format_t channelFormat,
     const char* sourceId
 );
+void pushLslSample(lsl_outlet outlet, void *sample);
 void closeLslOutlet(lsl_outlet *outlet);
 
 lsl_inlet connectLslInlet(const char* predicate);

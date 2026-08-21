@@ -26,6 +26,22 @@ lsl_outlet openIrregularRateLslOutlet(
     return outlet;
 }
 
+void pushLslSample(lsl_outlet outlet, void *sample)
+{
+    if (outlet == NULL)
+    {
+        fprintf(stderr, "Error: Can't push to a null outlet\n");
+        return;
+    }
+
+    int32_t pushError = lsl_push_sample_v(outlet, sample);
+    if (pushError != lsl_no_error)
+    {
+        printf("Error pushing trigger value to LSL stream\n");
+        exit(EXIT_SUCCESS);
+    }
+}
+
 void closeLslOutlet(lsl_outlet *outlet)
 {
     if (*outlet == NULL) return;
