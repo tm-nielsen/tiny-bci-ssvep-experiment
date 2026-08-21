@@ -1,27 +1,15 @@
-# include "lsl/lsl_trigger_outlet.h"
+# include "lsl/lsl_trigger_stream.h"
+# include "lsl/lsl_helpers.h"
 # include "lsl_c.h"
 
 static lsl_outlet outlet = NULL;
 
 void openLslTriggerOutlet(const char *streamName)
 {
-    lsl_streaminfo outletInfo = lsl_create_streaminfo(
-        streamName,
-        TRIGGER_STREAM_TYPE,
-        1, LSL_IRREGULAR_RATE,
-        cft_int16,
-        TRIGGER_STREAM_SOURCE_ID
+    outlet = openIrregularRateLslOutlet(
+        streamName, TRIGGER_STREAM_TYPE,
+        1, cft_int16, TRIGGER_STREAM_SOURCE_ID
     );
-    if (outletInfo == NULL) exit(EXIT_FAILURE);
-
-    outlet = lsl_create_outlet(outletInfo, 0, 360);
-    lsl_destroy_streaminfo(outletInfo);
-
-    if (outlet == NULL)
-    {
-        printf("Failed to open LSL trigger outlet\n");
-        exit(EXIT_SUCCESS);
-    }
 }
 
 void pushLslTrigger(uint16_t value)
@@ -42,11 +30,6 @@ void pushLslTrigger(uint16_t value)
     }
 }
 
-void closeLslTriggerOutlet()
-{
-    if (outlet != NULL)
-    {
-        lsl_destroy_outlet(outlet);
-        outlet = NULL;
-    }
+void closeLslTriggerOutlet() {
+    closeLslOutlet(&outlet);
 }

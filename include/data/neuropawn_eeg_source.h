@@ -33,4 +33,4 @@ typedef struct {
 void connectNeuropawnEEGSource(const char *, NeuropawnConfiguration);
 void resetNeuropawnEEGSource();
 void updateNeuropawnEEGSource();
-void disconnectNeuropawnEEGSource();
+void closeNeuropawnEEGSource();

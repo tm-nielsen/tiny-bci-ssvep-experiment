@@ -11,7 +11,7 @@
 # include "lsl/lsl_eeg_source.h"
 void initializeEEGSource() { connectLslEEGSource(); }
 void updateEEGSource() { updateLslEEGSource(); }
-void cleanUpEEGSource() { disconnectLslEEGSource(); }
+void cleanUpEEGSource() { closeLslEEGSource(); }
 
 uint8_t getChannelCount() { return getLslEEGSourceChannelCount(); }
 uint32_t getSampleRate() { return getLslEEGSourceSampleRate(); }

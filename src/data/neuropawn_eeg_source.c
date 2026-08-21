@@ -284,4 +284,4 @@ void updateNeuropawnEEGSource()
     resetPayload();
 }
 
-void disconnectNeuropawnEEGSource() { serialClose(&handle); }
+void closeNeuropawnEEGSource() { serialClose(&handle); }
