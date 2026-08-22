@@ -21,6 +21,7 @@ set(SOURCES
   src/data/serial_windows.c
   src/data/serial_utils.c
   src/data/neuropawn_eeg_source.c
+  src/data/unicorn_eeg_source.c
 )
 add_executable(${PROJECT_NAME} ${SOURCES})
 
