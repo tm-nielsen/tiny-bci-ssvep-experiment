@@ -50,7 +50,7 @@ NeuroPawnBoardType detectBoardType()
 {
     static uint8_t buffer[8192];
     size_t scanLength = 0;
-    int attempts = 10;  /* ~10 s at 50 ms per read */
+    int attempts = 200;  /* ~10 s at 50 ms per read */
 
     serialFlush(&handle);
 

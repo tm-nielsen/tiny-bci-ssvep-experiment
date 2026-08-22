@@ -51,7 +51,7 @@ int serialWrite(SerialHandle *handle, uint8_t *buffer, size_t bufferLength)
 
 int serialRead(SerialHandle *handle, uint8_t *buffer, size_t bufferLength)
 {
-    if (handle == INVALID_HANDLE_VALUE)
+    if (*handle == INVALID_HANDLE_VALUE)
     {
         fprintf(stderr, "Error: Attempted to read from invalid serial handle");
         return 0;
