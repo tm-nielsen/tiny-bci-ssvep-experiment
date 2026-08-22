@@ -6,9 +6,9 @@
 
 # include "inference_logger.h"
 
-# include "lsl/lsl_trigger_stream.h"
+# include "lsl/trigger_stream.h"
 
-# include "lsl/lsl_eeg_source.h"
+# include "lsl/eeg_source.h"
 void initializeEEGSource() { connectLslEEGSource(); }
 void updateEEGSource() { updateLslEEGSource(); }
 void cleanUpEEGSource() { closeLslEEGSource(); }

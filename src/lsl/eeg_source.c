@@ -1,6 +1,6 @@
-# include "lsl/lsl_eeg_source.h"
-# include "lsl/lsl_helpers.h"
-# include "lsl/lsl_constants.h"
+# include "lsl/eeg_source.h"
+# include "lsl/helpers.h"
+# include "lsl/constants.h"
 # include "pipeline.h"
 # include "lsl_c.h"
 

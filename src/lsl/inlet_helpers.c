@@ -1,5 +1,5 @@
-# include "lsl/lsl_helpers.h"
-# include "lsl/lsl_constants.h"
+# include "lsl/helpers.h"
+# include "lsl/constants.h"
 
 lsl_inlet connectLslInlet(const char* predicate)
 {

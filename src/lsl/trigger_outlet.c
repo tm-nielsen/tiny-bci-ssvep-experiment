@@ -1,5 +1,5 @@
-# include "lsl/lsl_trigger_stream.h"
-# include "lsl/lsl_helpers.h"
+# include "lsl/trigger_stream.h"
+# include "lsl/helpers.h"
 # include "lsl_c.h"
 
 static lsl_outlet outlet = NULL;

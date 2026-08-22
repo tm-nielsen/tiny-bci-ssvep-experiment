@@ -1,4 +1,4 @@
-# include "lsl/lsl_helpers.h"
+# include "lsl/helpers.h"
 
 lsl_outlet openIrregularRateLslOutlet(
     const char *streamName, const char *streamType,
