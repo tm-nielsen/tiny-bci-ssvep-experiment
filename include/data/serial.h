@@ -28,4 +28,23 @@ void sleepMilliseconds(uint32_t);
 
 # define SERIAL_DATA_WAIT_ITERATION_TIME_MS 100
 # define SERIAL_DATA_WAIT_MAXIMUM_ITERATIONS 20
-int awaitSerialData(SerialHandle *);
+int awaitSerialData(SerialHandle *handle);
+int seekSerialByte(SerialHandle *handle, uint8_t targetByte);
+int seekSerialBytes(SerialHandle *handle, uint8_t *targetBytes, uint8_t targetCount);
+
+typedef enum {
+    READ_STATUS_READY,
+    READ_STATUS_PENDING,
+    READ_STATUS_INVALID
+} ReadStatus;
+
+typedef struct {
+    uint8_t *buffer;
+    uint8_t length;
+    uint8_t cursor;
+} SerialFrame;
+
+SerialFrame createSerialFrame(uint8_t *pBuffer, uint8_t pLength);
+void resetSerialFrame(SerialFrame *frame);
+
+ReadStatus readSerialFrame(SerialHandle *handle, SerialFrame *frame);

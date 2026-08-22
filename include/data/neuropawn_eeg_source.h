@@ -1,17 +1,15 @@
 # pragma once
 # include "storage.h"
 
-# define SAMPLE_INTERVAL (uint64_t)(1000000.0f / SAMPLE_RATE)
-
-# define NEUROPAWN_N_IMU             9       /**< Number of IMU channels (IMU board).       */
+# define NEUROPAWN_N_IMU             9      /**< Number of IMU channels (IMU board).       */
 # define NEUROPAWN_EEG_CHANNEL_COUNT 8
-# define NEUROPAWN_SAMPLE_RATE       125.0f  /**< Sampling rate in Hz.                      */
-# define NEUROPAWN_START_BYTE        0xA0    /**< Frame start byte.                         */
-# define NEUROPAWN_END_BYTE          0xC0    /**< Frame end byte.                           */
-# define NEUROPAWN_EEG_PAYLOAD_LEN   21      /**< Payload bytes including 0xA0, non-IMU.    */
-# define NEUROPAWN_IMU_PAYLOAD_LEN   57      /**< Payload bytes including 0xA0, IMU board.  */
-# define NEUROPAWN_DEFAULT_GAIN      12      /**< Default channel gain.                     */
-# define NEUROPAWN_CMD_PAUSE_MS      200u    /**< Delay between config commands (ms).       */
+# define NEUROPAWN_SAMPLE_RATE       125    /**< Sampling rate in Hz.                      */
+# define NEUROPAWN_START_BYTE        0xA0   /**< Frame start byte.                         */
+# define NEUROPAWN_END_BYTE          0xC0   /**< Frame end byte.                           */
+# define NEUROPAWN_EEG_PAYLOAD_LEN   21     /**< Payload bytes including 0xA0, non-IMU.    */
+# define NEUROPAWN_IMU_PAYLOAD_LEN   57     /**< Payload bytes including 0xA0, IMU board.  */
+# define NEUROPAWN_DEFAULT_GAIN      12     /**< Default channel gain.                     */
+# define NEUROPAWN_CMD_PAUSE_MS      200u   /**< Delay between config commands (ms).       */
 
 typedef enum {
     NEUROPAWN_BOARD_UNKNOWN = 0,
@@ -34,3 +32,6 @@ void connectNeuropawnEEGSource(const char *, NeuropawnConfiguration);
 void resetNeuropawnEEGSource();
 void updateNeuropawnEEGSource();
 void closeNeuropawnEEGSource();
+
+uint8_t getNeuropawnEEGSourceChannelCount();
+uint32_t getNeuropawnEEGSourceSampleRate();
