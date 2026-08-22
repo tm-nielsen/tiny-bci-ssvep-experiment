@@ -1,5 +1,4 @@
 # pragma once
-# include "storage.h"
 
 # define NEUROPAWN_N_IMU             9      /**< Number of IMU channels (IMU board).       */
 # define NEUROPAWN_EEG_CHANNEL_COUNT 8

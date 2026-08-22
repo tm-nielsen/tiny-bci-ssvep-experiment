@@ -1,5 +1,4 @@
 # pragma once
-# include "storage.h"
 
 # define UNICORN_EEG_CHANNEL_COUNT     8
 # define UNICORN_SAMPLE_RATE    250

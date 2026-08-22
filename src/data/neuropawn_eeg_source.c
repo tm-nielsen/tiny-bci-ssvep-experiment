@@ -1,5 +1,6 @@
 # include "data/neuropawn_eeg_source.h"
 # include "data/serial.h"
+# include "storage.h"
 # include "microsecond_timer.h"
 
 static SerialHandle handle = INVALID_HANDLE_VALUE;
