@@ -42,6 +42,34 @@ void onAllTrialsCompleted()
     clearPresentationTarget();
 }
 
+// ---
+
+void cleanUp()
+{
+    cleanUpEEGSource();
+    cleanUpTinyBCIPipeline();
+    closeLslTriggerOutlet();
+    closeInferenceLogger();
+    stopPresentation();
+}
+
+void closeIfPromptedTo()
+{
+    if (WindowShouldClose())
+    {
+        cleanUp();
+        exit(EXIT_SUCCESS);
+    }
+}
+
+void updatePipelineWithUserPrompt(const char* message)
+{
+    drawMessageScreen(message);
+    updateEEGSource();
+    updateTinyBCIPipeline();
+    closeIfPromptedTo();
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -70,6 +98,7 @@ int main(int argc, char *argv[])
     uint8_t channelCount = getChannelCount();
     uint32_t sampleRate = getSampleRate();
     if (initializeTinyBCIPipeline(frequencies, channelCount, sampleRate)) return EXIT_FAILURE;
+    initializeInferenceLogger();
 
     if (startTinyBCIPipeline()) return EXIT_FAILURE;
     printf("---\nTiny BCI Pipeline Running.\n\n");
@@ -78,34 +107,14 @@ int main(int argc, char *argv[])
     resetMicrosecondTimer(&stabilizationTimer);
     while (!checkMicrosecondTimer(&stabilizationTimer))
     {
-        drawMessageScreen("Awaiting Filter Stabilization...");
-        updateEEGSource();
-        updateTinyBCIPipeline();
-
-        if (WindowShouldClose())
-        {
-            cleanUpEEGSource();
-            closeLslTriggerOutlet();
-            stopPresentation();
-            return EXIT_SUCCESS;
-        }
+        updatePipelineWithUserPrompt("Awaiting Filter Stabilization...");
     }
     printf("Filter settled.\n");
 
     while (!IsKeyPressed(KEY_SPACE))
     {
-        drawMessageScreen("Press Spacebar to Start");
-        updateEEGSource();
-
-        if (WindowShouldClose())
-        {
-            cleanUpEEGSource();
-            closeLslTriggerOutlet();
-            stopPresentation();
-            return EXIT_SUCCESS;
-        }
+        updatePipelineWithUserPrompt("Press Spacebar to Start");
     }
-    initializeInferenceLogger();
 
     while (!WindowShouldClose())
     {
@@ -141,11 +150,6 @@ int main(int argc, char *argv[])
         drawStimulusScreen();
     }
 
-    cleanUpEEGSource();
-    cleanUpTinyBCIPipeline();
-    closeLslTriggerOutlet();
-    closeInferenceLogger();
-    stopPresentation();
-
+    cleanUp();
     return EXIT_SUCCESS;
 }
