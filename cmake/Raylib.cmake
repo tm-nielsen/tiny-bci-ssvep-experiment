@@ -15,5 +15,3 @@ if (NOT raylib_FOUND) # If there's none, fetch and build raylib
     FetchContent_MakeAvailable(raylib)
   endif()
 endif()
-
-target_link_libraries(${PROJECT_NAME} raylib)

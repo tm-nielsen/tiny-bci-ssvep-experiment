@@ -13,8 +13,6 @@ set(LSL_SOURCES
     src/lsl/inference_source.c
 )
 
-target_sources(${PROJECT_NAME} PRIVATE ${LSL_SOURCES})
-
 option(USE_LSL_TIMESTAMPS "Use EEG  timestamps from source, marking triggers with lsl_local_clock" OFF)
 if (${USE_LSL_TIMESTAMPS})
     target_compile_definitions(${PROJECT_NAME} PRIVATE USE_LSL_TIMESTAMPS)
@@ -26,5 +24,3 @@ FetchContent_Declare(liblsl
     GIT_TAG        v1.16.2
 )
 FetchContent_MakeAvailable(liblsl)
-
-target_link_libraries(${PROJECT_NAME} lsl)

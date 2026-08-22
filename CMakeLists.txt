@@ -5,11 +5,13 @@ project(tiny_bci_ssvep_experiment)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
+include(cmake/TinyBCI.cmake)
+include(cmake/LSL.cmake)
+include(cmake/Raylib.cmake)
+include(cmake/CopyAssets.cmake)
 
-set(SOURCES
-  src/main.c
+set(SHARED_SOURCES
   src/trial_conductor.c
-  src/presentation.c
   src/microsecond_timer.c
   src/storage.c
   src/pipeline.c
@@ -23,22 +25,20 @@ set(SOURCES
   src/data/neuropawn_eeg_source.c
   src/data/unicorn_eeg_source.c
 )
-add_executable(${PROJECT_NAME} ${SOURCES})
 
-set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_WARNING_AS_ERROR ON)
-target_precompile_headers(${PROJECT_NAME} PRIVATE include/pch.h)
-target_include_directories(${PROJECT_NAME} PRIVATE include)
+function(ADD_TARGET TARGET_NAME SOURCES)
+  add_executable(${TARGET_NAME} ${SOURCES} ${ARGN} ${SHARED_SOURCES} ${LSL_SOURCES})
 
+  set_target_properties(${TARGET_NAME} PROPERTIES COMPILE_WARNING_AS_ERROR ON)
+  target_precompile_headers(${TARGET_NAME} PRIVATE include/pch.h)
+  target_include_directories(${TARGET_NAME} PRIVATE include)
 
-include(FetchContent)
-FetchContent_Declare(
-  tiny_bci
-  GIT_REPOSITORY https://github.com/BCI-Games/TinyBCI.git
-  GIT_TAG 1590909aaba5bdf6d082996b6a4ba9559a55afcc
-)
-FetchContent_MakeAvailable(tiny_bci)
-target_link_libraries(${PROJECT_NAME} tiny_bci)
+  target_link_libraries(${TARGET_NAME} tiny_bci)
+  target_link_libraries(${TARGET_NAME} lsl)
+endfunction()
 
-include(cmake/Raylib.cmake)
-include(cmake/LSL.cmake)
-include(cmake/CopyAssets.cmake)
+add_target(${PROJECT_NAME} src/main.c src/presentation.c)
+target_link_libraries(${PROJECT_NAME} raylib)
+add_dependencies(${PROJECT_NAME} copy_assets)
+
+add_target("headless_${PROJECT_NAME}" src/main_headless.c)
