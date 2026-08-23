@@ -1,24 +1,18 @@
 # include "data/neuropawn_eeg_source.h"
 # include "data/serial.h"
+# include "storage.h"
 # include "microsecond_timer.h"
 
 static SerialHandle handle = INVALID_HANDLE_VALUE;
 
-static uint8_t payload[NEUROPAWN_IMU_PAYLOAD_LEN];
-static uint8_t payloadLength;
-static uint8_t payloadCursor = 0;
+static uint8_t frameBuffer[NEUROPAWN_IMU_PAYLOAD_LEN];
+static SerialFrame frame;
 
 static float eegScale;
 static float samples[NEUROPAWN_EEG_CHANNEL_COUNT];
 static uint32_t sampleIndex = 0;
 static uint8_t expectedSampleIndex = 0;
 static bool sampleIndexExpectationSet = false;
-
-typedef enum {
-    READ_STATUS_READY,
-    READ_STATUS_PENDING,
-    READ_STATUS_INVALID
-} ReadStatus;
 
 typedef enum {
     EXG_STATUS_VALID,
@@ -57,7 +51,7 @@ NeuroPawnBoardType detectBoardType()
 {
     static uint8_t buffer[8192];
     size_t scanLength = 0;
-    int attempts = 10;  /* ~10 s at 50 ms per read */
+    int attempts = 200;  /* ~10 s at 50 ms per read */
 
     serialFlush(&handle);
 
@@ -80,66 +74,56 @@ NeuroPawnBoardType detectBoardType()
 
 // ---
 
-void resetPayload()
-{
-    for (int i = 0; i < payloadLength; i++) payload[i] = 0;
-    payloadCursor = 0;
-}
-
 int findStartByte()
 {
-    uint16_t scanAttempts = 200;
-    while (payload[0] != NEUROPAWN_START_BYTE)
-    {
-        serialRead(&handle, payload, 1);
-        if (scanAttempts-- <= 0)
-        {
-            fprintf(stderr, "neuropawn: failed to locate start byte\n");
-            return EXIT_FAILURE;
-        }
-    }
-    return EXIT_SUCCESS;
+    return seekSerialByte(&handle, NEUROPAWN_START_BYTE);
 }
 
 ReadStatus readFrame()
 {
-    if (payloadCursor == 0)
+    if (frame.cursor == 0)
     {
         if (findStartByte()) return READ_STATUS_INVALID;
-        payloadCursor = 1;
+        frame.buffer[0] = NEUROPAWN_START_BYTE;
+        frame.cursor = 1;
     }
 
-    int readCount = serialRead(&handle, payload + payloadCursor, payloadLength - payloadCursor);
-    if (readCount > 0) payloadCursor += readCount;
-
-    if (payloadCursor < payloadLength) return READ_STATUS_PENDING;
-    else
+    ReadStatus readStatus = readSerialFrame(&handle, &frame);
+    if (readStatus == READ_STATUS_READY)
     {
-        if (payload[payloadLength - 1] != NEUROPAWN_END_BYTE)
+        if (frame.buffer[frame.length - 1] != NEUROPAWN_END_BYTE)
         {
             fprintf(stderr, "neuropawn: dropped packet due to misaligned frame\n");
-            serialRead(&handle, payload, 1); // offset frame
-            resetPayload();
+            serialRead(&handle, frame.buffer, 1); // offset frame
+            resetSerialFrame(&frame);
             return READ_STATUS_INVALID;
         }
-        return READ_STATUS_READY;
     }
+    return readStatus;
 }
 
 EXGStatus validateEXGFrame()
 {
-    if (payload[0] != NEUROPAWN_START_BYTE || payload[payloadLength - 1] != NEUROPAWN_END_BYTE)
-    {
+    if (
+        frame.buffer[0] != NEUROPAWN_START_BYTE || 
+        frame.buffer[frame.length - 1] != NEUROPAWN_END_BYTE
+    ) {
         fprintf(stderr, "neuropawn: payload invalid, frame is misaligned\n");
         return EXG_STATUS_MISALIGNED;
     }
-    if (sampleIndexExpectationSet && payload[1] != expectedSampleIndex)
+
+    uint8_t frameIndex = frame.buffer[1];
+    if (sampleIndexExpectationSet && frameIndex != expectedSampleIndex)
     {
-        fprintf(stderr, "neuropawn: payload index %u doesn't match expected index of %u\n", payload[1], expectedSampleIndex);
-        expectedSampleIndex = payload[1] + 1;
+        fprintf(stderr,
+            "neuropawn: payload index %u doesn't "
+            "match expected index of %u\n",
+            frameIndex, expectedSampleIndex
+        );
+        expectedSampleIndex = frameIndex + 1;
         return EXG_STATUS_UNEXPECTED_SAMPLE_INDEX;
     }
-    expectedSampleIndex = payload[1] + 1;
+    expectedSampleIndex = frameIndex + 1;
     sampleIndexExpectationSet = true;
     return EXG_STATUS_VALID;
 }
@@ -148,8 +132,8 @@ void parseEXG()
 {
     for (size_t channelIndex = 0; channelIndex < NEUROPAWN_EEG_CHANNEL_COUNT; channelIndex++)
     {
-        int16_t raw = (int16_t)(((uint16_t)payload[1 + 2 * channelIndex] << 8) |
-                                 (uint16_t)payload[2 + 2 * channelIndex]);
+        int16_t raw = (int16_t)(((uint16_t)frame.buffer[1 + 2 * channelIndex] << 8) |
+                                 (uint16_t)frame.buffer[2 + 2 * channelIndex]);
         samples[channelIndex] = (float)raw * eegScale;
     }
 }
@@ -159,7 +143,7 @@ void parseEXG()
 int awaitFrame()
 {
     uint16_t scanAttempts = 400;
-    resetPayload();
+    resetSerialFrame(&frame);
     serialFlush(&handle);
     while (readFrame() != READ_STATUS_READY)
     {
@@ -174,7 +158,10 @@ int awaitEXGChannelData(uint8_t channelIndex, bool requireValues)
     if (awaitFrame()) return EXIT_FAILURE;
     if (!requireValues) return EXIT_SUCCESS;
     
-    if (payload[1 + 2 * channelIndex] || payload[2 + 2 * channelIndex]) return EXIT_SUCCESS;
+    if (
+        frame.buffer[1 + 2 * channelIndex] ||
+        frame.buffer[2 + 2 * channelIndex]
+    ) return EXIT_SUCCESS;
     return EXIT_FAILURE;
 }
 
@@ -252,11 +239,13 @@ void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config)
         exit(EXIT_SUCCESS);
     }
 
-    payloadLength = boardType == NEUROPAWN_BOARD_IMU
+    uint8_t payloadLength = boardType == NEUROPAWN_BOARD_IMU
         ? NEUROPAWN_IMU_PAYLOAD_LEN
         : NEUROPAWN_EEG_PAYLOAD_LEN;
     const char * typeString = (boardType == NEUROPAWN_BOARD_IMU) ? "IMU" : "non-IMU";
     printf("neuropawn: connected on %s (%s board)\n", port, typeString);
+
+    frame = createSerialFrame(frameBuffer, payloadLength);
 
     printf("neuropawn: configuring channels (gain %u)...\n", config.gain);
     configureChannels(config);
@@ -264,7 +253,7 @@ void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config)
 
 void resetNeuropawnEEGSource()
 {
-    resetPayload();
+    resetSerialFrame(&frame);
     serialFlush(&handle);
 }
 
@@ -273,7 +262,7 @@ void updateNeuropawnEEGSource()
     if (readFrame() != READ_STATUS_READY) return;
     if (validateEXGFrame() != EXG_STATUS_VALID)
     {
-        resetPayload();
+        resetSerialFrame(&frame);
         return;
     }
 
@@ -281,7 +270,10 @@ void updateNeuropawnEEGSource()
     uint64_t timestamp = getCurrentMicrosecondTimestamp();
     in_push_signal(&tbciInputs, samples, timestamp, sampleIndex++);
 
-    resetPayload();
+    resetSerialFrame(&frame);
 }
 
-void disconnectNeuropawnEEGSource() { serialClose(&handle); }
+void closeNeuropawnEEGSource() { serialClose(&handle); }
+
+uint8_t getNeuropawnEEGSourceChannelCount() { return NEUROPAWN_EEG_CHANNEL_COUNT; }
+uint32_t getNeuropawnEEGSourceSampleRate() { return NEUROPAWN_SAMPLE_RATE; }

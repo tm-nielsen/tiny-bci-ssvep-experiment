@@ -11,13 +11,13 @@
 int serialOpen(SerialHandle *handle, const char *port, uint32_t readTimeout)
 {
     if (access(port, F_OK) != 0) {
-        fprintf(stderr, "Port %s does not exist\n", port);
+        fprintf(stderr, "Error: Port %s does not exist\n", port);
         return EXIT_FAILURE;
     }
 
     *handle = open(port, O_RDWR | O_NOCTTY | O_NONBLOCK);
     if (*handle == INVALID_HANDLE_VALUE) {
-        fprintf(stderr, "neuropawn: cannot open %s — %s (errno=%d)\n",
+        fprintf(stderr, "Error: Cannot open %s — %s (errno=%d)\n",
                 port, strerror(errno), errno);
         return EXIT_FAILURE;
     }
@@ -51,6 +51,12 @@ int serialWrite(SerialHandle *handle, uint8_t *buffer, size_t bufferLength)
 
 int serialRead(SerialHandle *handle, uint8_t *buffer, size_t bufferLength)
 {
+    if (*handle == INVALID_HANDLE_VALUE)
+    {
+        fprintf(stderr, "Error: Attempted to read from invalid serial handle");
+        return 0;
+    }
+
     fd_set readfds;
     FD_ZERO(&readfds);
     FD_SET(*handle, &readfds);

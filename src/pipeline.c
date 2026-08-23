@@ -1,5 +1,5 @@
 # include "pipeline.h"
-# include "data/trigger_source.h"
+# include "triggers.h"
 
 void initializeTinyBCIPipelineStorage(uint8_t, uint32_t);
 void setTinyBCIPipelineConfiguration(uint8_t, float);

@@ -1,4 +1,4 @@
-# include "data/trigger_source.h"
+# include "triggers.h"
 
 # ifdef USE_LSL_TIMESTAMPS
 #   include "lsl_c.h"
