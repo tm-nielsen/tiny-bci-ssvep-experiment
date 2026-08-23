@@ -2,24 +2,15 @@
 # include "lsl/helpers.h"
 
 static LSLDataSource dataSource;
-static TriggerCallback triggerCallback = NULL;
 
-bool tryConnectLslTriggerSource(TriggerCallback callback)
+void initializeLslTriggerSource(TriggerCallback callback)
 {
-    triggerCallback = callback;
-    return tryConnectLSLDataSource(&dataSource, TRIGGER_STREAM_PREDICATE);
+    dataSource = createLSLDataSource(TRIGGER_STREAM_PREDICATE);
+    setLSLDataSourceCallback(&dataSource, (void (*)(void*))callback);
 }
 
-void updateLslTriggerSource()
-{
-    if (pollLSLDataSource(&dataSource))
-    {
-        int16_t sample = *(int16_t*)(dataSource.sampleBuffer);
-        triggerCallback(sample);
-    }
-}
+void updateLslTriggerSource() { pollLSLDataSource(&dataSource); }
+void closeLslTriggerSource() { closeLSLDataSource(&dataSource); }
 
-void closeLslTriggerSource()
-{
-    closeLSLDataSource(&dataSource);
-}
+bool tryConnectLslTriggerSource() { return tryConnectLSLDataSource(&dataSource); }
+bool isLslTriggerSourceConnected() { return dataSource.isConnected; }

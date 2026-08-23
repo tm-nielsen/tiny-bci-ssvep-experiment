@@ -13,18 +13,30 @@ lsl_outlet openIrregularRateLslOutlet(
 void pushLslSample(lsl_outlet outlet, void *sample);
 void closeLslOutlet(lsl_outlet *outlet);
 
-lsl_inlet connectLslInlet(const char* predicate);
+lsl_inlet connectAndOpenLslInlet(lsl_streaminfo targetStream);
 void closeLslInlet(lsl_inlet *inlet);
+
+lsl_continuous_resolver createLslResolver(const char* predicate);
+void closeLslResolver(lsl_continuous_resolver *resolver);
 
 typedef struct {
     lsl_inlet inlet;
+    lsl_continuous_resolver streamResolver;
+    bool isConnected;
+
     void *sampleBuffer;
+    void (*sampleCallback)(void*);
+
     int32_t sampleBufferLength;
     bool bufferMemoryAllocated;
 } LSLDataSource;
 
-bool tryConnectLSLDataSource(LSLDataSource *dataSource, const char* streamResolutionPredicate);
+LSLDataSource createLSLDataSource(const char* streamResolutionPredicate);
+bool tryConnectLSLDataSource(LSLDataSource *source);
 bool pollLSLDataSource(LSLDataSource *source);
 void closeLSLDataSource(LSLDataSource *source);
+
+bool isLSLDataSourceConnected(LSLDataSource *source);
+void setLSLDataSourceCallback(LSLDataSource *source, void (*callback)(void*));
 
 # endif

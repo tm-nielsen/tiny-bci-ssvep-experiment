@@ -14,8 +14,11 @@ void closeLslTriggerOutlet();
 
 typedef void (*TriggerCallback)(uint16_t value);
 
-bool tryConnectLslTriggerSource(TriggerCallback callback);
+void initializeLslTriggerSource(TriggerCallback callback);
 void updateLslTriggerSource();
 void closeLslTriggerSource();
+
+bool tryConnectLslTriggerSource();
+bool isLslTriggerSourceConnected();
 
 # endif

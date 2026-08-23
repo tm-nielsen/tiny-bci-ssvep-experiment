@@ -3,9 +3,9 @@
 
 static LSLDataSource dataSource;
 
-bool tryConnectLslInferenceSource()
+void initializeLslInferenceSource()
 {
-    return tryConnectLSLDataSource(&dataSource, INFERENCE_STREAM_PREDICATE);
+    dataSource = createLSLDataSource(INFERENCE_STREAM_PREDICATE);
 }
 
 bool pollLslInferenceSource(TinyBCIInference *out, uint64_t *microsecondTimestamp)
@@ -28,7 +28,7 @@ bool pollLslInferenceSource(TinyBCIInference *out, uint64_t *microsecondTimestam
     return false;
 }
 
-void closeLslInferenceSource()
-{
-    closeLSLDataSource(&dataSource);
-}
+void closeLslInferenceSource() { closeLSLDataSource(&dataSource); }
+
+bool tryConnectLslInferenceSource() { return tryConnectLSLDataSource(&dataSource); }
+bool isLslInferenceSourceConnected() { return dataSource.isConnected; }

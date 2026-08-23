@@ -1,49 +1,61 @@
 # include "lsl/helpers.h"
 # include "lsl/constants.h"
 
-bool tryConnectLSLDataSource(LSLDataSource *dataSource, const char* streamResolutionPredicate)
+void connectLSLDataSource(LSLDataSource *source, lsl_streaminfo targetStream)
 {
-    lsl_inlet inlet = connectLslInlet(streamResolutionPredicate);
-    if (inlet == NULL) return false;
+    source->inlet = connectAndOpenLslInlet(targetStream);
+    source->isConnected = true;
 
-    int32_t infoError = 0;
-    lsl_streaminfo inletInfo = lsl_get_fullinfo(inlet, LSL_SCAN_TIMEOUT, &infoError);
+    int32_t bufferLength = lsl_get_sample_bytes(targetStream);
+    source->sampleBuffer = malloc(bufferLength);
+    source->sampleBufferLength = bufferLength;
+    source->bufferMemoryAllocated = true;
+}
 
-    if (infoError != lsl_no_error)
+bool tryConnectLSLDataSource(LSLDataSource *source)
+{
+    if (source->streamResolver == NULL) return false;
+    if (source->isConnected) return true;
+
+    lsl_streaminfo scanResult;
+    if (lsl_resolver_results(source->streamResolver, &scanResult, 1))
     {
-        fprintf(stderr, "Failed to get LSL stream info");
-        lsl_destroy_inlet(inlet);
-        return false;
+        connectLSLDataSource(source, scanResult);
+        lsl_destroy_streaminfo(scanResult);
+        return true;
     }
+    return false;
+}
 
-    int32_t bufferLength = lsl_get_sample_bytes(inletInfo);
-    lsl_destroy_streaminfo(inletInfo);
-
-    closeLSLDataSource(dataSource);
-    *dataSource = (LSLDataSource)
+LSLDataSource createLSLDataSource(const char* streamResolutionPredicate)
+{
+    LSLDataSource dataSource = (LSLDataSource)
     {
-        .inlet = inlet,
-        .sampleBuffer = malloc(bufferLength),
-        .sampleBufferLength = bufferLength,
-        .bufferMemoryAllocated = true
+        .inlet = NULL,
+        .streamResolver = createLslResolver(streamResolutionPredicate),
+        .isConnected = false,
+
+        .sampleBuffer = NULL,
+        .sampleCallback = NULL,
+
+        .sampleBufferLength = 0,
+        .bufferMemoryAllocated = false
     };
-    return true;
+    tryConnectLSLDataSource(&dataSource);
+
+    return dataSource;
 }
 
 bool pollLSLDataSource(LSLDataSource *source)
 {
     if (source == NULL)
     {
-        fprintf(stderr, "Error: Attempted to poll a null data source\n");
-        return false;
+        fprintf(stderr, "Error: Can't update a null data source\n");
+        exit(EXIT_FAILURE);
     }
-    if (source->inlet == NULL)
+    if (!source->isConnected)
     {
-        fprintf(stderr,
-            "Error: Attempted to poll a data source "
-            "without a valid inlet\n"
-        );
-        return false;
+        if (!tryConnectLSLDataSource(source)) return false;
     }
 
     int32_t pullError = 0;
@@ -59,7 +71,12 @@ bool pollLSLDataSource(LSLDataSource *source)
         exit(EXIT_SUCCESS);
     }
 
-    return lslTimestamp > 0.0;
+    bool samplePulled = lslTimestamp > 0.0;
+    if (samplePulled && source->sampleCallback != NULL)
+    {
+        source->sampleCallback(source->sampleBuffer);
+    }
+    return samplePulled;
 }
 
 void closeLSLDataSource(LSLDataSource *source)
@@ -68,7 +85,21 @@ void closeLSLDataSource(LSLDataSource *source)
     if (source->bufferMemoryAllocated)
     {
         free(source->sampleBuffer);
+        source->sampleBuffer = NULL;
         source->bufferMemoryAllocated = false;
+        source->sampleBufferLength = 0;
     }
+    closeLslResolver(&(source->streamResolver));
     closeLslInlet(&(source->inlet));
+    source->isConnected = false;
+}
+
+bool isLSLDataSourceConnected(LSLDataSource *source)
+{
+    return source->isConnected && source->inlet != NULL;
+}
+
+void setLSLDataSourceCallback(LSLDataSource *source, void (*callback)(void*))
+{
+    source->sampleCallback = callback;
 }
