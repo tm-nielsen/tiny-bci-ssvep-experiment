@@ -34,8 +34,8 @@ void onAllTrialsCompleted()
 
 void cleanUp()
 {
-    closeLslTriggerOutlet();
     closeLslInferenceSource();
+    closeLslTriggerOutlet();
     stopPresentation();
 }
 
@@ -97,6 +97,12 @@ int main(void)
         if (allTrialsCompleted)
         {
             drawMessageScreen("Experiment Complete");
+            continue;
+        }
+
+        if (!isLslInferenceSourceConnected())
+        {
+            drawMessageScreen("Connection Lost");
             continue;
         }
 

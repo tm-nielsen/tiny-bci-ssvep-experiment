@@ -33,6 +33,28 @@ static void onTriggerReceived(uint16_t code)
     currentTargetLabel = code - 1; // matches presenter's pushTrigger(target + 1)
 }
 
+// ---
+
+void cleanUp()
+{
+    cleanUpEEGSource();
+    cleanUpTinyBCIPipeline();
+    closeInferenceLogger();
+    closeLslTriggerSource();
+    closeLslInferenceOutlet();
+}
+
+void handleTriggersDisconnected()
+{
+    printf("---\nPresenter App Disconnected\n\n");
+    cleanUp();
+    printf("\npress [Enter] to quit\n");
+
+    char in;
+    scanf("%c", &in);
+    exit(EXIT_SUCCESS);
+}
+
 int main(void)
 {
     initializeEEGSource();
@@ -77,6 +99,11 @@ int main(void)
     {
         updateEEGSource();
         updateLslTriggerSource();
+        
+        if (!isLslTriggerSourceConnected())
+        {
+            handleTriggersDisconnected();
+        }
 
         if (updateTinyBCIPipeline()) break;
 
@@ -93,10 +120,6 @@ int main(void)
         }
     }
 
-    cleanUpEEGSource();
-    cleanUpTinyBCIPipeline();
-    closeLslTriggerSource();
-    closeLslInferenceOutlet();
-    closeInferenceLogger();
+    cleanUp();
     return EXIT_SUCCESS;
 }

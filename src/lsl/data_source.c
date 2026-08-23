@@ -54,12 +54,20 @@ bool pollLSLDataSource(LSLDataSource *source)
 {
     if (source == NULL)
     {
-        fprintf(stderr, "Error: Can't update a null data source\n");
+        fprintf(stderr, "Error: Can't poll a null data source\n");
         exit(EXIT_FAILURE);
     }
     if (!source->isConnected)
     {
-        if (!tryConnectLSLDataSource(source)) return false;
+        if (source->streamResolver != NULL)
+        {
+            if (!tryConnectLSLDataSource(source)) return false;
+        }
+        else
+        {
+            fprintf(stderr, "Error: Can't poll a disconnected data source\n");
+            return false;
+        }
     }
 
     int32_t pullError = 0;
@@ -70,9 +78,12 @@ bool pollLSLDataSource(LSLDataSource *source)
 
     if (pullError != lsl_no_error)
     {
+        fprintf(
+            stderr, "Pull error %u in LSL data source: %s\n",
+            pullError, lsl_last_error()
+        );
         closeLSLDataSource(source);
-        printf("Pull error %u in LSL data source\n", pullError);
-        exit(EXIT_SUCCESS);
+        return false;
     }
 
     bool samplePulled = lslTimestamp > 0.0;
