@@ -23,7 +23,7 @@ typedef struct {
     bool bufferMemoryAllocated;
 } LSLDataSource;
 
-LSLDataSource createAndConnectLSLDataSource(const char* streamResolutionPredicate);
+bool tryConnectLSLDataSource(LSLDataSource *dataSource, const char* streamResolutionPredicate);
 bool pollLSLDataSource(LSLDataSource *source);
 void closeLSLDataSource(LSLDataSource *source);
 

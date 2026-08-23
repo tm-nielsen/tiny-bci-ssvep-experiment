@@ -1,9 +1,10 @@
 # include "lsl/helpers.h"
 # include "lsl/constants.h"
 
-LSLDataSource createAndConnectLSLDataSource(const char* streamResolutionPredicate)
+bool tryConnectLSLDataSource(LSLDataSource *dataSource, const char* streamResolutionPredicate)
 {
     lsl_inlet inlet = connectLslInlet(streamResolutionPredicate);
+    if (inlet == NULL) return false;
 
     int32_t infoError = 0;
     lsl_streaminfo inletInfo = lsl_get_fullinfo(inlet, LSL_SCAN_TIMEOUT, &infoError);
@@ -12,19 +13,21 @@ LSLDataSource createAndConnectLSLDataSource(const char* streamResolutionPredicat
     {
         fprintf(stderr, "Failed to get LSL stream info");
         lsl_destroy_inlet(inlet);
-        exit(EXIT_SUCCESS);
+        return false;
     }
 
     int32_t bufferLength = lsl_get_sample_bytes(inletInfo);
     lsl_destroy_streaminfo(inletInfo);
 
-    return (LSLDataSource)
+    closeLSLDataSource(dataSource);
+    *dataSource = (LSLDataSource)
     {
         .inlet = inlet,
         .sampleBuffer = malloc(bufferLength),
         .sampleBufferLength = bufferLength,
         .bufferMemoryAllocated = true
     };
+    return true;
 }
 
 bool pollLSLDataSource(LSLDataSource *source)

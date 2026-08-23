@@ -23,7 +23,7 @@ void openLslInferenceOutlet(const char *streamName);
 void pushLslInference(const TinyBCIInference *inference, uint64_t microsecondTimestamp);
 void closeLslInferenceOutlet();
 
-void connectLslInferenceSource();
+bool tryConnectLslInferenceSource();
 bool pollLslInferenceSource(TinyBCIInference *out, uint64_t *microsecondTimestamp);
 void closeLslInferenceSource();
 

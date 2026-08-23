@@ -19,7 +19,7 @@ static uint32_t sampleIndex = 0;
 
 void connectLslEEGSource()
 {
-    dataSource = createAndConnectLSLDataSource(EEG_STREAM_PREDICATE);
+    if (!tryConnectLSLDataSource(&dataSource, EEG_STREAM_PREDICATE)) exit(EXIT_SUCCESS);
 
     int32_t infoError = 0;
     lsl_streaminfo inletInfo = lsl_get_fullinfo(

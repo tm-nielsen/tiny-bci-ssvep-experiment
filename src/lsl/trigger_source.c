@@ -4,10 +4,10 @@
 static LSLDataSource dataSource;
 static TriggerCallback triggerCallback = NULL;
 
-void connectLslTriggerSource(TriggerCallback callback)
+bool tryConnectLslTriggerSource(TriggerCallback callback)
 {
-    dataSource = createAndConnectLSLDataSource(TRIGGER_STREAM_PREDICATE);
     triggerCallback = callback;
+    return tryConnectLSLDataSource(&dataSource, TRIGGER_STREAM_PREDICATE);
 }
 
 void updateLslTriggerSource()

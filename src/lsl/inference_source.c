@@ -3,9 +3,9 @@
 
 static LSLDataSource dataSource;
 
-void connectLslInferenceSource()
+bool tryConnectLslInferenceSource()
 {
-    dataSource = createAndConnectLSLDataSource(INFERENCE_STREAM_PREDICATE);
+    return tryConnectLSLDataSource(&dataSource, INFERENCE_STREAM_PREDICATE);
 }
 
 bool pollLslInferenceSource(TinyBCIInference *out, uint64_t *microsecondTimestamp)

@@ -15,13 +15,13 @@ lsl_inlet connectLslInlet(const char* predicate)
     {
         fprintf(stderr, "Failed to locate LSL Source ");
         fprintf(stderr, "matching '%s'\n", predicate);
-        exit(EXIT_SUCCESS);
+        return NULL;
     }
     else if (resultCount > 1)
     {
         fprintf(stderr, "Cannot choose between 2 or more ");
         fprintf(stderr, "LSL streams matching '%s'\n", predicate);
-        exit(EXIT_SUCCESS);
+        return NULL;
     }
 
     lsl_streaminfo targetStream = scanResults[0];
@@ -35,7 +35,7 @@ lsl_inlet connectLslInlet(const char* predicate)
     if (inlet == NULL)
     {
         fprintf(stderr, "Failed to create LSL inlet\n");
-        exit(EXIT_SUCCESS);
+        return NULL;
     }
 
     int32_t openError = 0;
@@ -45,7 +45,7 @@ lsl_inlet connectLslInlet(const char* predicate)
     {
         lsl_destroy_inlet(inlet);
         fprintf(stderr, "Failed to connect to LSL stream\n");
-        exit(EXIT_SUCCESS);
+        return NULL;
     }
 
     return inlet;
