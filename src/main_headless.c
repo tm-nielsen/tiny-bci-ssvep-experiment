@@ -36,7 +36,23 @@ static void onTriggerReceived(uint16_t code)
 int main(void)
 {
     initializeEEGSource();
-    openLslInferenceOutlet(INFERENCE_STREAM_NAME_DEFAULT);
+    initializeLslTriggerSource(&onTriggerReceived);
+
+    printf("Searching for Presenter App...\n"); 
+    MicrosecondTimer connectionAttemptTimer = createMicrosecondTimer(CONNECTION_ATTEMPT_INTERVAL);
+    resetMicrosecondTimer(&connectionAttemptTimer);
+
+    while (!isLslTriggerSourceConnected())
+    {
+        while (!checkMicrosecondTimer(&connectionAttemptTimer))
+        {
+            updateEEGSource();
+            updateTinyBCIPipeline();
+        }
+
+        tryConnectLslTriggerSource();
+    }
+    printf("\nConnected to presenter app\n");
 
     uint8_t channelCount = getChannelCount();
     uint32_t sampleRate = getSampleRate();
@@ -45,6 +61,7 @@ int main(void)
 
     if (startTinyBCIPipeline()) return EXIT_FAILURE;
     printf("---\nTiny BCI Pipeline Running\n\n");
+    printf("Waiting for filter to settle...\n");
 
     MicrosecondTimer stabilizationTimer = createMicrosecondTimer(FILTER_STABILIZATION_DELAY);
     resetMicrosecondTimer(&stabilizationTimer);
@@ -54,19 +71,7 @@ int main(void)
     }
     printf("Filter settled.\n");
 
-    MicrosecondTimer connectionAttemptTimer = createMicrosecondTimer(CONNECTION_ATTEMPT_INTERVAL);
-    while (true)
-    {
-        if (tryConnectLslTriggerSource(onTriggerReceived)) break;
-        else printf("Failed ot connect to presenter app, retrying...\n");
-
-        while (checkMicrosecondTimer(&connectionAttemptTimer))
-        {
-            updateEEGSource();
-            updateTinyBCIPipeline();
-        }
-    }
-    printf("\nConnected to presenter app\n");
+    openLslInferenceOutlet();
 
     while (true)
     {

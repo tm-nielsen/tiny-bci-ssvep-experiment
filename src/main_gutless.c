@@ -64,22 +64,22 @@ int main(void)
     setPresentationTarget(0);
     disableTextureStimulus();
 
-    openLslTriggerOutlet(TRIGGER_STREAM_NAME_DEFAULT);
+    openLslTriggerOutlet();
+    initializeLslInferenceSource();
 
     MicrosecondTimer connectionAttemptTimer = createMicrosecondTimer(CONNECTION_ATTEMPT_INTERVAL);
     resetMicrosecondTimer(&connectionAttemptTimer);
-    while(true)
-    {
-        drawMessageScreen("Connecting to Runtime...");
-        if (tryConnectLslInferenceSource()) break;
 
-        while (checkMicrosecondTimer(&connectionAttemptTimer))
+    while(!isLslInferenceSourceConnected())
+    {
+        while (!checkMicrosecondTimer(&connectionAttemptTimer))
         {
+            drawMessageScreen("Searching for BCI Engine...");
             closeIfPromptedTo();
         }
-    }
 
-    // set connection status
+        tryConnectLslInferenceSource();
+    }
 
     while (!IsKeyPressed(KEY_SPACE))
     {
