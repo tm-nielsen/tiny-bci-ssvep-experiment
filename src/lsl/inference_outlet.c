@@ -13,7 +13,7 @@ void openLslInferenceOutlet(const char* streamName)
     );
 }
 
-void pushLslInference(const TinyBCIInference *inference, uint64_t microsecondTimestamp)
+void pushLslInference(const TinyBCIInference *inference, uint64_t microsecondTimestamp, uint16_t targetLabel)
 {
     double sample[INFERENCE_STREAM_CHANNEL_COUNT];
     sample[0] = (double)inference->predictedLabel;
@@ -22,7 +22,7 @@ void pushLslInference(const TinyBCIInference *inference, uint64_t microsecondTim
     {
         sample[2 + i] = (double)inference->confidences[i];
     }
-    sample[2 + N_FREQS] = (double)inference->targetLabel;
+    sample[2 + N_FREQS] = (double)targetLabel;
     sample[3 + N_FREQS] = (double)microsecondTimestamp;
 
     pushLslSample(outlet, sample);

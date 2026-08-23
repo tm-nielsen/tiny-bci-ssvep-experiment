@@ -20,7 +20,7 @@
 # define INFERENCE_STREAM_PREDICATE "type='" INFERENCE_STREAM_TYPE "'"
 
 void openLslInferenceOutlet(const char *streamName);
-void pushLslInference(const TinyBCIInference *inference, uint64_t microsecondTimestamp);
+void pushLslInference(const TinyBCIInference *inference, uint64_t microsecondTimestamp, uint16_t targetLabel);
 void closeLslInferenceOutlet();
 
 bool tryConnectLslInferenceSource();

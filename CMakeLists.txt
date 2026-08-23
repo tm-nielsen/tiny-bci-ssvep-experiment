@@ -42,3 +42,8 @@ target_link_libraries(${PROJECT_NAME} raylib)
 add_dependencies(${PROJECT_NAME} copy_assets)
 
 add_target("headless_${PROJECT_NAME}" src/main_headless.c)
+
+set(PRESENTATION_TARGET "gutless_${PROJECT_NAME}")
+add_target(${PRESENTATION_TARGET} src/main_gutless.c src/presentation.c)
+target_link_libraries(${PRESENTATION_TARGET} raylib)
+add_dependencies(${PRESENTATION_TARGET} copy_assets)
