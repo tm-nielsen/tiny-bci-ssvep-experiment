@@ -189,23 +189,37 @@ void drawLetterboxedTarget()
 
 // ---
 
-void drawMessageScreen(const char* message)
+void drawMessage(const char *message)
+{
+    int textWidth = MeasureText(message, MESSAGE_SCREEN_FONT_SIZE);
+    DrawText(
+        message,
+        (RENDER_WIDTH - textWidth) / 2, RENDER_HEIGHT / 2,
+        MESSAGE_SCREEN_FONT_SIZE, STIMULUS_BACKGROUND_COLOUR
+    );
+}
+
+void drawPreparationScreen(const char *message)
 {
     BeginTextureMode(renderTarget);
         ClearBackground(BACKGROUND_COLOUR);
-
+        
         for (uint16_t i = 0; i < frequencyCount; i++)
         {
             DrawRectangleRec(getGridRect(i, -STIMULUS_BREAK_PADDING), STIMULUS_BACKGROUND_COLOUR);
         }
         drawTargetIndicator();
+        drawMessage(message);
+    EndTextureMode();
 
-        int textWidth = MeasureText(message, MESSAGE_SCREEN_FONT_SIZE);
-        DrawText(
-            message,
-            (RENDER_WIDTH - textWidth) / 2, RENDER_HEIGHT / 2,
-            MESSAGE_SCREEN_FONT_SIZE, STIMULUS_BACKGROUND_COLOUR
-        );
+    drawLetterboxedTarget();
+}
+
+void drawMessageScreen(const char *message)
+{
+    BeginTextureMode(renderTarget);
+        ClearBackground(MESSAGE_SCREEN_BACKGROUND_COLOUR);
+        drawMessage(message);
     EndTextureMode();
 
     drawLetterboxedTarget();

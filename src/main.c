@@ -62,9 +62,8 @@ void closeIfPromptedTo()
     }
 }
 
-void updatePipelineWithUserPrompt(const char* message)
+void updatePipeline()
 {
-    drawMessageScreen(message);
     updateEEGSource();
     updateTinyBCIPipeline();
     closeIfPromptedTo();
@@ -107,13 +106,15 @@ int main(int argc, char *argv[])
     resetMicrosecondTimer(&stabilizationTimer);
     while (!checkMicrosecondTimer(&stabilizationTimer))
     {
-        updatePipelineWithUserPrompt("Awaiting Filter Stabilization...");
+        drawMessageScreen("Awaiting Filter Stabilization...");
+        updatePipeline();
     }
     printf("Filter settled.\n");
 
     while (!IsKeyPressed(KEY_SPACE))
     {
-        updatePipelineWithUserPrompt("Press Spacebar to Start");
+        drawPreparationScreen("Press Spacebar to Start");
+        updatePipeline();
     }
 
     while (!WindowShouldClose())

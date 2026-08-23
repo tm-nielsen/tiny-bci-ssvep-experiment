@@ -7,6 +7,7 @@
 # define MINIMUM_WINDOW_HEIGHT 600
 
 # define MESSAGE_SCREEN_FONT_SIZE 48
+# define MESSAGE_SCREEN_BACKGROUND_COLOUR (Color){48, 48, 64, 255}
 
 # define ROW_COUNT 2
 # define MARGIN_TOP 100
@@ -36,6 +37,7 @@
 # define TAU 6.28318530717958647692528676655900576839433879875021
 
 void initializePresentation(const float *, uint16_t);
+void drawPreparationScreen(const char*);
 void drawMessageScreen(const char*);
 void drawStimulusScreen();
 void stopPresentation();

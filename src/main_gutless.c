@@ -89,7 +89,7 @@ int main(void)
 
     while (!IsKeyPressed(KEY_SPACE))
     {
-        drawMessageScreen("Press Spacebar to Start");
+        drawPreparationScreen("Press Spacebar to Start");
         closeIfPromptedTo();
     }
 
