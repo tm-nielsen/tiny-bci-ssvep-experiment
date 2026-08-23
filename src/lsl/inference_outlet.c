@@ -32,3 +32,8 @@ void closeLslInferenceOutlet()
 {
     closeLslOutlet(&outlet);
 }
+
+bool doesLslInferenceOutletHaveConsumers()
+{
+    return lsl_have_consumers(outlet);
+}

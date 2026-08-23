@@ -65,6 +65,12 @@ int main(void)
     disableTextureStimulus();
 
     openLslTriggerOutlet();
+    while (!doesLslTriggerOutletHaveConsumers())
+    {
+        drawMessageScreen("Searching for BCI Engine...");
+        closeIfPromptedTo();
+    }
+
     initializeLslInferenceSource();
 
     MicrosecondTimer connectionAttemptTimer = createMicrosecondTimer(CONNECTION_ATTEMPT_INTERVAL);
@@ -74,7 +80,7 @@ int main(void)
     {
         while (!checkMicrosecondTimer(&connectionAttemptTimer))
         {
-            drawMessageScreen("Searching for BCI Engine...");
+            drawMessageScreen("Waiting For BCI Engine...");
             closeIfPromptedTo();
         }
 

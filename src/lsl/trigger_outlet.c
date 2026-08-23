@@ -21,3 +21,8 @@ void pushLslTrigger(uint16_t value)
 void closeLslTriggerOutlet() {
     closeLslOutlet(&outlet);
 }
+
+bool doesLslTriggerOutletHaveConsumers()
+{
+    return lsl_have_consumers(outlet);
+}

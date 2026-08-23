@@ -23,6 +23,8 @@ void openLslInferenceOutlet();
 void pushLslInference(const TinyBCIInference *inference, uint64_t microsecondTimestamp, uint16_t targetLabel);
 void closeLslInferenceOutlet();
 
+bool doesLslInferenceOutletHaveConsumers();
+
 void initializeLslInferenceSource();
 bool pollLslInferenceSource(TinyBCIInference *out, uint64_t *microsecondTimestamp);
 void closeLslInferenceSource();

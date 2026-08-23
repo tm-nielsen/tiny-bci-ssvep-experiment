@@ -12,6 +12,8 @@ void openLslTriggerOutlet();
 void pushLslTrigger(uint16_t value);
 void closeLslTriggerOutlet();
 
+bool doesLslTriggerOutletHaveConsumers();
+
 typedef void (*TriggerCallback)(uint16_t value);
 
 void initializeLslTriggerSource(TriggerCallback callback);
