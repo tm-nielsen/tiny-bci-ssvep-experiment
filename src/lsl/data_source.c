@@ -14,7 +14,11 @@ void connectLSLDataSource(LSLDataSource *source, lsl_streaminfo targetStream)
 
 bool tryConnectLSLDataSource(LSLDataSource *source)
 {
-    if (source->streamResolver == NULL) return false;
+    if (source->streamResolver == NULL)
+    {
+        fprintf(stderr, "Error: Can't connect uninitialized data source\n");
+        return false;
+    }
     if (source->isConnected) return true;
 
     lsl_streaminfo scanResult;
