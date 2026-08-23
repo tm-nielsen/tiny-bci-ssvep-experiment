@@ -4,10 +4,10 @@
 
 static lsl_outlet outlet = NULL;
 
-void openLslTriggerOutlet(const char *streamName)
+void openLslTriggerOutlet()
 {
     outlet = openIrregularRateLslOutlet(
-        streamName, TRIGGER_STREAM_TYPE,
+        TRIGGER_STREAM_NAME, TRIGGER_STREAM_TYPE,
         1, cft_int16, TRIGGER_STREAM_SOURCE_ID
     );
 }

@@ -4,10 +4,10 @@
 
 static lsl_outlet outlet = NULL;
 
-void openLslInferenceOutlet(const char* streamName)
+void openLslInferenceOutlet()
 {
     outlet = openIrregularRateLslOutlet(
-        streamName, INFERENCE_STREAM_TYPE,
+        INFERENCE_STREAM_NAME, INFERENCE_STREAM_TYPE,
         INFERENCE_STREAM_CHANNEL_COUNT,
         cft_double64, INFERENCE_STREAM_SOURCE_ID
     );
