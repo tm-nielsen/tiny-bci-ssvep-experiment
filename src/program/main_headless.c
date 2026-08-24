@@ -51,13 +51,14 @@ int main(void)
     initializeEEGSource();
     initializeLslTriggerSource(&onTriggerReceived);
 
-    printf("Searching for Presenter App...\n");
+    printf("---\nSearching for Presenter App...\n");
     awaitConnection(
         &isLslTriggerSourceConnected,
         &updateProgram,
         &tryConnectLslTriggerSource
     ); 
-    printf("\nConnected to presenter app\n");
+    printf("Connected to presenter app\n");
+    printf("---\n");
 
     initializeEEGSourceAndPipeline();
     awaitFilterStabilization(&cleanUp);
