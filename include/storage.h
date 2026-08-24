@@ -9,9 +9,11 @@
 # include "nodes/decoder/tbci_cca_model.h"
 # include "nodes/decoder/tbci_label_encoder_node.h"
 # include "nodes/decoder/tbci_trial_averaging_node.h"
+# include "nodes/preprocessing/tbci_resample_node.h"
+# include "nodes/preprocessing/tbci_channels_pick_node.h"
 
 # define SIG_CAPACITY 1024
-# define TRIG_CAPACITY 32
+# define TRIG_CAPACITY 8
 # define EPOCH_CAPACITY 8
 
 # define WINDOW_LENGTH_MS 2000
@@ -19,7 +21,7 @@
 
 // ---
 
-void allocateDynamicStorage(uint8_t, uint32_t);
+void allocateDynamicStorage(uint8_t, uint8_t, uint32_t);
 void deallocateDynamicStorage();
 
 // ---
@@ -63,6 +65,10 @@ extern size_t referenceSignalsCapacity;
 extern float *refSignals;
 
 // Nodes
+extern TBCI_ChanPickNode chanpick_node;
+extern TBCI_ChanPickConfig chanpick_config;
+extern TBCI_ResampleNode res_node;
+extern TBCI_ResampleConfig res_config;
 extern TBCI_NotchNode notchNode;
 extern TBCI_NotchConfig notchConfiguration;
 extern TBCI_BandpassNode bandpassNode;

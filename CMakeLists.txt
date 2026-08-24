@@ -6,7 +6,7 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 set(SOURCES
-    src/main.c
+    src/demo/standalone_unicorn.c
     src/trial_conductor.c
     src/microsecond_timer.c
     src/storage.c
@@ -46,7 +46,7 @@ endif()
 FetchContent_Declare(
         tiny_bci
         GIT_REPOSITORY ${TINY_BCI_REPO_URL}
-        GIT_TAG 1590909aaba5bdf6d082996b6a4ba9559a55afcc
+        GIT_TAG 65dfc5dd45f486ac9f83a2f6851ce57e6f7e620d
 )
 FetchContent_MakeAvailable(tiny_bci)
 target_link_libraries(${PROJECT_NAME} tiny_bci)

@@ -49,8 +49,11 @@ void onAllTrialsCompleted()
 int main(int argc, char *argv[])
 {
     const float frequencies[N_FREQS] = {9.0f, 7.5f, 8.0f, 7.0f, 11.0f, 8.57f};
+    const int selectedChannelCount = 8;
+    const int selectedChannels[8] = {0, 1, 2, 3, 4, 5, 6, 7};
+    const float targetSampleRate = 250.0f;
 
-    const uint16_t stimulusRounds = 4;
+    const uint16_t stimulusRounds = 1;
 
     const float filterStabilizationDelay = 5.0f;
     const float stimulusDuration = 6.0f;
@@ -74,7 +77,7 @@ int main(int argc, char *argv[])
 
     uint8_t channelCount = getChannelCount();
     uint32_t sampleRate = getSampleRate();
-    if (initializeTinyBCIPipeline(frequencies, channelCount, sampleRate)) return EXIT_FAILURE;
+    if (initializeTinyBCIPipeline(frequencies, channelCount, selectedChannelCount, selectedChannels, sampleRate, targetSampleRate)) return EXIT_FAILURE;
 
     if (startTinyBCIPipeline()) return EXIT_FAILURE;
     printf("---\nTiny BCI Pipeline Running.\n\n");

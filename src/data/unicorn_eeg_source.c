@@ -23,6 +23,7 @@ void initializeUnicornEEGSource(const char *port)
         fprintf(stderr, "unicorn: failed to connect on %s | code: %d\n", port, s);
     }
     producer.state.timestamp_us = getCurrentMicrosecondTimestamp();
+
 }
 
 uint8_t getUnicornEEGSourceChannelCount()
