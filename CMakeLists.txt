@@ -19,6 +19,8 @@ set(SHARED_SOURCES
   src/inference_logger.c
 
   src/data/synthetic_eeg_source.c
+  src/data/serial_port_enumeration_unix.c
+  src/data/serial_port_enumeration_windows.c
   src/data/serial_unix.c
   src/data/serial_windows.c
   src/data/serial_utils.c
