@@ -114,7 +114,7 @@ void initializeProgram(ProgramMode mode)
 
     STANDALONE(
         initializeEEGSourceAndPipeline();
-        drawMessageScreen("Awaiting Filer Stabilization...");
+        drawMessageScreen("Awaiting Filter Stabilization...");
         awaitFilterStabilization(&cleanUpProgram);
     )
 
