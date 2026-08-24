@@ -1,0 +1,30 @@
+# pragma once
+# ifndef PROGRAM_FRAGMENTS
+# define PROGRAM_FRAGMENTS
+
+# include "pipeline.h"
+
+void initializeTrialPresentation(
+    void (*trialStartCallback)(),
+    void (*trialEndCallback)(),
+    void (*allTrialsCompletedCallback)()
+);
+
+void initializeEEGSourceAndPipeline();
+void updateEEGSourceAndPipeline(void (*cleanUpMethod)());
+void cleanUpEEGSourceAndPipeline();
+
+void awaitFilterStabilization(void (*cleanUpMethod)());
+void awaitConnection(
+    bool (*predicate)(),
+    void (*updateMethod)(),
+    void (*attemptMethod)()
+);
+
+void displayInference(TinyBCIInference inference, uint64_t timestamp);
+void printInference(TinyBCIInference inference, uint64_t timestamp);
+
+void displayMessageOrExit(const char *message, void (*cleanUpMethod)());
+void closeIfPromptedTo(void (*cleanUpMethod)());
+
+# endif

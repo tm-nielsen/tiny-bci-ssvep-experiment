@@ -18,6 +18,10 @@ set(SHARED_SOURCES
   src/triggers.c
   src/inference_logger.c
 
+  src/program/helpers.c
+  src/program/pipeline_helpers.c
+
+  src/cli/helpers.c
   src/cli/eeg_source_selection.c
   src/cli/eeg_selection_prompts.c
 
@@ -42,13 +46,13 @@ function(ADD_TARGET TARGET_NAME SOURCES)
   target_link_libraries(${TARGET_NAME} lsl)
 endfunction()
 
-add_target(${PROJECT_NAME} src/main.c src/presentation.c)
+add_target(${PROJECT_NAME}
+  src/program/main.c
+  src/presentation.c
+  src/program/presentation_helpers.c
+  src/cli/program_mode_selection.c
+)
 target_link_libraries(${PROJECT_NAME} raylib)
 add_dependencies(${PROJECT_NAME} copy_assets)
 
-add_target("headless_${PROJECT_NAME}" src/main_headless.c)
-
-set(PRESENTATION_TARGET "gutless_${PROJECT_NAME}")
-add_target(${PRESENTATION_TARGET} src/main_gutless.c src/presentation.c)
-target_link_libraries(${PRESENTATION_TARGET} raylib)
-add_dependencies(${PRESENTATION_TARGET} copy_assets)
+add_target("headless_${PROJECT_NAME}" src/program/main_headless.c)

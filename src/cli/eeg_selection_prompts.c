@@ -1,25 +1,17 @@
 # include "cli/eeg_source_selection.h"
+# include "cli/helpers.h"
 # include "data/serial_port_enumeration.h"
 
 EEGSourceType promptEEGSourceSelection()
 {
-    printf("Select EEG Source\n");
+    printf("Select EEG Source:\n");
     printf("\t%u - LSL Stream\n", LSLSource);
     printf("\t%u - Neuropawn over USB\n", NeuropawnSource);
     printf("\t%u - Unicorn over USB\n", UnicornSource);
     printf("\t%u - DSI-7 over USB\n", DSI7Source);
     printf("\t%u - Synthetic test data\n", SyntheticSource);
 
-    unsigned int selection = 0;
-    scanf("%u", &selection);
-
-    while (selection > SyntheticSource)
-    {
-        printf("invalid selection\n");
-        scanf("%u", &selection);
-    }
-
-    return (EEGSourceType)selection;
+    return (EEGSourceType)getIntegerSelection(SyntheticSource);
 }
 
 const char* promptSerialPortSelection()
@@ -34,17 +26,10 @@ const char* promptSerialPortSelection()
         {
             printf("\t%u : %s\n", i + 1, getSerialPortName(i));
         }
-        printf("Selection one of options [0-%u]\t", deviceCount + 1);
-
-        uint32_t selection;
-        scanf("%u", &selection);
+        printf("Select one of options [0-%u]\t", deviceCount + 1);
+        uint32_t selection = getIntegerSelection(deviceCount);
 
         if (selection == 0) continue;
-        if (selection > deviceCount)
-        {
-            printf("Invalid selection\n Try Again\n");
-            continue;
-        }
         return getSerialPortName(selection - 1);
     }
 }
