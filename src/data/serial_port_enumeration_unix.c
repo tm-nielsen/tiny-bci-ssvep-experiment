@@ -34,6 +34,7 @@
 */
 
 # include "data/serial_port_enumeration.h"
+# include <dirent.h>
 
 # if defined(_WIN32) || defined(_WIN64)
 # else
@@ -62,7 +63,7 @@ void appendDevices(const char * baseName)
     struct dirent * dp;
 // Enumerate devices
     DIR * dirp = opendir("/dev");
-    while ((dp = readdir(dirp)) && deviceCount < COM_MAXDEVICES) {
+    while ((dp = readdir(dirp)) && deviceCount < MAX_DEVICES) {
         if (strlen(dp->d_name) >= baseNameLength) {
             if (memcmp(baseName, dp->d_name, baseNameLength) == 0) {
                 deviceNames[deviceCount++] = (char *)strdup(dp->d_name);
@@ -82,7 +83,7 @@ uint32_t enumerateSerialPorts()
     }
     deviceCount = 0;
     for (uint8_t i = 0; i < baseNameCount; i++)
-        _AppendDevices(deviceBaseNames[i]);
+        appendDevices(deviceBaseNames[i]);
     return deviceCount;
 }
 
