@@ -140,7 +140,7 @@ void updateProgram()
     }
 
     PRESENTATION_ONLY(
-        if (!isLslInferenceSourceConnected)
+        if (!isLslInferenceSourceConnected())
         {
             drawMessageScreen("Connection Lost");
             return;
