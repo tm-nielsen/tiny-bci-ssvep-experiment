@@ -34,10 +34,10 @@
 */
 
 # include "data/serial_port_enumeration.h"
-# include <dirent.h>
 
 # if defined(_WIN32) || defined(_WIN64)
 # else
+# include <dirent.h>
 
 /** Base name for COM devices */
 # if defined(__APPLE__) && defined(__MACH__)
@@ -52,7 +52,6 @@
     const static uint8_t baseNameCount = 4;
 # endif
 
-# define MAXIMUM_KNOWN_SERIAL_DEVICES 64
 static char *deviceNames[MAXIMUM_KNOWN_SERIAL_DEVICES];
 static uint32_t deviceCount = 0;
 

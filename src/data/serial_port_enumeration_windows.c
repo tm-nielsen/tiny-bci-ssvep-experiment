@@ -37,7 +37,6 @@
 
 # if defined(_WIN32) || defined(_WIN64)
 
-# define MAXIMUM_KNOWN_SERIAL_DEVICES 64
 static int32_t enumeratedPorts[MAXIMUM_KNOWN_SERIAL_DEVICES];
 static uint32_t deviceCount = 0;
 
@@ -126,10 +125,9 @@ uint32_t enumerateSerialPorts()
     return deviceCount;
 }
 
-# define MAX_PORT_NAME_LENGTH 32
 const char* getSerialPortName(uint32_t index)
 {
-    static char name[MAX_PORT_NAME_LENGTH];
+    static char name[MAXIMUM_PORT_NAME_LENGTH];
     if (index < 0 || index >= deviceCount)
         return 0;
     sprintf(name, "COM%i", enumeratedPorts[index]);
