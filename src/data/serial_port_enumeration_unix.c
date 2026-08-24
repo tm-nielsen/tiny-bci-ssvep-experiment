@@ -52,8 +52,8 @@
     const static uint8_t baseNameCount = 4;
 # endif
 
-# define MAX_DEVICES 64
-static char *deviceNames[MAX_DEVICES];
+# define MAXIMUM_KNOWN_SERIAL_DEVICES 64
+static char *deviceNames[MAXIMUM_KNOWN_SERIAL_DEVICES];
 static uint32_t deviceCount = 0;
 
 /** Private functions */
@@ -63,7 +63,7 @@ void appendDevices(const char * baseName)
     struct dirent * dp;
 // Enumerate devices
     DIR * dirp = opendir("/dev");
-    while ((dp = readdir(dirp)) && deviceCount < MAX_DEVICES) {
+    while ((dp = readdir(dirp)) && deviceCount < MAXIMUM_KNOWN_SERIAL_DEVICES) {
         if (strlen(dp->d_name) >= baseNameLength) {
             if (memcmp(baseName, dp->d_name, baseNameLength) == 0) {
                 deviceNames[deviceCount++] = (char *)strdup(dp->d_name);

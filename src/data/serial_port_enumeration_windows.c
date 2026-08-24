@@ -37,8 +37,8 @@
 
 # if defined(_WIN32) || defined(_WIN64)
 
-# define MAX_DEVICES 64
-static int32_t enumeratedPorts[MAX_DEVICES];
+# define MAXIMUM_KNOWN_SERIAL_DEVICES 64
+static int32_t enumeratedPorts[MAXIMUM_KNOWN_SERIAL_DEVICES];
 static uint32_t deviceCount = 0;
 
 # define COM_MINDEVNAME 16384
@@ -118,7 +118,7 @@ uint32_t enumerateSerialPorts()
     int port;
     const char * nlist = findPattern(list, portNamePattern, &port);
     deviceCount = 0;
-    while(port > 0 && deviceCount < MAX_DEVICES) {
+    while(port > 0 && deviceCount < MAXIMUM_KNOWN_SERIAL_DEVICES) {
         enumeratedPorts[deviceCount++] = port;
         nlist = findPattern(nlist, portNamePattern, &port);
     }
