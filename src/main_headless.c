@@ -35,8 +35,9 @@ void handleTriggersDisconnected()
     cleanUp();
     printf("\npress [Enter] to quit\n");
 
-    char in;
-    scanf("%c", &in);
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+    getchar();
     exit(EXIT_SUCCESS);
 }
 
