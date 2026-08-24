@@ -7,7 +7,7 @@
 void awaitConnection(
     bool (*predicate)(),
     void (*updateMethod)(),
-    void (*attemptMethod)()
+    bool (*attemptMethod)()
 )
 {
     MicrosecondTimer connectionAttemptTimer =

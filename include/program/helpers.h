@@ -5,8 +5,8 @@
 # include "pipeline.h"
 
 void initializeTrialPresentation(
-    void (*trialStartCallback)(),
-    void (*trialEndCallback)(),
+    void (*trialStartCallback)(uint16_t),
+    void (*trialEndCallback)(uint16_t),
     void (*allTrialsCompletedCallback)()
 );
 
@@ -18,7 +18,7 @@ void awaitFilterStabilization(void (*cleanUpMethod)());
 void awaitConnection(
     bool (*predicate)(),
     void (*updateMethod)(),
-    void (*attemptMethod)()
+    bool (*attemptMethod)()
 );
 
 void displayInference(TinyBCIInference inference, uint64_t timestamp);

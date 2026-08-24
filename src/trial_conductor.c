@@ -28,8 +28,8 @@ void initializeTrialConductor(
     breakTimer = createMicrosecondTimer(breakDuration);
 }
 
-void setTrialStartCallback(void (*onTrialStart)) { trialStartCallback = onTrialStart; }
-void setTrialEndCallback(void (*onTrialEnd)) { trialEndCallback = onTrialEnd; }
+void setTrialStartCallback(void (*onTrialStart)(uint16_t)) { trialStartCallback = onTrialStart; }
+void setTrialEndCallback(void (*onTrialEnd)(uint16_t)) { trialEndCallback = onTrialEnd; }
 
 void setStimulusRoundCompleteCallback(void (*onStimulusRoundCompleted))
 {

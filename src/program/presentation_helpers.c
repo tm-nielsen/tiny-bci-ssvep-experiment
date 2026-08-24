@@ -6,8 +6,8 @@
 # include "presentation.h"
 
 void initializeTrialPresentation(
-    void (*trialStartCallback)(),
-    void (*trialEndCallback)(),
+    void (*trialStartCallback)(uint16_t),
+    void (*trialEndCallback)(uint16_t),
     void (*allTrialsCompletedCallback)()
 )
 {
