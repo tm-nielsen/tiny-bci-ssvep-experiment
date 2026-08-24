@@ -8,8 +8,7 @@
 
 # include "lsl/trigger_stream.h"
 
-# include "data/eeg_sources.h"
-
+# include "cli/eeg_source_selection.h"
 
 static uint16_t currentTargetLabel = 0;
 void onTrialStart(uint16_t target)
@@ -66,7 +65,7 @@ void updatePipeline()
 
 int main(int argc, char *argv[])
 {
-    promptEEGSourceSelection();
+    runEEGSourceSelection();
 
     const float frequencies[N_FREQS] = {7.5f, 8.57f, 10.0f, 12.0f};
 

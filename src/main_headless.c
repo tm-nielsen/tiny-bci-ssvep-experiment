@@ -8,7 +8,7 @@
 
 # include "program_constants.h"
 
-# include "data/eeg_sources.h"
+# include "cli/eeg_source_selection.h"
 
 static uint16_t currentTargetLabel = 0;
 static void onTriggerReceived(uint16_t code)
@@ -43,7 +43,7 @@ void handleTriggersDisconnected()
 
 int main(void)
 {
-    promptEEGSourceSelection();
+    runEEGSourceSelection();
 
     initializeEEGSource();
     initializeLslTriggerSource(&onTriggerReceived);
