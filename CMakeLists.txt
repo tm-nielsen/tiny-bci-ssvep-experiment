@@ -18,6 +18,7 @@ set(SHARED_SOURCES
   src/triggers.c
   src/inference_logger.c
 
+  src/data/eeg_sources.c
   src/data/synthetic_eeg_source.c
   src/data/serial_port_enumeration_unix.c
   src/data/serial_port_enumeration_windows.c

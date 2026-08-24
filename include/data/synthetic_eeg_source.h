@@ -8,5 +8,7 @@
 
 void initializeSyntheticEEGSource(uint8_t, uint32_t);
 void updateSyntheticEEGSource();
-void cleanUpSyntheticEEGSource();
-void resetSyntheticEEGSource();
+void closeSyntheticEEGSource();
+
+uint8_t getSyntheticEEGSourceChannelCount();
+uint32_t getSyntheticEEGSourceSampleRate();

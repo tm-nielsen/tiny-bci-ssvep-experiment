@@ -8,13 +8,7 @@
 
 # include "lsl/trigger_stream.h"
 
-# include "lsl/eeg_source.h"
-void initializeEEGSource() { connectLslEEGSource(); }
-void updateEEGSource() { updateLslEEGSource(); }
-void cleanUpEEGSource() { closeLslEEGSource(); }
-
-uint8_t getChannelCount() { return getLslEEGSourceChannelCount(); }
-uint32_t getSampleRate() { return getLslEEGSourceSampleRate(); }
+# include "data/eeg_sources.h"
 
 
 static uint16_t currentTargetLabel = 0;
@@ -72,6 +66,8 @@ void updatePipeline()
 
 int main(int argc, char *argv[])
 {
+    promptEEGSourceSelection();
+
     const float frequencies[N_FREQS] = {7.5f, 8.57f, 10.0f, 12.0f};
 
     const uint16_t stimulusRounds = 4;
@@ -94,8 +90,8 @@ int main(int argc, char *argv[])
     initializeEEGSource();
     openLslTriggerOutlet("tBCI_Experiment_Triggers");
 
-    uint8_t channelCount = getChannelCount();
-    uint32_t sampleRate = getSampleRate();
+    uint8_t channelCount = getEEGChannelCount();
+    uint32_t sampleRate = getEEGSampleRate();
     if (initializeTinyBCIPipeline(frequencies, channelCount, sampleRate)) return EXIT_FAILURE;
     initializeInferenceLogger();
 

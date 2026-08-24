@@ -8,22 +8,7 @@
 
 # include "program_constants.h"
 
-# define SYNTHETIC_EEG_CHANNEL_COUNT 8
-# define SYNTHETIC_EEG_SAMPLE_RATE 250
-
-# include "data/synthetic_eeg_source.h"
-void initializeEEGSource()
-{
-    initializeSyntheticEEGSource(
-        SYNTHETIC_EEG_CHANNEL_COUNT,
-        SYNTHETIC_EEG_SAMPLE_RATE
-    );
-}
-void updateEEGSource() { updateSyntheticEEGSource(); }
-void cleanUpEEGSource() { cleanUpSyntheticEEGSource(); }
-
-uint8_t getChannelCount() { return SYNTHETIC_EEG_CHANNEL_COUNT; }
-uint32_t getSampleRate() { return SYNTHETIC_EEG_SAMPLE_RATE; }
+# include "data/eeg_sources.h"
 
 static uint16_t currentTargetLabel = 0;
 static void onTriggerReceived(uint16_t code)
@@ -57,6 +42,8 @@ void handleTriggersDisconnected()
 
 int main(void)
 {
+    promptEEGSourceSelection();
+
     initializeEEGSource();
     initializeLslTriggerSource(&onTriggerReceived);
 
@@ -76,8 +63,8 @@ int main(void)
     }
     printf("\nConnected to presenter app\n");
 
-    uint8_t channelCount = getChannelCount();
-    uint32_t sampleRate = getSampleRate();
+    uint8_t channelCount = getEEGChannelCount();
+    uint32_t sampleRate = getEEGSampleRate();
     if (initializeTinyBCIPipeline(FREQUENCIES, channelCount, sampleRate)) return EXIT_FAILURE;
     initializeInferenceLogger();
 
