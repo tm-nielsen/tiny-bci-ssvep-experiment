@@ -86,7 +86,6 @@ void displayHeadlessRuntimeConnectionWaitMessage()
 
 void connectToHeadlessRuntime()
 {
-    openLslTriggerOutlet();
     while (!doesLslTriggerOutletHaveConsumers())
     {
         displayMessageOrExit("Searching for BCI Engine...", &cleanUpProgram);
