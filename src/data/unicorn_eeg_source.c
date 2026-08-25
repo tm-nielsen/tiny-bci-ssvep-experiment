@@ -101,5 +101,6 @@ void closeUnicornEEGSource()
     serialClose(&handle);
 }
 
+bool isUnicornEEGSourceConnected() { return handle != INVALID_HANDLE_VALUE; }
 uint8_t getUnicornEEGSourceChannelCount() { return UNICORN_EEG_CHANNEL_COUNT; }
 uint32_t getUnicornEEGSourceSampleRate() { return UNICORN_SAMPLE_RATE; }

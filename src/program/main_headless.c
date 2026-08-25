@@ -27,14 +27,9 @@ void cleanUp()
     closeLslInferenceOutlet();
 }
 
-void updateProgram()
+void handleDisconnection(const char *message)
 {
-    updateEEGSourceAndPipeline(&cleanUp);
-}
-
-void handleTriggersDisconnected()
-{
-    printf("---\nPresenter App Disconnected\n\n");
+    printf("---\n%s\n\n", message);
     cleanUp();
     printf("\npress [Enter] to quit\n");
 
@@ -42,6 +37,16 @@ void handleTriggersDisconnected()
     while ((c = getchar()) != '\n' && c != EOF);
     getchar();
     exit(EXIT_SUCCESS);
+}
+
+void updateProgram()
+{
+    updateEEGSourceAndPipeline(&cleanUp);
+    
+    if (!isEEGSourceConnected())
+    {
+        handleDisconnection("EEG Source Disconnected");
+    }
 }
 
 int main(void)
@@ -71,7 +76,7 @@ int main(void)
    
         if (!isLslTriggerSourceConnected())
         {
-            handleTriggersDisconnected();
+            handleDisconnection("Presenter App Disconnected");
         }
 
         updateProgram();

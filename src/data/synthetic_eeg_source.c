@@ -46,5 +46,12 @@ void updateSyntheticEEGSource()
 
 void closeSyntheticEEGSource() { free(samples); }
 
+bool isSyntheticEEGSourceReady()
+{
+    return channelCount > 0
+        && sampleRate > 0
+        && samples != NULL;
+}
+
 uint8_t getSyntheticEEGSourceChannelCount() { return channelCount; }
 uint32_t getSyntheticEEGSourceSampleRate() { return sampleRate; }

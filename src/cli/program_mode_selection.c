@@ -129,7 +129,10 @@ void awaitPromptedProgramStart()
     while (!IsKeyPressed(KEY_SPACE))
     {
         drawPreparationScreen("Press Spacebar to Start");
-        STANDALONE(updateEEGSourceAndPipeline(&cleanUpProgram);)
+        STANDALONE(
+            updateEEGSourceAndPipeline(&cleanUpProgram);
+            if (!isEEGSourceConnected()) return;
+        )
         closeIfPromptedTo(&cleanUpProgram);
     }
 }
@@ -146,6 +149,14 @@ void updateProgram()
         if (!isLslInferenceSourceConnected())
         {
             drawMessageScreen("Connection Lost");
+            return;
+        }
+    )
+
+    STANDALONE(
+        if (!isEEGSourceConnected())
+        {
+            drawMessageScreen("EEG Source Disconnected");
             return;
         }
     )

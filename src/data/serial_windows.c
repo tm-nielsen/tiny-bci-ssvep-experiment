@@ -51,11 +51,26 @@ int serialRead(SerialHandle *handle, uint8_t *buffer, size_t bufferLength)
 
     DWORD readCount = 0;
     ReadFile(*handle, buffer, (DWORD)bufferLength, &readCount, NULL);
+
+    if (GetLastError() != ERROR_SUCCESS)
+    {
+        printf("Windows serial read error: %u\n", GetLastError());
+        if (GetLastError() == ERROR_INVALID_HANDLE)
+        {
+            fprintf(stderr, "--\nSerial handle disconnected\n---\n");
+            serialClose(handle);
+            return 0;
+        }
+    }
     return readCount;
 }
 
 void serialFlush(SerialHandle *handle) { PurgeComm(*handle, PURGE_RXCLEAR); }
-void serialClose(SerialHandle *handle) { CloseHandle(*handle); }
+void serialClose(SerialHandle *handle)
+{
+    CloseHandle(*handle);
+    *handle = INVALID_HANDLE_VALUE;
+}
 
 // ---
 

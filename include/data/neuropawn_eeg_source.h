@@ -32,5 +32,6 @@ void resetNeuropawnEEGSource();
 void updateNeuropawnEEGSource();
 void closeNeuropawnEEGSource();
 
+bool isNeuropawnEEGSourceConnected();
 uint8_t getNeuropawnEEGSourceChannelCount();
 uint32_t getNeuropawnEEGSourceSampleRate();

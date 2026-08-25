@@ -22,5 +22,6 @@ void resetUnicornEEGSource();
 void updateUnicornEEGSource();
 void closeUnicornEEGSource();
 
+bool isUnicornEEGSourceConnected();
 uint8_t getUnicornEEGSourceChannelCount();
 uint32_t getUnicornEEGSourceSampleRate();

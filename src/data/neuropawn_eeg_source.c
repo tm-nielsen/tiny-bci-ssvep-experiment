@@ -275,5 +275,6 @@ void updateNeuropawnEEGSource()
 
 void closeNeuropawnEEGSource() { serialClose(&handle); }
 
+bool isNeuropawnEEGSourceConnected() { return handle != INVALID_HANDLE_VALUE; }
 uint8_t getNeuropawnEEGSourceChannelCount() { return NEUROPAWN_EEG_CHANNEL_COUNT; }
 uint32_t getNeuropawnEEGSourceSampleRate() { return NEUROPAWN_SAMPLE_RATE; }

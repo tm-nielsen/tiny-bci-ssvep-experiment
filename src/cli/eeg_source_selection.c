@@ -9,6 +9,7 @@ static void (*initializationMethod)();
 static void (*updateMethod)();
 static void (*cleanupMethod)();
 
+static bool (*connectionPredicate)();
 static uint8_t (*channelCountGetMethod)();
 static uint32_t (*sampleRateGetMethod)();
 
@@ -73,6 +74,7 @@ void selectEEGSource(unsigned int selection)
             initializationMethod = connectLslEEGSource;
             updateMethod = updateLslEEGSource;
             cleanupMethod = closeLslEEGSource;
+            connectionPredicate = isLslEEGSourceConnected;
             channelCountGetMethod = getLslEEGSourceChannelCount;
             sampleRateGetMethod = getLslEEGSourceSampleRate;
         break;
@@ -81,6 +83,7 @@ void selectEEGSource(unsigned int selection)
             initializationMethod = initializeNeuropawnSource;
             updateMethod = updateNeuropawnEEGSource;
             cleanupMethod = closeNeuropawnEEGSource;
+            connectionPredicate = isNeuropawnEEGSourceConnected;
             channelCountGetMethod = getNeuropawnEEGSourceChannelCount;
             sampleRateGetMethod = getNeuropawnEEGSourceSampleRate;
         break;
@@ -89,6 +92,7 @@ void selectEEGSource(unsigned int selection)
             initializationMethod = initializeUnicornSource;
             updateMethod = updateUnicornEEGSource;
             cleanupMethod = closeUnicornEEGSource;
+            connectionPredicate = isUnicornEEGSourceConnected;
             channelCountGetMethod = getUnicornEEGSourceChannelCount;
             sampleRateGetMethod = getUnicornEEGSourceSampleRate;
         break;
@@ -103,6 +107,7 @@ void selectEEGSource(unsigned int selection)
             initializationMethod = initializeTestSource;
             updateMethod = updateSyntheticEEGSource;
             cleanupMethod = closeSyntheticEEGSource;
+            connectionPredicate = isSyntheticEEGSourceReady;
             channelCountGetMethod = getSyntheticEEGSourceChannelCount;
             sampleRateGetMethod = getSyntheticEEGSourceSampleRate;
         break;
@@ -110,6 +115,12 @@ void selectEEGSource(unsigned int selection)
 }
 
 void runEEGSourceSelection() { selectEEGSource(promptEEGSourceSelection()); }
+
+bool isEEGSourceConnected()
+{
+    if (connectionPredicate == NULL) return 0;
+    return connectionPredicate();
+}
 
 uint8_t getEEGChannelCount()
 {

@@ -8,6 +8,7 @@ void connectLslEEGSource();
 void updateLslEEGSource();
 void closeLslEEGSource();
 
+bool isLslEEGSourceConnected();
 uint8_t getLslEEGSourceChannelCount();
 uint32_t getLslEEGSourceSampleRate();
 

@@ -69,6 +69,8 @@ void connectLslEEGSource()
 void updateLslEEGSource() { pollLSLDataSource(&dataSource); }
 void closeLslEEGSource() { closeLSLDataSource(&dataSource); }
 
+bool isLslEEGSourceConnected() { return dataSource.isConnected; }
+
 // ---
 
 uint8_t getLslEEGSourceChannelCount() { return channelCount; }

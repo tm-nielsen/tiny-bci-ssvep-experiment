@@ -70,13 +70,23 @@ int serialRead(SerialHandle *handle, uint8_t *buffer, size_t bufferLength)
     ssize_t n = read(*handle, buffer, bufferLength);
     if (n < 0) {
         if (errno == EAGAIN || errno == EWOULDBLOCK) return 0;
+        if (errno == EBADF)
+        {
+            fprintf(stderr, "--\nSerial handle disconnected\n---\n");
+            serialClose(handle);
+            return 0;
+        }
         return 0;
     }
     return (int)n;
 }
 
 void serialFlush(SerialHandle *handle) { tcflush(*handle, TCIFLUSH); }
-void serialClose(SerialHandle *handle) { close(*handle); }
+void serialClose(SerialHandle *handle)
+{
+    close(*handle);
+    *handle = INVALID_HANDLE_VALUE;
+}
 
 // --
 
