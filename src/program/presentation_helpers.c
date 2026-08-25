@@ -36,7 +36,7 @@ void displayInference(TinyBCIInference inference, uint64_t timestamp)
 
 void displayMessageOrExit(const char *message, void (*cleanUpMethod)())
 {
-    drawMessageScreen("Searching for BCI Engine...");
+    drawMessageScreen(message);
     closeIfPromptedTo(cleanUpMethod);
 }
 
