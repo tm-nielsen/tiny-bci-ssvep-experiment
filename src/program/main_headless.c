@@ -54,6 +54,7 @@ int main(void)
     runEEGSourceSelection();
 
     initializeEEGSource();
+    initializePipelineWithEEGSourceParameters();
     initializeLslTriggerSource(&onTriggerReceived);
 
     printf("---\nSearching for Presenter App...\n");
@@ -65,7 +66,6 @@ int main(void)
     printf("Connected to presenter app\n");
     printf("---\n");
 
-    initializePipelineWithEEGSourceParameters();
     awaitFilterStabilization(&cleanUp);
 
     openLslInferenceOutlet();
