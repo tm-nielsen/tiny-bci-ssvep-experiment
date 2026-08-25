@@ -60,7 +60,7 @@ int main(void)
     printf("Connected to presenter app\n");
     printf("---\n");
 
-    initializeEEGSourceAndPipeline();
+    initializePipelineWithEEGSourceParameters();
     awaitFilterStabilization(&cleanUp);
 
     openLslInferenceOutlet();

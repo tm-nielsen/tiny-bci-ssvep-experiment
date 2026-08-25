@@ -6,7 +6,7 @@
 
 # include "cli/eeg_source_selection.h"
 
-void initializeEEGSourceAndPipeline()
+void initializePipelineWithEEGSourceParameters()
 {
     uint8_t channelCount = getEEGChannelCount();
     uint32_t sampleRate = getEEGSampleRate();

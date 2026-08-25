@@ -109,11 +109,14 @@ void initializeProgram(ProgramMode mode)
         &onTrialStart, &onTrialEnd,
         &onAllTrialsCompleted
     );
-    STANDALONE(initializeEEGSource();)
+    STANDALONE(
+        drawMessageScreen("Initializing EEG Source...");
+        initializeEEGSource();
+    )
     openLslTriggerOutlet();
 
     STANDALONE(
-        initializeEEGSourceAndPipeline();
+        initializePipelineWithEEGSourceParameters();
         drawMessageScreen("Awaiting Filter Stabilization...");
         awaitFilterStabilization(&cleanUpProgram);
     )

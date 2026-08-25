@@ -10,7 +10,7 @@ void initializeTrialPresentation(
     void (*allTrialsCompletedCallback)()
 );
 
-void initializeEEGSourceAndPipeline();
+void initializePipelineWithEEGSourceParameters();
 void updateEEGSourceAndPipeline(void (*cleanUpMethod)());
 void cleanUpEEGSourceAndPipeline();
 
