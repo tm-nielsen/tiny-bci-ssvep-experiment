@@ -43,7 +43,7 @@ void updateProgram()
 {
     updateEEGSourceAndPipeline(&cleanUp);
     
-    if (!isEEGSourceConnected())
+    if (!isSelectedEEGSourceConnected())
     {
         handleDisconnection("EEG Source Disconnected");
     }
@@ -53,7 +53,7 @@ int main(void)
 {
     runEEGSourceSelection();
 
-    initializeEEGSource();
+    initializeSelectedEEGSource();
     initializePipelineWithEEGSourceParameters();
     initializeLslTriggerSource(&onTriggerReceived);
 

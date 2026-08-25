@@ -4,9 +4,9 @@
 
 void runEEGSourceSelection();
 
-void initializeEEGSource();
-void updateEEGSource();
-void cleanUpEEGSource();
+void initializeSelectedEEGSource();
+void updateSelectedEEGSource();
+void cleanUpSelectedEEGSource();
 
 typedef enum {
     LSLSource,
@@ -19,8 +19,8 @@ typedef enum {
 EEGSourceType promptEEGSourceSelection();
 const char* promptSerialPortSelection();
 
-bool isEEGSourceConnected();
-uint8_t getEEGChannelCount();
-uint32_t getEEGSampleRate();
+bool isSelectedEEGSourceConnected();
+uint8_t getChannelCountOfSelectedEEGSource();
+uint32_t getSampleRateOfSelectedEEGSource();
 
 # endif

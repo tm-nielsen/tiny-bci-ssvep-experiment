@@ -111,7 +111,7 @@ void initializeProgram(ProgramMode mode)
     );
     STANDALONE(
         drawMessageScreen("Initializing EEG Source...");
-        initializeEEGSource();
+        initializeSelectedEEGSource();
     )
     openLslTriggerOutlet();
 
@@ -131,7 +131,7 @@ void awaitPromptedProgramStart()
         drawPreparationScreen("Press Spacebar to Start");
         STANDALONE(
             updateEEGSourceAndPipeline(&cleanUpProgram);
-            if (!isEEGSourceConnected()) return;
+            if (!isSelectedEEGSourceConnected()) return;
         )
         closeIfPromptedTo(&cleanUpProgram);
     }
@@ -154,7 +154,7 @@ void updateProgram()
     )
 
     STANDALONE(
-        if (!isEEGSourceConnected())
+        if (!isSelectedEEGSourceConnected())
         {
             drawMessageScreen("EEG Source Disconnected");
             return;

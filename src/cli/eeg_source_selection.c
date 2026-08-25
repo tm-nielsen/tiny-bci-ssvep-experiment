@@ -22,9 +22,9 @@ void safeInvoke(void (*method)())
     fprintf(stderr, "Error: can't invoke null method\n");
 }
 
-void initializeEEGSource() { safeInvoke(initializationMethod); }
-void updateEEGSource() { safeInvoke(updateMethod); }
-void cleanUpEEGSource() { safeInvoke(cleanupMethod); }
+void initializeSelectedEEGSource() { safeInvoke(initializationMethod); }
+void updateSelectedEEGSource() { safeInvoke(updateMethod); }
+void cleanUpSelectedEEGSource() { safeInvoke(cleanupMethod); }
 
 // ---
 
@@ -116,18 +116,18 @@ void selectEEGSource(unsigned int selection)
 
 void runEEGSourceSelection() { selectEEGSource(promptEEGSourceSelection()); }
 
-bool isEEGSourceConnected()
+bool isSelectedEEGSourceConnected()
 {
     if (connectionPredicate == NULL) return 0;
     return connectionPredicate();
 }
 
-uint8_t getEEGChannelCount()
+uint8_t getChannelCountOfSelectedEEGSource()
 {
     if (channelCountGetMethod == NULL) return 0;
     return channelCountGetMethod();
 }
-uint32_t getEEGSampleRate()
+uint32_t getSampleRateOfSelectedEEGSource()
 {
     if (sampleRateGetMethod == NULL) return 0;
     return sampleRateGetMethod();
