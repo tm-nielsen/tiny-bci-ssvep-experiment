@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <sys/select.h>
+#include <sys/stat.h>
 #include <time.h>
 
 int serialOpen(SerialHandle *handle, const char *port, uint32_t readTimeout)
@@ -77,14 +78,21 @@ int serialRead(SerialHandle *handle, uint8_t *buffer, size_t bufferLength)
         return 0;  /* timeout or error — no data */
 
     ssize_t n = read(*handle, buffer, bufferLength);
-    if (n < 0) {
-        if (errno == EAGAIN || errno == EWOULDBLOCK) return 0;
-        if (errno == EBADF)
+
+    if (n <= 0)
+    {
+        struct stat sb;
+        fstat(*handle, &sb);
+        if (sb.st_nlink == 0)
         {
             fprintf(stderr, "--\nSerial handle disconnected\n---\n");
             serialClose(handle);
             return 0;
         }
+    }
+
+    if (n < 0) {
+        printf("read error: %u\n", errno);
         return 0;
     }
     return (int)n;
