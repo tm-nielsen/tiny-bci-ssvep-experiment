@@ -69,6 +69,12 @@ static void initializeDsi7Source()
 
 void selectEEGSource(unsigned int selection)
 {
+    if (selection == DSI7Source && !isDsiLibraryAvailable())
+    {
+        printf("DSI API Library not present at %s\n", DSI_API_LIBRARY_PATH);
+        getchar();
+        exit(EXIT_SUCCESS);
+    }
     if (selection != LSLSource && selection != SyntheticSource)
     {
         strcpy(selectedPortName, promptSerialPortSelection());

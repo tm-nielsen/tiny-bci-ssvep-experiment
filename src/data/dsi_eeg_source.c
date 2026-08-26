@@ -42,7 +42,7 @@ void connectDsiEEGSource(const char *port, const char *montage)
      * bare "libDSI.so" won't be found sitting in the source tree. Passing
      * a path containing a '/' makes dlopen load that exact file instead
      * of searching for it. */
-    if (Load_DSI_API("./libDSI.so") != 0)
+    if (Load_DSI_API(DSI_API_LIBRARY_PATH) != 0)
     {
         fprintf(stderr, "dsi: failed to load DSI API\n");
         exit(EXIT_FAILURE);
@@ -130,3 +130,18 @@ void disconnectDsiEEGSource()
 bool isDsiEEGSourceConnected() { return DSI_Headset_IsConnected(headset); }
 uint8_t getDsiEEGSourceChannelCount() { return channelCount; }
 uint32_t getDsiEEGSourceSampleRate() { return sampleRate; }
+
+// ---
+
+bool isDsiLibraryAvailable()
+{
+# if defined(_WIN32) || defined(_WIN64)
+#   define WIN32_LEAN_AND_MEAN
+#   include <io.h>
+#   define F_OK 0
+#   define access _access
+# else
+#   include <unistd.h>
+# endif
+    return access(DSI_API_LIBRARY_PATH, F_OK) == 0;
+}

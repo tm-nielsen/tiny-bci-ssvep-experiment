@@ -4,6 +4,7 @@
 # include <stdint.h>
 # include <stdbool.h>
 
+# define DSI_API_LIBRARY_PATH "./libDSI.so"
 # define DSI_7_MONTAGE "F4,C4,S3,S1,S2,C3,F3"
 
 /* port:    serial port to connect on (e.g. "/dev/ttyACM0", "COM4"),
@@ -17,5 +18,7 @@ void disconnectDsiEEGSource();
 bool isDsiEEGSourceConnected();
 uint8_t getDsiEEGSourceChannelCount();
 uint32_t getDsiEEGSourceSampleRate();
+
+bool isDsiLibraryAvailable();
  
 #endif
