@@ -7,6 +7,10 @@
 # tiny_bci_ssvep_experiment runtime. Cleans up the Bluetooth connection
 # on exit (normal or interrupted).
 #
+# If SERIAL_PORT is set (e.g. SERIAL_PORT=/dev/ttyUSB0), the entire
+# Bluetooth/RFCOMM setup is skipped and the runtime is launched directly
+# against that device.
+#
 set -euo pipefail
 
 # --- Configuration -----------------------------------------------------
@@ -15,6 +19,8 @@ DEVICE_NAME="${DEVICE_NAME:-UN-2023.08.05}"   # override: DEVICE_NAME=foo ./run_
 RFCOMM_CHANNEL="${RFCOMM_CHANNEL:-1}"         # confirmed via: sdptool browse <mac>
 RFCOMM_ID=0
 RFCOMM_DEV="/dev/rfcomm${RFCOMM_ID}"
+
+SERIAL_PORT="${SERIAL_PORT:-}"                # override: SERIAL_PORT=/dev/ttyUSB0 ./run_experiment.sh
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BIN_DIR="${PROJECT_ROOT}/bin"
@@ -27,6 +33,10 @@ MAC=""
 
 cleanup() {
     echo "==> Cleaning up..."
+    # nothing to release if we skipped Bluetooth entirely via SERIAL_PORT
+    if [[ -n "${SERIAL_PORT}" ]]; then
+        return
+    fi
     if [[ -n "${RFCOMM_PID}" ]]; then
         sudo kill "${RFCOMM_PID}" 2>/dev/null || true
     fi
@@ -38,6 +48,26 @@ cleanup() {
     sudo rfcomm release "${RFCOMM_ID}" 2>/dev/null || true
 }
 trap cleanup EXIT INT TERM
+
+# --- 0. Skip Bluetooth entirely if a serial port was provided -----------
+
+if [[ -n "${SERIAL_PORT}" ]]; then
+    echo "==> SERIAL_PORT=${SERIAL_PORT} provided, skipping Bluetooth setup."
+
+    if [[ ! -e "${SERIAL_PORT}" ]]; then
+        echo "ERROR: ${SERIAL_PORT} does not exist." >&2
+        echo "Check 'ls /dev/ttyUSB*' or 'ls /dev/ttyACM*' for the actual device node." >&2
+        exit 1
+    fi
+
+    echo "==> Launching runtime from ${BIN_DIR}..."
+    cd "${BIN_DIR}"
+    ./"${RUNTIME_BIN}"
+    RUNTIME_EXIT_CODE=$?
+
+    echo "==> Runtime exited with code ${RUNTIME_EXIT_CODE}."
+    exit "${RUNTIME_EXIT_CODE}"
+fi
 
 # --- 1. Ensure Bluetooth is on -------------------------------------------
 
