@@ -31,4 +31,5 @@ bool pollLslInferenceSource(TinyBCIInference *out, uint64_t *microsecondTimestam
 void closeLslInferenceSource() { closeLSLDataSource(&dataSource); }
 
 bool tryConnectLslInferenceSource() { return tryConnectLSLDataSource(&dataSource); }
-bool isLslInferenceSourceConnected() { return dataSource.isConnected; }
+bool isLslInferenceSourceConnected() { return isLSLDataSourceConnected(&dataSource); }
+bool isLslInferenceSourceConsumable() { return isLSLDataSourceConsumable(&dataSource); }

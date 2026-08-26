@@ -109,6 +109,12 @@ void closeLSLDataSource(LSLDataSource *source)
     source->isConnected = false;
 }
 
+bool isLSLDataSourceConsumable(LSLDataSource *source)
+{
+    pollLSLDataSource(source);
+    return isLSLDataSourceConnected(source);
+}
+
 bool isLSLDataSourceConnected(LSLDataSource *source)
 {
     return source->isConnected && source->inlet != NULL;

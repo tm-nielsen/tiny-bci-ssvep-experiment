@@ -31,5 +31,6 @@ void closeLslInferenceSource();
 
 bool tryConnectLslInferenceSource();
 bool isLslInferenceSourceConnected();
+bool isLslInferenceSourceConsumable();
 
 # endif

@@ -133,6 +133,9 @@ void awaitPromptedProgramStart()
             if (!isSelectedEEGSourceConnected()) return;
             updateEEGSourceAndPipeline(&cleanUpProgram);
         )
+        PRESENTATION_ONLY(
+            if(!isLslInferenceSourceConsumable()) return;
+        )
         closeIfPromptedTo(&cleanUpProgram);
     }
 }

@@ -36,6 +36,7 @@ bool tryConnectLSLDataSource(LSLDataSource *source);
 bool pollLSLDataSource(LSLDataSource *source);
 void closeLSLDataSource(LSLDataSource *source);
 
+bool isLSLDataSourceConsumable(LSLDataSource *source);
 bool isLSLDataSourceConnected(LSLDataSource *source);
 void setLSLDataSourceCallback(LSLDataSource *source, void (*callback)(void*));
 
