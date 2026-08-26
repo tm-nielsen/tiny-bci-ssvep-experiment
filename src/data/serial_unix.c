@@ -10,12 +10,15 @@
 
 int serialOpen(SerialHandle *handle, const char *port, uint32_t readTimeout)
 {
-    if (access(port, F_OK) != 0) {
+    char *fullPortPath = malloc(strlen(port) + 5);
+    sprintf(fullPortPath, "/dev/%s", port);
+    if (access(fullPortPath, F_OK) != 0) {
         fprintf(stderr, "Error: Port %s does not exist\n", port);
         return EXIT_FAILURE;
     }
 
-    *handle = open(port, O_RDWR | O_NOCTTY | O_NONBLOCK);
+    *handle = open(fullPortPath, O_RDWR | O_NOCTTY | O_NONBLOCK | O_CLOEXEC);
+    free(fullPortPath);
     if (*handle == INVALID_HANDLE_VALUE) {
         fprintf(stderr, "Error: Cannot open %s — %s (errno=%d)\n",
                 port, strerror(errno), errno);
