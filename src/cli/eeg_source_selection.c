@@ -3,6 +3,7 @@
 # include "data/synthetic_eeg_source.h"
 # include "data/neuropawn_eeg_source.h"
 # include "data/unicorn_eeg_source.h"
+# include "data/dsi_eeg_source.h"
 # include "lsl/eeg_source.h"
 
 static void (*initializationMethod)();
@@ -54,9 +55,14 @@ static void initializeNeuropawnSource()
     );
 }
 
-static void initializeUnicornSource() \
+static void initializeUnicornSource()
 {
     connectUnicornEEGSource(selectedPortName, serialTimeout);
+}
+
+static void initializeDsi7Source()
+{
+    connectDsiEEGSource(selectedPortName, DSI_7_MONTAGE);
 }
 
 // ---
@@ -98,9 +104,12 @@ void selectEEGSource(unsigned int selection)
         break;
 
         case DSI7Source:
-            printf("DSI-7 Support is not yet implemented\n");
-            getchar();
-            exit(EXIT_SUCCESS);
+            initializationMethod = initializeDsi7Source;
+            updateMethod = updateDsiEEGSource;
+            cleanupMethod = disconnectDsiEEGSource;
+            connectionPredicate = isDsiEEGSourceConnected;
+            channelCountGetMethod = getDsiEEGSourceChannelCount;
+            sampleRateGetMethod = getDsiEEGSourceSampleRate;
         break;
 
         case SyntheticSource:

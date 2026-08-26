@@ -33,6 +33,8 @@ set(SHARED_SOURCES
   src/data/serial_utils.c
   src/data/neuropawn_eeg_source.c
   src/data/unicorn_eeg_source.c
+  src/data/dsi_eeg_source.c
+  src/data/DSI_API_Loader.c
 )
 
 function(ADD_TARGET TARGET_NAME SOURCES)
