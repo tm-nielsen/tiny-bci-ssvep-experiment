@@ -56,7 +56,7 @@ extern TBCI_Config tbciConfiguration;
 extern TBCI_Context tbciContext;
 
 // CCA constants
-# define N_FREQS 4
+# define N_FREQS 6
 # define N_HARMONICS 3
 # define N_COMPONENTS (N_HARMONICS * 2)
 extern size_t referenceSignalsCapacity;

@@ -2,7 +2,7 @@
 # ifndef PROGRAM_CONSTANTS
 # define PROGRAM_CONSTANTS
 
-# define FREQUENCIES (float[]){ 7.5f, 8.57f, 10.0f, 12.0f }
+# define FREQUENCIES (float[]){ 5.0f, 5.5f, 6.0f, 6.5f, 7.0f, 7.5f }
 # define FILTER_STABILIZATION_DELAY 5.0f
 
 # define TRIAL_COUNT 4
