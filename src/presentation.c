@@ -12,6 +12,7 @@ static Rectangle presenterSpacing;
 
 static Texture2D stimulusTexture;
 static Rectangle stimulusTextureSourceRect;
+static Color stimulusTextureBackgroundColour;
 
 static uint16_t targetIndex;
 static bool hasTarget = false;
@@ -44,11 +45,14 @@ void initializeWindow()
     renderTexture = renderTarget.texture;
     renderTextureRect = (Rectangle){ 0, 0, RENDER_WIDTH, -RENDER_HEIGHT };
 
-    stimulusTexture = LoadTexture(STIMULUS_TEXTURE_PATH);
+    stimulusTexture = LoadTexture(TEXTURE_STIMULUS_FILEPATH);
     stimulusTextureSourceRect = (Rectangle)
     {
         0, 0, (float)stimulusTexture.width, (float)stimulusTexture.height
     };
+    Image samplingImage = LoadImageFromTexture(stimulusTexture);
+    stimulusTextureBackgroundColour = GetImageColor(samplingImage, 0, 0);
+    UnloadImage(samplingImage);
 }
 
 void initializePresenters(const float* pFrequencies, uint16_t pFrequencyCount)
@@ -162,6 +166,11 @@ void drawSelectionIndicator()
     DrawRectangleRec(borderRect, SELECTION_DISPLAY_COLOUR);
 }
 
+void drawStimulusBreakPlaceholder(uint16_t index)
+{
+    DrawRectangleRec(getGridRect(index, 0), STIMULUS_BREAK_PLACEHOLDER_COLOUR);
+}
+
 // ---
 
 void drawLetterboxedTarget()
@@ -195,7 +204,7 @@ void drawMessage(const char *message)
     DrawText(
         message,
         (RENDER_WIDTH - textWidth) / 2, RENDER_HEIGHT / 2,
-        MESSAGE_SCREEN_FONT_SIZE, STIMULUS_BACKGROUND_COLOUR
+        MESSAGE_SCREEN_FONT_SIZE, MESSAGE_SCREEN_TEXT_COLOUR
     );
 }
 
@@ -206,7 +215,7 @@ void drawPreparationScreen(const char *message)
         
         for (uint16_t i = 0; i < frequencyCount; i++)
         {
-            DrawRectangleRec(getGridRect(i, -STIMULUS_BREAK_PADDING), STIMULUS_BACKGROUND_COLOUR);
+            drawStimulusBreakPlaceholder(i);
         }
         drawTargetIndicator();
         drawMessage(message);
@@ -230,21 +239,31 @@ void drawMessageScreen(const char *message)
 void drawStimulusPresenter(uint16_t index)
 {
     Rectangle gridRect = getGridRect(index, 0);
-    DrawRectangleRec(gridRect, STIMULUS_BACKGROUND_COLOUR);
 
     double waveValue = sin(frequencies[index] * TAU * GetTime());
-    double weightedValue = (sqrt(fabs(waveValue)) * (waveValue / fabs(waveValue)));
-    float normalizedValue = (float)(weightedValue + 1) / 2.0f;
+    float normalizedValue = (float)(waveValue + 1) / 2.0f;
 
     if (textureEnabled)
     {
-        Color textureColor = STIMULUS_ON_COLOUR;
-        textureColor.a = (uint8_t)(normalizedValue * 255);
+        DrawRectangleRec(gridRect, BLACK);
+        BeginBlendMode(BLEND_ADDITIVE);
+        
+        Color blendedBackgroundColour = stimulusTextureBackgroundColour;
+        blendedBackgroundColour = ColorAlpha(blendedBackgroundColour, 1 - normalizedValue);
+        DrawRectangleRec(gridRect, blendedBackgroundColour);
+
+        Color textureColor = WHITE;
+        textureColor = ColorAlpha(textureColor, normalizedValue);
         DrawTexturePro(stimulusTexture, stimulusTextureSourceRect, gridRect, (Vector2){0, 0}, 0, textureColor);
+        EndBlendMode();
     }
     else
     {
-        Color stimulusColor = ColorLerp(STIMULUS_OFF_COLOUR, STIMULUS_ON_COLOUR, normalizedValue);
+        Color stimulusColor = ColorLerp(
+            UNTEXTURED_STIMULUS_OFF_COLOUR,
+            UNTEXTURED_STIMULUS_ON_COLOUR,
+            normalizedValue
+        );
         DrawRectangleRec(gridRect, stimulusColor);
     }
 }
@@ -259,7 +278,7 @@ void drawStimulusScreen()
         for (uint16_t i = 0; i < frequencyCount; i++)
         {
             if (stimulusEnabled) drawStimulusPresenter(i);
-            else DrawRectangleRec(getGridRect(i, -STIMULUS_BREAK_PADDING), STIMULUS_BACKGROUND_COLOUR);
+            else drawStimulusBreakPlaceholder(i);
         }
 
         drawTargetIndicator();

@@ -21,7 +21,6 @@ void initializeTrialPresentation(
 
     initializePresentation(FREQUENCIES, N_FREQS);
     setPresentationTarget(0);
-    disableTextureStimulus();
 }
 
 void displayInference(TinyBCIInference inference, uint64_t timestamp)
