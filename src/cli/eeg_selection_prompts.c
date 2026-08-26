@@ -26,7 +26,7 @@ const char* promptSerialPortSelection()
         {
             printf("\t%u : %s\n", i + 1, getSerialPortName(i));
         }
-        printf("Select one of options [0-%u]\t", deviceCount + 1);
+        printf("Select one of options [0-%u]\t", deviceCount);
         uint32_t selection = getIntegerSelection(deviceCount);
 
         if (selection == 0) continue;
