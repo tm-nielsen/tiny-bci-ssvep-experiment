@@ -40,13 +40,13 @@ void handleDisconnection(const char *message)
 }
 
 void updateProgram()
-{
-    updateEEGSourceAndPipeline(&cleanUp);
-    
+{    
     if (!isSelectedEEGSourceConnected())
     {
         handleDisconnection("EEG Source Disconnected");
     }
+
+    updateEEGSourceAndPipeline(&cleanUp);
 }
 
 int main(void)

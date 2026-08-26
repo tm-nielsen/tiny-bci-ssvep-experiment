@@ -9,6 +9,7 @@ int awaitSerialData(SerialHandle *handle)
 
     while (!serialRead(handle, &scanByte, 1))
     {
+        if (*handle == INVALID_HANDLE_VALUE) return EXIT_FAILURE;
         if (iterationCount++ > SERIAL_DATA_WAIT_MAXIMUM_ITERATIONS) return EXIT_FAILURE;
         sleepMilliseconds(SERIAL_DATA_WAIT_ITERATION_TIME_MS);
     }
@@ -25,6 +26,7 @@ int seekSerialBytes(SerialHandle *handle, uint8_t *targetBytes, uint8_t targetCo
     {
         if (serialRead(handle, scanBuffer + cursor, 1))
         {
+            if (*handle == INVALID_HANDLE_VALUE) return EXIT_FAILURE;
             if (scanBuffer[cursor] == targetBytes[cursor])
             {
                 if (++cursor == targetCount)

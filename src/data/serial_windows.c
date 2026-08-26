@@ -36,6 +36,12 @@ int serialOpen(SerialHandle *handle, const char *port, uint32_t readTimeout)
 
 int serialWrite(SerialHandle *handle, uint8_t *buffer, size_t bufferLength)
 {
+    if (*handle == INVALID_HANDLE_VALUE)
+    {
+        fprintf(stderr, "Error: Attempted to write to invalid serial handle\n");
+        return 0;
+    }
+
     DWORD writeCount = 0;
     WriteFile(*handle, buffer, (DWORD)bufferLength, &writeCount, NULL);
     return writeCount;
@@ -43,20 +49,23 @@ int serialWrite(SerialHandle *handle, uint8_t *buffer, size_t bufferLength)
 
 int serialRead(SerialHandle *handle, uint8_t *buffer, size_t bufferLength)
 {
-    if (handle == INVALID_HANDLE_VALUE)
+    if (*handle == INVALID_HANDLE_VALUE)
     {
-        fprintf(stderr, "Error: Attempted to read from invalid serial handle");
+        fprintf(stderr, "Error: Attempted to read from invalid serial handle\n");
         return 0;
     }
 
     DWORD readCount = 0;
     ReadFile(*handle, buffer, (DWORD)bufferLength, &readCount, NULL);
 
-    if (GetLastError() != ERROR_SUCCESS)
+    DWORD lastError = GetLastError();
+    if (lastError != ERROR_SUCCESS)
     {
-        printf("Windows serial read error: %u\n", GetLastError());
-        if (GetLastError() == ERROR_INVALID_HANDLE)
-        {
+        if (
+            lastError == ERROR_OPERATION_ABORTED ||
+            lastError == ERROR_ACCESS_DENIED ||
+            lastError == ERROR_INVALID_HANDLE
+        ) {
             fprintf(stderr, "--\nSerial handle disconnected\n---\n");
             serialClose(handle);
             return 0;

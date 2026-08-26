@@ -130,8 +130,8 @@ void awaitPromptedProgramStart()
     {
         drawPreparationScreen("Press Spacebar to Start");
         STANDALONE(
-            updateEEGSourceAndPipeline(&cleanUpProgram);
             if (!isSelectedEEGSourceConnected()) return;
+            updateEEGSourceAndPipeline(&cleanUpProgram);
         )
         closeIfPromptedTo(&cleanUpProgram);
     }

@@ -176,6 +176,7 @@ void configureChannel(const char* cmd, uint8_t channelIndex, bool expectNonZeroS
     sleepMilliseconds(NEUROPAWN_CMD_PAUSE_MS);
     while (awaitEXGChannelData(channelIndex, expectNonZeroSamples))
     {
+        if (!isNeuropawnEEGSourceConnected()) exit(EXIT_SUCCESS);
         fprintf(stderr, "neuropawn: failed to configure channel, retrying\n");
         sendCommand(cmd);
     }

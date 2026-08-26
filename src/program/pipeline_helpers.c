@@ -41,8 +41,8 @@ void awaitFilterStabilization(void (*cleanUpMethod)())
     resetMicrosecondTimer(&stabilizationTimer);
 
     while (!checkMicrosecondTimer(&stabilizationTimer)) {
-        updateEEGSourceAndPipeline(cleanUpMethod);
         if (!isSelectedEEGSourceConnected()) return;
+        updateEEGSourceAndPipeline(cleanUpMethod);
     }
     printf("Filter settled.\n");
 }

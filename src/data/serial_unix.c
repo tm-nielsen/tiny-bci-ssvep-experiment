@@ -46,6 +46,12 @@ int serialOpen(SerialHandle *handle, const char *port, uint32_t readTimeout)
 
 int serialWrite(SerialHandle *handle, uint8_t *buffer, size_t bufferLength)
 {
+    if (*handle == INVALID_HANDLE_VALUE)
+    {
+        fprintf(stderr, "Error: Attempted to write to invalid serial handle\n");
+        return 0;
+    }
+
     return write(*handle, buffer, bufferLength);
 }
 
@@ -53,7 +59,7 @@ int serialRead(SerialHandle *handle, uint8_t *buffer, size_t bufferLength)
 {
     if (*handle == INVALID_HANDLE_VALUE)
     {
-        fprintf(stderr, "Error: Attempted to read from invalid serial handle");
+        fprintf(stderr, "Error: Attempted to read from invalid serial handle\n");
         return 0;
     }
 
