@@ -132,14 +132,17 @@ void drawTargetIndicator()
     if (!hasTarget) return;
 
     Vector2 gridOrigin = getGridCentre(targetIndex);
+    bool drawInverted = gridOrigin.y > RENDER_HEIGHT / 2;
+    float yOffsetDirection = drawInverted ? -1.0f : 1.0f;
+
     Vector2 arrowTip = gridOrigin;
-    arrowTip.y += presenterSpacing.height / 2;
-    arrowTip.y += TARGET_INDICATION_OFFSET;
+    arrowTip.y += presenterSpacing.height / 2 * yOffsetDirection;
+    arrowTip.y += TARGET_INDICATION_OFFSET * yOffsetDirection;
 
     Vector2 arrowBottomLeft = (Vector2)
     {
         arrowTip.x - TARGET_INDICATION_SIZE.x / 2,
-        arrowTip.y + TARGET_INDICATION_SIZE.y
+        arrowTip.y + TARGET_INDICATION_SIZE.y * yOffsetDirection
     };
     Vector2 arrowBottomRight = (Vector2)
     {
@@ -147,6 +150,9 @@ void drawTargetIndicator()
         arrowBottomLeft.y
     };
 
+    if (drawInverted)
+    DrawTriangle(arrowTip, arrowBottomRight, arrowBottomLeft, TARGET_INDICATION_COLOUR);
+    else
     DrawTriangle(arrowTip, arrowBottomLeft, arrowBottomRight, TARGET_INDICATION_COLOUR);
 }
 
