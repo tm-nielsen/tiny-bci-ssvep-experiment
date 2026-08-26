@@ -26,16 +26,6 @@ void initializeUnicornEEGSource(const char *port)
 
 }
 
-uint8_t getUnicornEEGSourceChannelCount()
-{
-    return config.n_channels;
-}
-
-uint32_t getUnicornEEGSourceSampleRate()
-{
-    return config.srate;
-}
-
 void resetUnicornEEGSource()
 {
     up_reset(&producer);
@@ -58,4 +48,14 @@ void updateUnicornEEGSource()
 void closeUnicornEEGSource()
 {
     up_close(&producer);
+}
+
+uint8_t getUnicornEEGSourceChannelCount()
+{
+    return config.n_channels;
+}
+
+uint32_t getUnicornEEGSourceSampleRate()
+{
+    return config.srate;
 }

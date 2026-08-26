@@ -7,8 +7,9 @@
 
 
 void initializeUnicornEEGSource(const char *port);
-uint8_t getUnicornEEGSourceChannelCount();
-uint32_t getUnicornEEGSourceSampleRate();
 void resetUnicornEEGSource();
 void updateUnicornEEGSource();
 void closeUnicornEEGSource();
+
+uint8_t getUnicornEEGSourceChannelCount();
+uint32_t getUnicornEEGSourceSampleRate();
