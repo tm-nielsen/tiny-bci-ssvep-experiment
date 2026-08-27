@@ -3,8 +3,15 @@
 
 # include "raylib.h"
 
+# ifndef putenv
+#   define putenv _putenv
+# endif
+
 int main(int argc, char *argv[])
 {
+    putenv("MESA_GL_VERSION_OVERRIDE=3.3");
+    putenv("MESA_GLSL_VERSION_OVERRIDE=330");
+
     ProgramMode mode = promptProgramModeSelection();
     if (mode == Standalone) runEEGSourceSelection();
 
