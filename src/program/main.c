@@ -5,7 +5,8 @@
 
 int main(int argc, char *argv[])
 {
-# ifdef __arm__
+# if defined(_WIN32) || defined(_WIN64)
+# else
     printf("Setting GL Version overrides for Raspberry Pi...\n");
     putenv("MESA_GL_VERSION_OVERRIDE=3.3");
     putenv("MESA_GLSL_VERSION_OVERRIDE=330");
