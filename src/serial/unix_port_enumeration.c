@@ -33,7 +33,7 @@
     THE SOFTWARE.
 */
 
-# include "data/serial_port_enumeration.h"
+# include "serial/port_enumeration.h"
 
 # if defined(_WIN32) || defined(_WIN64)
 # else

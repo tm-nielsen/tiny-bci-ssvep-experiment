@@ -1,6 +1,6 @@
 # include "cli/eeg_source_selection.h"
 # include "cli/helpers.h"
-# include "data/serial_port_enumeration.h"
+# include "serial/port_enumeration.h"
 
 EEGSourceType promptEEGSourceSelection()
 {

@@ -1,4 +1,4 @@
-# include "data/serial.h"
+# include "serial/serial.h"
 
 int awaitSerialData(SerialHandle *handle)
 {

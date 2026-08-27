@@ -1,5 +1,5 @@
 # include "cli/eeg_source_selection.h"
-# include "data/serial_port_enumeration.h"
+# include "serial/port_enumeration.h"
 # include "data/synthetic_eeg_source.h"
 # include "data/neuropawn_eeg_source.h"
 # include "data/unicorn_eeg_source.h"

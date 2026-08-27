@@ -1,5 +1,5 @@
 # include "data/unicorn_eeg_source.h"
-# include "data/serial.h"
+# include "serial/serial.h"
 # include "storage.h"
 # include "microsecond_timer.h"
 
