@@ -3,14 +3,13 @@
 
 # include "raylib.h"
 
-# ifndef putenv
-#   define putenv _putenv
-# endif
-
 int main(int argc, char *argv[])
 {
+# ifdef __arm__
+    printf("Setting GL Version overrides for Raspberry Pi...\n");
     putenv("MESA_GL_VERSION_OVERRIDE=3.3");
     putenv("MESA_GLSL_VERSION_OVERRIDE=330");
+# endif
 
     ProgramMode mode = promptProgramModeSelection();
     if (mode == Standalone) runEEGSourceSelection();
