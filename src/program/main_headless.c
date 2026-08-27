@@ -9,6 +9,7 @@
 # include "lsl/trigger_stream.h"
 
 # include "cli/eeg_source_selection.h"
+# include "cli/helpers.h"
 
 static uint16_t currentTargetLabel = 0;
 static void onTriggerReceived(uint16_t code)
@@ -33,9 +34,7 @@ void handleDisconnection(const char *message)
     cleanUp();
     printf("\npress [Enter] to quit\n");
 
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
-    getchar();
+    awaitCLINewline();
     exit(EXIT_SUCCESS);
 }
 

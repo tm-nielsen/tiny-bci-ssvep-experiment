@@ -16,14 +16,29 @@ uint32_t getCLIIntegerSelection(uint32_t maximum)
 
 bool getCLIYesNo()
 {
-    char selection = 0;
-    while (selection != 'y')
+    while (true)
     {
         printf("[y/n]: ");
-        scanf("%c", &selection);
+        flushInput();
+        int selection = 0;
+        while ((selection = getchar()) == '\n');
+
         if (selection == 'y' || selection == 'Y') return true;
         if (selection == 'n' || selection == 'N') return false;
+
         printf(" - invalid selection\n");
     }
     return false;
+}
+
+void flushInput()
+{
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
+void awaitCLINewline()
+{
+    flushInput();
+    getchar();
 }

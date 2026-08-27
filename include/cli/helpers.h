@@ -5,4 +5,7 @@
 uint32_t getCLIIntegerSelection(uint32_t maximum);
 bool getCLIYesNo();
 
+void flushInput();
+void awaitCLINewline();
+
 # endif
