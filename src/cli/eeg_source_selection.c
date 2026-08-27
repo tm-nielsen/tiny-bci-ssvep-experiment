@@ -15,6 +15,7 @@ static uint8_t (*channelCountGetMethod)();
 static uint32_t (*sampleRateGetMethod)();
 
 static char selectedPortName[MAXIMUM_PORT_NAME_LENGTH];
+static EEGSourceType selectedSourceType;
 
 void safeInvoke(void (*method)())
 {
@@ -69,6 +70,7 @@ static void initializeDsi7Source()
 
 void selectEEGSource(unsigned int selection)
 {
+    selectedSourceType = selection;
     if (selection == DSI7Source && !isDsiLibraryAvailable())
     {
         printf("DSI API Library not present at %s\n", DSI_API_LIBRARY_PATH);
@@ -131,6 +133,8 @@ void selectEEGSource(unsigned int selection)
 
 void runEEGSourceSelection() { selectEEGSource(promptEEGSourceSelection()); }
 
+// ---
+
 bool isSelectedEEGSourceConnected()
 {
     if (connectionPredicate == NULL) return 0;
@@ -146,4 +150,11 @@ uint32_t getSampleRateOfSelectedEEGSource()
 {
     if (sampleRateGetMethod == NULL) return 0;
     return sampleRateGetMethod();
+}
+
+bool isSelectedEEGSourceEligibleForLslStreaming()
+{
+    return selectedSourceType == NeuropawnSource
+        || selectedSourceType == UnicornSource
+        || selectedSourceType == DSI7Source;
 }

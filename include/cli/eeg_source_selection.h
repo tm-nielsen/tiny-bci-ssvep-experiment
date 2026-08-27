@@ -18,9 +18,12 @@ typedef enum {
 
 EEGSourceType promptEEGSourceSelection();
 const char* promptSerialPortSelection();
+bool promptEEGOutletUsageSelection();
 
 bool isSelectedEEGSourceConnected();
 uint8_t getChannelCountOfSelectedEEGSource();
 uint32_t getSampleRateOfSelectedEEGSource();
+
+bool isSelectedEEGSourceEligibleForLslStreaming();
 
 # endif

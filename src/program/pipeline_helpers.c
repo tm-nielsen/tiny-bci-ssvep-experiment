@@ -5,6 +5,7 @@
 # include "microsecond_timer.h"
 
 # include "cli/eeg_source_selection.h"
+# include "lsl/eeg_outlet.h"
 
 void initializePipelineWithEEGSourceParameters()
 {
@@ -16,6 +17,11 @@ void initializePipelineWithEEGSourceParameters()
     );
     if (pipelineStatus != TBCI_OK) exit(EXIT_FAILURE);
     initializeInferenceLogger();
+
+    if (
+        isSelectedEEGSourceEligibleForLslStreaming()
+        && promptEEGOutletUsageSelection()
+    ) createAndConnectPipelineEEGOutlet();
 
     pipelineStatus = startTinyBCIPipeline();
     if (pipelineStatus != TBCI_OK) exit(EXIT_FAILURE);
@@ -51,5 +57,6 @@ void cleanUpEEGSourceAndPipeline()
 {
     cleanUpSelectedEEGSource();
     cleanUpTinyBCIPipeline();
+    closePipelineEEGOutlet();
     closeInferenceLogger();
 }

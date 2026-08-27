@@ -6,6 +6,7 @@ set(LSL_SOURCES
     src/lsl/data_source.c
 
     src/lsl/eeg_source.c
+    src/lsl/eeg_outlet.c
 
     src/lsl/trigger_outlet.c
     src/lsl/trigger_source.c

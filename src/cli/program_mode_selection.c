@@ -1,7 +1,6 @@
 # include "cli/program_mode_selection.h"
 # include "cli/helpers.h"
 
-# include "program/constants.h"
 # include "program/helpers.h"
 # include "presentation.h"
 # include "trial_conductor.h"
@@ -29,7 +28,7 @@ ProgramMode promptProgramModeSelection()
         , PresentationOnly
     );
 
-    uint32_t selection = getIntegerSelection(PresentationOnly);
+    uint32_t selection = getCLIIntegerSelection(PresentationOnly);
 
     printf(
         "\nProceeding in %s mode...\n",

@@ -11,7 +11,7 @@ EEGSourceType promptEEGSourceSelection()
     printf("\t%u - DSI-7 over USB\n", DSI7Source);
     printf("\t%u - Synthetic test data\n", SyntheticSource);
 
-    return (EEGSourceType)getIntegerSelection(SyntheticSource);
+    return (EEGSourceType)getCLIIntegerSelection(SyntheticSource);
 }
 
 const char* promptSerialPortSelection()
@@ -27,9 +27,15 @@ const char* promptSerialPortSelection()
             printf("\t%u : %s\n", i + 1, getSerialPortName(i));
         }
         printf("Select one of options [0-%u]\t", deviceCount);
-        uint32_t selection = getIntegerSelection(deviceCount);
+        uint32_t selection = getCLIIntegerSelection(deviceCount);
 
         if (selection == 0) continue;
         return getSerialPortName(selection - 1);
     }
+}
+
+bool promptEEGOutletUsageSelection()
+{
+    printf("Would you like to stream the raw EEG to LSL for recording?\n");
+    return getCLIYesNo();
 }
