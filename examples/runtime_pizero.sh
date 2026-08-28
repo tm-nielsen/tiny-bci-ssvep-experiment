@@ -20,7 +20,7 @@ RFCOMM_CHANNEL="${RFCOMM_CHANNEL:-1}"         # confirmed via: sdptool browse <m
 RFCOMM_ID=0
 RFCOMM_DEV="/dev/rfcomm${RFCOMM_ID}"
 
-SERIAL_PORT="${SERIAL_PORT:-}"                # override: SERIAL_PORT=/dev/ttyUSB0 ./run_experiment.sh
+SERIAL_PORT="${SERIAL_PORT:-}"                # override: SERIAL_PORT=/dev/ttyUSB0 ./runtime_pizero.sh
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BIN_DIR="${PROJECT_ROOT}/bin"

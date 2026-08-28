@@ -38,7 +38,7 @@ int main(void)
     const float targetSampleRate = 125.0f;
 
     initializeEEGSource();
-    //resetUnicornEEGSource();
+    resetNeuropawnEEGSource();
     openLslInferenceOutlet("tBCI_Inference_Results");
     openLslTriggerInlet("tBCI_Experiment_Triggers", onTriggerReceived);
 
