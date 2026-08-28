@@ -21,6 +21,12 @@ static double selectionTime = -SELECTION_DISPLAY_TIME;
 
 static bool stimulusEnabled = true;
 static bool textureEnabled = true;
+static bool runtimeConnected = false;
+
+#define STATUS_BAR_FONT_SIZE 16
+#define STATUS_BAR_PADDING 8
+#define STATUS_BAR_CONNECTED_COLOUR  GREEN
+#define STATUS_BAR_DISCONNECTED_COLOUR RED
 
 // ---
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
@@ -189,10 +195,31 @@ void drawLetterboxedTarget()
 
 // ---
 
+void setRuntimeConnectionStatus(bool connected)
+{
+    runtimeConnected = connected;
+}
+
+static void drawConnectionStatusBar(void)
+{
+    const char *message = runtimeConnected ? "Runtime: Connected" : "Runtime: Disconnected";
+    Color colour = runtimeConnected ? GREEN : RED;
+
+    int textWidth = MeasureText(message, STATUS_BAR_FONT_SIZE);
+
+    DrawRectangle(
+        0, 0,
+        textWidth + STATUS_BAR_PADDING * 2, STATUS_BAR_FONT_SIZE + STATUS_BAR_PADDING * 2,
+        Fade(BLACK, 0.5f)
+    );
+    DrawText(message, STATUS_BAR_PADDING, STATUS_BAR_PADDING, STATUS_BAR_FONT_SIZE, colour);
+}
+
 void drawMessageScreen(const char* message)
 {
     BeginTextureMode(renderTarget);
         ClearBackground(BACKGROUND_COLOUR);
+        drawConnectionStatusBar();
 
         for (uint16_t i = 0; i < frequencyCount; i++)
         {
@@ -235,6 +262,23 @@ void drawStimulusPresenter(uint16_t index)
     }
 }
 
+void drawFixationDots(void)
+{
+    for (uint16_t i = 0; i < frequencyCount; i++)
+    {
+        Rectangle rect = getGridRect(i, 0);
+        int cx = (int)(rect.x + rect.width  / 2.0f);
+        int cy = (int)(rect.y + rect.height / 2.0f);
+
+        Color color = FIXATION_DOT_COLORS[i % 6];
+
+        if (i == targetIndex)
+            DrawCircleLines(cx, cy, FIXATION_DOT_RADIUS + 4, color);
+
+        DrawCircle(cx, cy, FIXATION_DOT_RADIUS, color);
+    }
+}
+
 void drawStimulusScreen()
 {
     BeginTextureMode(renderTarget);
@@ -248,6 +292,7 @@ void drawStimulusScreen()
             else DrawRectangleRec(getGridRect(i, -STIMULUS_BREAK_PADDING), STIMULUS_BACKGROUND_COLOUR);
         }
 
+        drawFixationDots();
         drawTargetIndicator();
     EndTextureMode();
 

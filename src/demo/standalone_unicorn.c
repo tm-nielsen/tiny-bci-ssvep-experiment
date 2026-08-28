@@ -1,23 +1,23 @@
-#include <inttypes.h>
+# include <inttypes.h>
+# include <unistd.h>
 
+# include "inference_logger.h"
 # include "pipeline.h"
 # include "presentation.h"
 # include "trial_conductor.h"
 # include "microsecond_timer.h"
-
-# include "inference_logger.h"
-#include "data/lsl_eeg_source.h"
-
-# include "data/trigger_source.h"
 # include "data/lsl_trigger_outlet.h"
-# include "data/synthetic_eeg_source.h"
+# include "data/trigger_source.h"
+# include "data/unicorn_eeg_source.h"
 
-void initializeEEGSource() { connectLslEEGSource(); } // { connectLslEEGSource(); }
-void updateEEGSource() { updateLslEEGSource(); } //{ updateLslEEGSource(); }
-void cleanUpEEGSource() { disconnectLslEEGSource(); } // { disconnectLslEEGSource(); }
+# define PORT "/dev/cu.UN-20230805"
 
-uint8_t getChannelCount() { return getLslEEGSourceChannelCount(); }
-uint32_t getSampleRate() { return getLslEEGSourceSampleRate(); }
+void initializeEEGSource() { initializeUnicornEEGSource(PORT); } // { connectLslEEGSource(); }
+void updateEEGSource() { updateUnicornEEGSource(); } //{ updateLslEEGSource(); }
+void cleanUpEEGSource() { closeUnicornEEGSource(); } // { disconnectLslEEGSource(); }
+
+uint8_t getChannelCount() { return getUnicornEEGSourceChannelCount(); }
+uint32_t getSampleRate() { return getUnicornEEGSourceSampleRate(); }
 
 
 static uint16_t currentTargetLabel = 0;
@@ -52,8 +52,7 @@ int main(int argc, char *argv[])
     const int selectedChannelCount = 8;
     const int selectedChannels[8] = {0, 1, 2, 3, 4, 5, 6, 7};
     const float targetSampleRate = 250.0f;
-
-    const uint16_t stimulusRounds = 1;
+    const uint16_t stimulusRounds = 4;
 
     const float filterStabilizationDelay = 5.0f;
     const float stimulusDuration = 6.0f;
@@ -68,16 +67,18 @@ int main(int argc, char *argv[])
 
     initializePresentation(frequencies, N_FREQS);
     setPresentationTarget(0);
-    disableTextureStimulus();
-    initializeInferenceLogger();
+    //disableTextureStimulus();
 
     initializeEEGSource();
+    resetUnicornEEGSource();
     setRuntimeConnectionStatus(true);
+
     openLslTriggerOutlet("tBCI_Experiment_Triggers");
 
     uint8_t channelCount = getChannelCount();
     uint32_t sampleRate = getSampleRate();
     if (initializeTinyBCIPipeline(frequencies, channelCount, selectedChannelCount, selectedChannels, sampleRate, targetSampleRate)) return EXIT_FAILURE;
+
 
     if (startTinyBCIPipeline()) return EXIT_FAILURE;
     printf("---\nTiny BCI Pipeline Running.\n\n");
@@ -113,6 +114,7 @@ int main(int argc, char *argv[])
             return EXIT_SUCCESS;
         }
     }
+    initializeInferenceLogger();
 
     while (!WindowShouldClose())
     {

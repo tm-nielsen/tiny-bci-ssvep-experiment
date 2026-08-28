@@ -34,3 +34,6 @@ void connectNeuropawnEEGSource(const char *, NeuropawnConfiguration);
 void resetNeuropawnEEGSource();
 void updateNeuropawnEEGSource();
 void disconnectNeuropawnEEGSource();
+
+uint8_t getNeuropawnEEGSourceChannelCount();
+uint32_t getNeuropawnEEGSourceSampleRate();

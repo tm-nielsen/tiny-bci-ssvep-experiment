@@ -1,7 +1,7 @@
 # pragma once
 # include "raylib.h"
 
-# define RENDER_WIDTH 800
+# define RENDER_WIDTH 1200
 # define RENDER_HEIGHT 800
 # define MINIMUM_WINDOW_WIDTH 600
 # define MINIMUM_WINDOW_HEIGHT 600
@@ -33,10 +33,21 @@
 # define SELECTION_DISPLAY_COLOUR (Color){120, 200, 120, 255}
 # define SELECTION_DISPLAY_TIME 0.5f
 
+# define FIXATION_DOT_RADIUS 10
+# define FIXATION_DOT_COLORS (Color[]){ \
+{255, 100, 100, 255}, \
+{100, 255, 100, 255}, \
+{100, 100, 255, 255}, \
+{255, 150, 100, 255}, \
+{200, 100, 255, 255}, \
+{100, 255, 255, 255}  \
+}
+
 # define TAU 6.28318530717958647692528676655900576839433879875021
 
 void initializePresentation(const float *, uint16_t);
 void drawMessageScreen(const char*);
+void setRuntimeConnectionStatus(bool connected);
 void drawStimulusScreen();
 void stopPresentation();
 

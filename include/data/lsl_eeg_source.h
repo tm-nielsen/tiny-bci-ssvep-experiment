@@ -4,6 +4,7 @@
 
 # define LSL_SCAN_TIMEOUT 1.0
 # define LSL_CONNECT_TIMEOUT 2.0
+# define LSL_EEG_PREDICATE "type='EEG' or type='eeg'"
 
 void connectLslEEGSource();
 void updateLslEEGSource();

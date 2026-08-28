@@ -1,4 +1,5 @@
 # pragma once
+#include <stdint.h>
 
 void initializeTrialConductor(uint16_t, uint16_t, float, float);
 
@@ -9,3 +10,6 @@ void setAllTrialsCompletedCallback(void (*onAllTrialsCompleted));
 
 void updateTrialConductor();
 void resetTrialConductor();
+void resetTrialConductorTimers(void);
+
+uint16_t getTarget();

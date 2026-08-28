@@ -1,9 +1,9 @@
 # include "pipeline.h"
 # include "data/trigger_source.h"
 
-void initializeTinyBCIPipelineStorage(uint8_t, uint32_t);
-void setTinyBCIPipelineConfiguration(uint8_t, float);
-void addCCANodesToTinyBCIPipeline(const float *);
+void initializeTinyBCIPipelineStorage(uint8_t, uint8_t, uint32_t, uint32_t);
+void setTinyBCIPipelineConfiguration(uint8_t, float, float);
+void addCCANodesToTinyBCIPipeline(uint16_t, const int *, const float *);
 
 int reportStatus(TBCI_Status status, const char *actionLabel)
 {
@@ -16,11 +16,11 @@ int reportStatus(TBCI_Status status, const char *actionLabel)
 
 // ---
 
-int initializeTinyBCIPipeline(const float *frequencies, uint8_t channelCount, uint32_t sampleRate)
+int initializeTinyBCIPipeline(const float *frequencies, uint8_t channelCount, uint8_t selectedChannelCount, const int *selectedChannels, uint32_t sampleRate, uint32_t targetSampleRate)
 {
-    initializeTinyBCIPipelineStorage(channelCount, sampleRate);
-    setTinyBCIPipelineConfiguration(channelCount, sampleRate * 1.0f);
-    addCCANodesToTinyBCIPipeline(frequencies);
+    initializeTinyBCIPipelineStorage(channelCount, selectedChannelCount, sampleRate, targetSampleRate);
+    setTinyBCIPipelineConfiguration(channelCount, sampleRate * 1.0f, targetSampleRate * 1.0f);
+    addCCANodesToTinyBCIPipeline(selectedChannelCount, selectedChannels, frequencies);
 
     TBCI_Status initializationStatus = tbci_context_init(
         &tbciContext, &tbciConfiguration,
@@ -31,12 +31,12 @@ int initializeTinyBCIPipeline(const float *frequencies, uint8_t channelCount, ui
     return reportStatus(initializationStatus, "initialize");
 }
 
-void initializeTinyBCIPipelineStorage(uint8_t channelCount, uint32_t sampleRate)
+void initializeTinyBCIPipelineStorage(uint8_t channelCount, uint8_t selectedChannelCount, uint32_t sampleRate, uint32_t targetSampleRate)
 {
-    allocateDynamicStorage(channelCount, sampleRate);
+    allocateDynamicStorage(channelCount, selectedChannelCount, sampleRate);
 
     sb_init(&signalBuffer, signalStorage, signalTimestamps, signalIndices, SIG_CAPACITY, channelCount);
-    sb_init(&processedSignalBuffer, processedSignalStorage, processedSignalTimestamps, processedSignalIndices, SIG_CAPACITY, channelCount);
+    sb_init(&processedSignalBuffer, processedSignalStorage, processedSignalTimestamps, processedSignalIndices, (SIG_CAPACITY), selectedChannelCount);
     tq_init(&triggerQueue, triggerStorage, TRIG_CAPACITY);
     eq_init(&epochQueue, epochStorage, EPOCH_CAPACITY, totalFrames);
     eq_configure(&epochQueue, epochPool, channelCount);
@@ -50,11 +50,11 @@ void initializeTinyBCIPipelineStorage(uint8_t channelCount, uint32_t sampleRate)
     tbciInputs.n_channels = channelCount;
 }
 
-void setTinyBCIPipelineConfiguration(uint8_t channelCount, float sampleRate)
+void setTinyBCIPipelineConfiguration(uint8_t channelCount, float sampleRate, float targetSampleRate)
 {
     tbciConfiguration.paradigm = TBCI_PARADIGM_SSVEP;
     tbciConfiguration.nominal_srate = sampleRate;
-    tbciConfiguration.target_srate = sampleRate;
+    tbciConfiguration.target_srate = targetSampleRate;
     tbciConfiguration.n_channels = channelCount;
     tbciConfiguration.window_length_ms = WINDOW_LENGTH_MS;
     tbciConfiguration.mode = SEG_MODE_SLIDING;
@@ -71,17 +71,23 @@ void setTinyBCIPipelineConfiguration(uint8_t channelCount, float sampleRate)
     tbciConfiguration.log_session[0] = '\0';
 }
 
-void addCCANodesToTinyBCIPipeline(const float *frequencies)
+void addCCANodesToTinyBCIPipeline(uint16_t selectedChannelCount, const int *selectedChannels, const float *frequencies)
 {
+    /* Channels pick by index and downsampling */
+    for (uint16_t i = 0; i < selectedChannelCount; i++)
+        chanpick_config.selected_channels[i] = (uint8_t)selectedChannels[i];
+
+    chanpick_config.n_selected = selectedChannelCount;
+    chanpick_init(&chanpick_node, &chanpick_config);
+    resample_init(&res_node, &res_config);
+
     /* register notch & bandpass node in preprocessing group */
     notchConfiguration.freq_hz = 60.0f;
     notchConfiguration.q_factor = 10.0f;
-    notchConfiguration.n_harmonics = 2;
+    notchConfiguration.n_harmonics = 1;
     notch_init(&notchNode, &notchConfiguration);
 
-    bandpassConfiguration.low_hz = 1.0f;
-    bandpassConfiguration.high_hz = 40.0f;
-    bp_configure(&bandpassConfiguration, 2.0f, 45.0f, 3);
+    bp_configure(&bandpassConfiguration,2.0f, 45.0f, 3);
     bp_init(&bandpassNode, &bandpassConfiguration);
 
     /* Register CCA node and model */
@@ -98,10 +104,16 @@ void addCCANodesToTinyBCIPipeline(const float *frequencies)
     ccaModelConfiguration.n_freqs = N_FREQS;
     cca_model_init(&ccaModel, &ccaModelConfiguration);
 
+    trialAveragingConfiguration.n_reps = 3;
+    ta_init(&trialAveragingNode, &trialAveragingConfiguration);
+
+    group_add_node(&tbciContext.preprocessing.group, (TBCI_Node *)&chanpick_node);
+    group_add_node(&tbciContext.preprocessing.group, (TBCI_Node *)&res_node);
     group_add_node(&tbciContext.preprocessing.group, (TBCI_Node *)&notchNode);
     group_add_node(&tbciContext.preprocessing.group, (TBCI_Node *)&bandpassNode);
     group_add_node(&tbciContext.features.group, (TBCI_Node *)&ccaNode);
     group_add_node(&tbciContext.decoder.group, (TBCI_Node *)&ccaModel);
+    group_add_node(&tbciContext.decoder.group, (TBCI_Node *)&trialAveragingNode);
 }
 
 // ---

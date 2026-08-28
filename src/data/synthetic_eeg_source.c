@@ -5,12 +5,14 @@ static MicrosecondTimer timer;
 static float* samples = NULL;
 static uint32_t sampleIndex = 0;
 static uint8_t channelCount = 0;
+static uint32_t sampleRate = 0;
 
 static float tau = (float)(2 * TBCI_M_PI);
 
 
-void initializeSyntheticEEGSource(uint8_t pChannelCount, uint32_t sampleRate)
+void initializeSyntheticEEGSource(uint8_t pChannelCount, uint32_t sRate)
 {
+    sampleRate = sRate;
     channelCount = pChannelCount;
     timer = createMicrosecondTimer(1.0f / sampleRate);
     samples = malloc(channelCount * sizeof(float));
@@ -40,6 +42,9 @@ void updateSyntheticEEGSource()
         in_push_signal(&tbciInputs, samples, now, sampleIndex++);
     }
 }
+
+uint8_t getSyntheticEEGSourceChannelCount() { return channelCount; }
+uint32_t getSyntheticEEGSourceSampleRate() { return sampleRate; }
 
 void cleanUpSyntheticEEGSource()
 {

@@ -7,17 +7,21 @@
 # include "nodes/preprocessing/tbci_notch_node.h"
 # include "nodes/features/tbci_cca_node.h"
 # include "nodes/decoder/tbci_cca_model.h"
+# include "nodes/decoder/tbci_label_encoder_node.h"
+# include "nodes/decoder/tbci_trial_averaging_node.h"
+# include "nodes/preprocessing/tbci_resample_node.h"
+# include "nodes/preprocessing/tbci_channels_pick_node.h"
 
 # define SIG_CAPACITY 1024
-# define TRIG_CAPACITY 32
+# define TRIG_CAPACITY 8
 # define EPOCH_CAPACITY 8
 
 # define WINDOW_LENGTH_MS 2000
-# define WINDOW_OVERLAP_MS 1000
+# define WINDOW_OVERLAP_MS 1900
 
 // ---
 
-void allocateDynamicStorage(uint8_t, uint32_t);
+void allocateDynamicStorage(uint8_t, uint8_t, uint32_t);
 void deallocateDynamicStorage();
 
 // ---
@@ -54,13 +58,17 @@ extern TBCI_Config tbciConfiguration;
 extern TBCI_Context tbciContext;
 
 // CCA constants
-# define N_FREQS 4
+# define N_FREQS 6
 # define N_HARMONICS 3
 # define N_COMPONENTS (N_HARMONICS * 2)
 extern size_t referenceSignalsCapacity;
 extern float *refSignals;
 
 // Nodes
+extern TBCI_ChanPickNode chanpick_node;
+extern TBCI_ChanPickConfig chanpick_config;
+extern TBCI_ResampleNode res_node;
+extern TBCI_ResampleConfig res_config;
 extern TBCI_NotchNode notchNode;
 extern TBCI_NotchConfig notchConfiguration;
 extern TBCI_BandpassNode bandpassNode;
@@ -69,5 +77,9 @@ extern TBCI_CCANode ccaNode;
 extern TBCI_CCAConfig ccaConfiguration;
 extern TBCI_CCAModel ccaModel;
 extern TBCI_CCAModelConfig ccaModelConfiguration;
+extern TBCI_LabelEncoderNode labelEncoderNode;
+extern TBCI_LabelEncoderConfig labelEncoderConfiguration;
+extern TBCI_TrialAveragingNode trialAveragingNode;
+extern TBCI_TrialAveragingConfig trialAveragingConfiguration;
 
 #endif

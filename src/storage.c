@@ -47,7 +47,10 @@ TBCI_Context tbciContext;
 size_t referenceSignalsCapacity = 0;
 float *refSignals = NULL;
 
-
+TBCI_ChanPickNode chanpick_node;
+TBCI_ChanPickConfig chanpick_config;
+TBCI_ResampleNode res_node;
+TBCI_ResampleConfig res_config;
 TBCI_NotchNode notchNode;
 TBCI_NotchConfig notchConfiguration;
 TBCI_BandpassNode bandpassNode;
@@ -56,16 +59,20 @@ TBCI_CCANode ccaNode;
 TBCI_CCAConfig ccaConfiguration;
 TBCI_CCAModel ccaModel;
 TBCI_CCAModelConfig ccaModelConfiguration;
+TBCI_TrialAveragingNode trialAveragingNode;
+TBCI_TrialAveragingConfig trialAveragingConfiguration;
+
 
 // ---
 
-void allocateDynamicStorage(uint8_t channelCount, uint32_t sampleRate)
+void allocateDynamicStorage(uint8_t channelCount, uint8_t selectedChannelCount, uint32_t targetSampleRate)
 {
     size_t signalStorageSize = SIG_CAPACITY * channelCount * sizeof(float);
     signalStorage = malloc(signalStorageSize);
-    processedSignalStorage = malloc(signalStorageSize);
+    size_t procStorageSize = SIG_CAPACITY * selectedChannelCount * sizeof(float);
+    processedSignalStorage = malloc(procStorageSize);
 
-    totalFrames = (size_t)(sampleRate * WINDOW_LENGTH_MS / 1000);
+    totalFrames = (size_t)(targetSampleRate * WINDOW_LENGTH_MS / 1000);
     size_t epochPoolCapacity = EPOCH_CAPACITY * totalFrames * channelCount;
     size_t epochPoolSize = epochPoolCapacity * sizeof(float);
     epochPool = malloc(epochPoolSize);

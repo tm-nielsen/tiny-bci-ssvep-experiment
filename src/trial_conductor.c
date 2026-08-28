@@ -40,6 +40,10 @@ void setAllTrialsCompletedCallback(void (*onTrialsCompleted))
     allTrialsCompletedCallback = onTrialsCompleted;
 }
 
+uint16_t getTarget()
+{
+    return target + 1;
+}
 // ---
 
 void startTrial()
@@ -56,7 +60,7 @@ void endTrial()
     resetMicrosecondTimer(&breakTimer);
 
     if (trialEndCallback != NULL) trialEndCallback(target);
-    if (target == 0) 
+    if (target == 0)
     {
         if (stimulusRoundCompletedCallback != NULL) stimulusRoundCompletedCallback();
         if (--stimulusRoundsToBeCompleted <= 0)
