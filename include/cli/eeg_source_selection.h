@@ -9,11 +9,11 @@ void updateSelectedEEGSource();
 void cleanUpSelectedEEGSource();
 
 typedef enum {
-    LSLSource,
-    NeuropawnSource,
-    UnicornSource,
-    DSI7Source,
-    SyntheticSource
+    LSL_SOURCE,
+    NEUROPAWN_SOURCE,
+    UNICORN_SOURCE,
+    DSI7_SOURCE,
+    SYNTHETIC_SOURCE
 } EEGSourceType;
 
 EEGSourceType promptEEGSourceSelection();

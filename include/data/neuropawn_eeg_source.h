@@ -19,7 +19,7 @@
 # define NEUROPAWN_EEG_SCALE(gain) (4.0f / (float)(pow(2, 15) - 1) / gain / 79.57f * 1000000.0f)
 
 typedef enum {
-    NEUROPAWN_BOARD_UNKNOWN = 0,
+    NEUROPAWN_BOARD_UNKNOWN,
     NEUROPAWN_BOARD_EEG,
     NEUROPAWN_BOARD_IMU
 } NeuroPawnBoardType;

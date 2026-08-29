@@ -70,20 +70,20 @@ static void initializeDsi7Source()
 
 void selectEEGSource(unsigned int selection)
 {
-    if (selection == DSI7Source && !isDsiLibraryAvailable())
+    if (selection == DSI7_SOURCE && !isDsiLibraryAvailable())
     {
         printf("DSI API Library not present at %s\n", DSI_API_LIBRARY_PATH);
         getchar();
         exit(EXIT_SUCCESS);
     }
-    if (selection != LSLSource && selection != SyntheticSource)
+    if (selection != LSL_SOURCE && selection != SYNTHETIC_SOURCE)
     {
         strcpy(selectedPortName, promptSerialPortSelection());
     }
 
     switch (selection)
     {
-        case LSLSource:
+        case LSL_SOURCE:
             initializationMethod = connectLslEEGSource;
             updateMethod = updateLslEEGSource;
             cleanupMethod = closeLslEEGSource;
@@ -92,7 +92,7 @@ void selectEEGSource(unsigned int selection)
             sampleRateGetMethod = getLslEEGSourceSampleRate;
         break;
 
-        case NeuropawnSource:
+        case NEUROPAWN_SOURCE:
             initializationMethod = initializeNeuropawnSource;
             updateMethod = updateNeuropawnEEGSource;
             cleanupMethod = closeNeuropawnEEGSource;
@@ -101,7 +101,7 @@ void selectEEGSource(unsigned int selection)
             sampleRateGetMethod = getNeuropawnEEGSourceSampleRate;
         break;
 
-        case UnicornSource:
+        case UNICORN_SOURCE:
             initializationMethod = initializeUnicornSource;
             updateMethod = updateUnicornEEGSource;
             cleanupMethod = closeUnicornEEGSource;
@@ -110,7 +110,7 @@ void selectEEGSource(unsigned int selection)
             sampleRateGetMethod = getUnicornEEGSourceSampleRate;
         break;
 
-        case DSI7Source:
+        case DSI7_SOURCE:
             initializationMethod = initializeDsi7Source;
             updateMethod = updateDsiEEGSource;
             cleanupMethod = disconnectDsiEEGSource;
@@ -119,7 +119,7 @@ void selectEEGSource(unsigned int selection)
             sampleRateGetMethod = getDsiEEGSourceSampleRate;
         break;
 
-        case SyntheticSource:
+        case SYNTHETIC_SOURCE:
             initializationMethod = initializeTestSource;
             updateMethod = updateSyntheticEEGSource;
             cleanupMethod = closeSyntheticEEGSource;
@@ -136,9 +136,9 @@ void runEEGSourceSelection()
     selectEEGSource(type);
 
     if (
-        type == NeuropawnSource
-        || type == UnicornSource
-        || type == DSI7Source
+        type == NEUROPAWN_SOURCE
+        || type == UNICORN_SOURCE
+        || type == DSI7_SOURCE
     ) {
         userHasSelectedToStreamData = promptEEGOutletUsageSelection();
     }

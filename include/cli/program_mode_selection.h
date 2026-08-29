@@ -3,8 +3,8 @@
 # define PROGRAM_MODES
 
 typedef enum {
-    Standalone,
-    PresentationOnly
+    STANDALONE,
+    PRESENTATION_ONLY
 } ProgramMode;
 
 ProgramMode promptProgramModeSelection();

@@ -14,24 +14,24 @@
 # include "cli/eeg_source_selection.h"
 
 static ProgramMode programMode;
-# define STANDALONE(code) if(programMode == Standalone) { code }
-# define PRESENTATION_ONLY(code) if(programMode == PresentationOnly) { code }
+# define IF_STANDALONE(code) if(programMode == STANDALONE) { code }
+# define IF_PRESENTATION_ONLY(code) if(programMode == PRESENTATION_ONLY) { code }
 
 ProgramMode promptProgramModeSelection()
 {
     printf("Select program mode\n");
-    printf("\t%u - Standalone\n", Standalone);
+    printf("\t%u - Standalone\n", STANDALONE);
     printf(
         "\t%u - Presentation Only "
         "(connected to headless engine over LSL)\n"
-        , PresentationOnly
+        , PRESENTATION_ONLY
     );
 
-    uint32_t selection = getCLIIntegerSelection(PresentationOnly);
+    uint32_t selection = getCLIIntegerSelection(PRESENTATION_ONLY);
 
     printf(
         "\nProceeding in %s mode...\n",
-        selection == Standalone ? "Standalone" : "Presentation Only"
+        selection == STANDALONE ? "Standalone" : "Presentation Only"
     );
     return (ProgramMode)selection;
 }
@@ -40,7 +40,7 @@ ProgramMode promptProgramModeSelection()
 
 void onTrialStart(uint16_t target)
 {
-    STANDALONE(
+    IF_STANDALONE(
         uint64_t triggerTimestamp = pushTrigger(target + 1);
         notifyInferenceLoggerOfNewTarget(target, triggerTimestamp);
     )
@@ -51,7 +51,7 @@ void onTrialStart(uint16_t target)
 
 void onTrialEnd(uint16_t nextTarget)
 {
-    STANDALONE(pushTrigger(TRIAL_END_CODE);)
+    IF_STANDALONE(pushTrigger(TRIAL_END_CODE);)
     pushLslTrigger(TRIAL_END_CODE);
     setPresentationTarget(nextTarget);
     pauseStimulus();
@@ -66,11 +66,11 @@ void onAllTrialsCompleted()
 
 bool tryGetInference(TinyBCIInference *inference, uint64_t *timestamp)
 {
-    STANDALONE(
+    IF_STANDALONE(
         *timestamp = getCurrentMicrosecondTimestamp();
         return tryGetTinyBCIInference(inference);
     )
-    PRESENTATION_ONLY(
+    IF_PRESENTATION_ONLY(
         return pollLslInferenceSource(inference, timestamp);
     )
     return false;
@@ -108,19 +108,19 @@ void initializeProgram(ProgramMode mode)
         &onTrialStart, &onTrialEnd,
         &onAllTrialsCompleted
     );
-    STANDALONE(
+    IF_STANDALONE(
         drawMessageScreen("Initializing EEG Source...");
         initializeSelectedEEGSource();
     )
     openLslTriggerOutlet();
 
-    STANDALONE(
+    IF_STANDALONE(
         initializePipelineWithEEGSourceParameters();
         drawMessageScreen("Awaiting Filter Stabilization...");
         awaitFilterStabilization(&cleanUpProgram);
     )
 
-    PRESENTATION_ONLY(connectToHeadlessRuntime();)
+    IF_PRESENTATION_ONLY(connectToHeadlessRuntime();)
 }
 
 void awaitPromptedProgramStart()
@@ -128,11 +128,11 @@ void awaitPromptedProgramStart()
     while (!IsKeyPressed(KEY_SPACE))
     {
         drawPreparationScreen("Press Spacebar to Start");
-        STANDALONE(
+        IF_STANDALONE(
             if (!isSelectedEEGSourceConnected()) return;
             updateEEGSourceAndPipeline(&cleanUpProgram);
         )
-        PRESENTATION_ONLY(
+        IF_PRESENTATION_ONLY(
             if(!isLslInferenceSourceConsumable()) return;
         )
         closeIfPromptedTo(&cleanUpProgram);
@@ -147,7 +147,7 @@ void updateProgram()
         return;
     }
 
-    PRESENTATION_ONLY(
+    IF_PRESENTATION_ONLY(
         if (!isLslInferenceSourceConnected())
         {
             drawMessageScreen("Connection Lost");
@@ -155,7 +155,7 @@ void updateProgram()
         }
     )
 
-    STANDALONE(
+    IF_STANDALONE(
         if (!isSelectedEEGSourceConnected())
         {
             drawMessageScreen("EEG Source Disconnected");
@@ -164,14 +164,14 @@ void updateProgram()
     )
 
     updateTrialConductor();
-    STANDALONE(updateEEGSourceAndPipeline(&cleanUpProgram);)
+    IF_STANDALONE(updateEEGSourceAndPipeline(&cleanUpProgram);)
 
     TinyBCIInference inference;
     uint64_t timestamp;
     if (tryGetInference(&inference, &timestamp))
     {
         displayInference(inference, timestamp);
-        STANDALONE(logInference(inference, timestamp);)
+        IF_STANDALONE(logInference(inference, timestamp);)
     }
 
     drawStimulusScreen();
@@ -179,8 +179,8 @@ void updateProgram()
 
 void cleanUpProgram()
 {
-    STANDALONE(cleanUpEEGSourceAndPipeline();)
-    PRESENTATION_ONLY(closeLslInferenceSource();)
+    IF_STANDALONE(cleanUpEEGSourceAndPipeline();)
+    IF_PRESENTATION_ONLY(closeLslInferenceSource();)
     closeLslTriggerOutlet();
     stopPresentation();
 }

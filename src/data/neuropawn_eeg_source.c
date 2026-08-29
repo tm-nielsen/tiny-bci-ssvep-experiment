@@ -18,10 +18,6 @@ typedef enum {
 
 // ---
 
-
-
-// ---
-
 static EXGStatus validateEXGFrame(SerialFrame frame)
 {
     if (

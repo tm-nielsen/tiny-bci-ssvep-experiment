@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 # endif
 
     ProgramMode mode = promptProgramModeSelection();
-    if (mode == Standalone) runEEGSourceSelection();
+    if (mode == STANDALONE) runEEGSourceSelection();
 
     initializeProgram(mode);
     awaitPromptedProgramStart();
