@@ -24,6 +24,6 @@ bool isSelectedEEGSourceConnected();
 uint8_t getChannelCountOfSelectedEEGSource();
 uint32_t getSampleRateOfSelectedEEGSource();
 
-bool isSelectedEEGSourceEligibleForLslStreaming();
+bool shouldStreamSelectedEEGSource();
 
 # endif

@@ -13,10 +13,13 @@ include(cmake/CopyAssets.cmake)
 set(SHARED_SOURCES
   src/trial_conductor.c
   src/microsecond_timer.c
-  src/storage.c
-  src/pipeline.c
-  src/triggers.c
   src/inference_logger.c
+
+  src/pipeline/pipeline.c
+  src/pipeline/initialization.c
+  src/pipeline/storage.c
+  src/pipeline/triggers.c
+  src/pipeline/helpers.c
 
   src/program/helpers.c
   src/program/pipeline_helpers.c
@@ -28,11 +31,14 @@ set(SHARED_SOURCES
   src/serial/unix.c
   src/serial/windows.c
   src/serial/utils.c
+  src/serial/data_source.c
+  src/serial/data_source_reading.c
   src/serial/unix_port_enumeration.c
   src/serial/windows_port_enumeration.c
 
   src/data/synthetic_eeg_source.c
   src/data/neuropawn_eeg_source.c
+  src/data/neuropawn_board_configuration.c
   src/data/unicorn_eeg_source.c
   src/data/dsi_eeg_source.c
   src/data/DSI_API_Loader.c

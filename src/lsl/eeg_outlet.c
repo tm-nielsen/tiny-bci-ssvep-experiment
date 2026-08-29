@@ -1,7 +1,7 @@
 # include "lsl/eeg_outlet.h"
 # include "lsl/helpers.h"
 # include "lsl_c.h"
-# include "pipeline.h"
+# include "pipeline/storage.h"
 
 static lsl_outlet outlet = NULL;
 

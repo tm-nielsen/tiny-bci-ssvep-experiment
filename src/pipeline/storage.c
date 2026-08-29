@@ -1,4 +1,4 @@
-# include "storage.h"
+# include "pipeline/storage.h"
 
 uint64_t signalTimestampsArray[SIG_CAPACITY];
 uint32_t signalIndicesArray[SIG_CAPACITY];

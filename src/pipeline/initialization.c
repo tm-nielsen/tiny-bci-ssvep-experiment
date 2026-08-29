@@ -1,20 +1,8 @@
 # include "pipeline.h"
-# include "triggers.h"
 
 void initializeTinyBCIPipelineStorage(uint8_t, uint32_t);
 void setTinyBCIPipelineConfiguration(uint8_t, float);
 void addCCANodesToTinyBCIPipeline(const float *);
-
-int reportStatus(TBCI_Status status, const char *actionLabel)
-{
-    if (status)
-    {
-        fprintf(stderr, "Failed to %s Tiny BCI Pipeline | code: %d\n", actionLabel, status);
-    }
-    return status;
-}
-
-// ---
 
 int initializeTinyBCIPipeline(const float *frequencies, uint8_t channelCount, uint32_t sampleRate)
 {
@@ -28,7 +16,7 @@ int initializeTinyBCIPipeline(const float *frequencies, uint8_t channelCount, ui
         &epochQueue, &featuresQueue, &outputQueue
     );
     tbciInputs.signal = &signalBuffer;
-    return reportStatus(initializationStatus, "initialize");
+    return reportAndReturnPipelineStatus(initializationStatus, "initialize");
 }
 
 void initializeTinyBCIPipelineStorage(uint8_t channelCount, uint32_t sampleRate)
@@ -104,61 +92,4 @@ void addCCANodesToTinyBCIPipeline(const float *frequencies)
     group_add_node(&tbciContext.features.group, (TBCI_Node *)&ccaNode);
     group_add_node(&tbciContext.decoder.group, (TBCI_Node *)&ccaModel);
     group_add_node(&tbciContext.decoder.group, (TBCI_Node *)&trialAveragingNode);
-}
-
-// ---
-
-void cleanUpTinyBCIPipeline()
-{
-    stopTinyBCIPipeline();
-    deallocateDynamicStorage();
-}
-
-// ---
-
-int startTinyBCIPipeline()
-{
-    TBCI_Status status = tbci_context_start(&tbciContext, TBCI_STATE_INFERENCE);
-    return reportStatus(status, "start");
-}
-int startTinyBCIPipelineInState(TBCI_State initialState)
-{
-    TBCI_Status status = tbci_context_start(&tbciContext, initialState);
-    return reportStatus(status, "start");
-}
-
-int updateTinyBCIPipeline()
-{
-    TBCI_Status status = tbci_context_tick(&tbciContext);
-    return reportStatus(status, "update");
-}
-
-int stopTinyBCIPipeline()
-{
-    TBCI_Status status = tbci_context_stop(&tbciContext);
-    return reportStatus(status, "stop");
-}
-
-// ---
-
-bool tryGetTinyBCIInference(TinyBCIInference *out)
-{
-    if (eq_is_empty(&outputQueue))
-        return false;
-
-    TBCI_Epoch epoch;
-    eq_pop(&outputQueue, &epoch);
-
-    *out = (TinyBCIInference)
-    {
-        .predictedLabel = epoch.predicted_label,
-        .targetLabel = epoch.label,
-        .confidence = epoch.confidence
-    };
-    for (int i = 0; i < N_FREQS; i++)
-    {
-        out->confidences[i] = epoch.samples[i];
-    }
-
-    return true;
 }

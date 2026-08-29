@@ -18,10 +18,10 @@ void initializePipelineWithEEGSourceParameters()
     if (pipelineStatus != TBCI_OK) exit(EXIT_FAILURE);
     initializeInferenceLogger();
 
-    if (
-        isSelectedEEGSourceEligibleForLslStreaming()
-        && promptEEGOutletUsageSelection()
-    ) createAndConnectPipelineEEGOutlet();
+    if (shouldStreamSelectedEEGSource())
+    {
+        createAndConnectPipelineEEGOutlet();
+    }
 
     pipelineStatus = startTinyBCIPipeline();
     if (pipelineStatus != TBCI_OK) exit(EXIT_FAILURE);

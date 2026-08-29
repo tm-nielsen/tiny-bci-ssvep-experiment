@@ -1,7 +1,6 @@
 # include "program/helpers.h"
 
 # include "pipeline.h"
-# include "triggers.h"
 # include "inference_logger.h"
 # include "microsecond_timer.h"
 

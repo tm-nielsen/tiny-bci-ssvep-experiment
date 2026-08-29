@@ -1,4 +1,4 @@
-# include "triggers.h"
+# include "pipeline.h"
 
 # ifdef USE_LSL_TIMESTAMPS
 #   include "lsl_c.h"

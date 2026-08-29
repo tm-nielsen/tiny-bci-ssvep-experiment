@@ -1,4 +1,5 @@
 # include "data/synthetic_eeg_source.h"
+# include "pipeline.h"
 # include "microsecond_timer.h"
 
 static MicrosecondTimer timer;

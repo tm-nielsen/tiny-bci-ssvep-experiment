@@ -1,7 +1,7 @@
 # include "lsl/eeg_source.h"
 # include "lsl/helpers.h"
 # include "lsl/constants.h"
-# include "pipeline.h"
+# include "pipeline/storage.h"
 # include "microsecond_timer.h"
 # include "lsl_c.h"
 

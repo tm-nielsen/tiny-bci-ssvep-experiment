@@ -7,7 +7,6 @@
 # include "microsecond_timer.h"
 
 # include "pipeline.h"
-# include "triggers.h"
 # include "lsl/trigger_stream.h"
 # include "lsl/inference_stream.h"
 # include "inference_logger.h"

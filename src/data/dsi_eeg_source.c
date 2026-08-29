@@ -1,6 +1,5 @@
 # include "data/dsi_eeg_source.h"
 # include "pipeline.h"
-# include "microsecond_timer.h"
 # include "DSI.h"
  
 static DSI_Headset headset = NULL;
@@ -28,9 +27,8 @@ static void dsiSampleCallback(DSI_Headset h, double packetTime, void *userData)
     {
         samples[ch] = (float)DSI_Channel_ReadBuffered(channels[ch]);
     }
- 
-    uint64_t timestamp = getCurrentMicrosecondTimestamp();
-    in_push_signal(&tbciInputs, samples, timestamp, sampleIndex++);
+
+    pushEEGSampleToTinyBCIPipeline(samples, sampleIndex++);
 }
  
 // ---
