@@ -67,11 +67,12 @@ void configureChannel(
 
     SerialFrame frame = awaitSerialDataSourceFrame(target);
 
-    if (!expectNonZeroSamples) return;
-    else if (
-        frame.buffer[1 + 2 * channelIndex] ||
-        frame.buffer[2 + 2 * channelIndex]
-    ) return;
+    uint8_t *channelValues = frame.buffer + 1 + 2 * channelIndex;
+    if (expectNonZeroSamples)
+    {
+        if(channelValues[0] || channelValues[1]) return;
+    }
+    else if (channelValues[0] == 0 && channelValues[1] == 0) return;
     else
     {
         fprintf(stderr, "neuropawn: failed to configure channel, retrying\n");
