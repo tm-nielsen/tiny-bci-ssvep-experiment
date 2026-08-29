@@ -38,11 +38,12 @@ ProgramMode promptProgramModeSelection()
 
 // ---
 
-static uint16_t currentTargetLabel = 0;
 void onTrialStart(uint16_t target)
 {
-    currentTargetLabel = target;
-    STANDALONE(pushTrigger(target + 1);)
+    STANDALONE(
+        uint64_t triggerTimestamp = pushTrigger(target + 1);
+        notifyInferenceLoggerOfNewTarget(target, triggerTimestamp);
+    )
     pushLslTrigger(target + 1);
     setPresentationTarget(target);
     resumeStimulus();
@@ -170,7 +171,7 @@ void updateProgram()
     if (tryGetInference(&inference, &timestamp))
     {
         displayInference(inference, timestamp);
-        STANDALONE(logInference(inference, timestamp, currentTargetLabel);)
+        STANDALONE(logInference(inference, timestamp);)
     }
 
     drawStimulusScreen();

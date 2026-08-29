@@ -2,5 +2,6 @@
 # include "pipeline.h"
 
 void initializeInferenceLogger();
-void logInference(TinyBCIInference inference, uint64_t timestamp, uint16_t trueLabel);
+void notifyInferenceLoggerOfNewTarget(uint16_t target, uint64_t timestamp);
+void logInference(TinyBCIInference inference, uint64_t timestamp);
 void closeInferenceLogger();

@@ -2,6 +2,9 @@
 # include <time.h>
 
 static FILE *logFile = NULL;
+static uint16_t currentTarget = 0;
+static uint64_t targetAssignmentTimestamp = 0;
+static uint16_t roundNumber = 0;
 
 void initializeInferenceLogger()
 {
@@ -20,7 +23,7 @@ void initializeInferenceLogger()
     logFile = fopen(filepath, "w");
 
     if (logFile) {
-        fprintf(logFile, "timestamp_us,true_label,predicted_label,confidence");
+        fprintf(logFile, "timestamp_us,delta_time_us,true_label,predicted_label,confidence,round_number");
         for (int i = 0; i < N_FREQS; i++)
         {
             fprintf(logFile, ",prob_%d", i);
@@ -34,7 +37,14 @@ void initializeInferenceLogger()
     }
 }
 
-void logInference(TinyBCIInference inference, uint64_t timestamp, uint16_t trueLabel)
+void notifyInferenceLoggerOfNewTarget(uint16_t target, uint64_t timestamp)
+{
+    if (target == 0 && currentTarget != 0) roundNumber++;
+    currentTarget = target;
+    targetAssignmentTimestamp = timestamp;
+}
+
+void logInference(TinyBCIInference inference, uint64_t timestamp)
 {
     if (!logFile)
     {
@@ -42,9 +52,10 @@ void logInference(TinyBCIInference inference, uint64_t timestamp, uint16_t trueL
         return;
     }
 
-    fprintf(logFile, "\n%" PRIu64 ",%d,%d,%.6f",
-        timestamp, trueLabel + 1,
-        inference.predictedLabel + 1, inference.confidence
+    fprintf(logFile, "\n%" PRIu64 ",%" PRIu64 ",%d,%d,%.6f,%u",
+        timestamp, timestamp - targetAssignmentTimestamp,
+        currentTarget + 1, inference.predictedLabel + 1,
+        inference.confidence, roundNumber
     );
     for (int i = 0; i < N_FREQS; i++)
     {

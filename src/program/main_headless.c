@@ -13,9 +13,10 @@
 static uint16_t currentTargetLabel = 0;
 static void onTriggerReceived(uint16_t code)
 {
-    pushTrigger(code);
+    uint64_t pushTimestamp = pushTrigger(code);
     if (code == TRIAL_END_CODE) return; // nothing to do at trial boundaries here
     currentTargetLabel = code - 1; // matches presenter's pushTrigger(target + 1)
+    notifyInferenceLoggerOfNewTarget(currentTargetLabel, pushTimestamp);
 }
 
 // ---
@@ -83,7 +84,7 @@ int main(void)
         if (tryGetTinyBCIInference(&inference)) {
             uint64_t timestamp = getCurrentMicrosecondTimestamp();
             printInference(inference, timestamp);
-            logInference(inference, timestamp, currentTargetLabel);
+            logInference(inference, timestamp);
             pushLslInference(&inference, timestamp, currentTargetLabel);
         }
     }

@@ -8,7 +8,7 @@ uint64_t getTimestamp() { return (uint64_t)(lsl_local_clock() * 1000000); }
 uint64_t getTimestamp() { return getCurrentMicrosecondTimestamp(); }
 # endif
 
-void pushTrigger(uint16_t value)
+uint64_t pushTrigger(uint16_t value)
 {
     uint64_t timestamp = getTimestamp();
     printf("%" PRIu64 " | Pushing trigger : %u\n", timestamp, value);
@@ -19,9 +19,10 @@ void pushTrigger(uint16_t value)
         .type = TBCI_TRIGGER_DATA
     };
     in_push_trigger(&tbciInputs, &trigger, &tbciContext);
+    return timestamp;
 }
 
-void pushTrialEndCode()
+uint64_t pushTrialEndCode()
 {
-    pushTrigger(TRIAL_END_CODE);
+    return pushTrigger(TRIAL_END_CODE);
 }
