@@ -65,7 +65,9 @@ void appendDevices(const char * baseName)
     while ((dp = readdir(dirp)) && deviceCount < MAXIMUM_KNOWN_SERIAL_DEVICES) {
         if (strlen(dp->d_name) >= baseNameLength) {
             if (memcmp(baseName, dp->d_name, baseNameLength) == 0) {
-                deviceNames[deviceCount++] = (char *)strdup(dp->d_name);
+                char *fullName = malloc(strlen(dp->d_name) + 5);
+                sprintf(fullName, "/dev/%s", dp->d_name);
+                deviceNames[deviceCount++] = fullName;
             }
         }
     }
