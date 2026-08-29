@@ -23,8 +23,8 @@ bool getCLIYesNo()
         int selection = 0;
         while ((selection = getchar()) == '\n');
 
-        if (selection == 'y' || selection == 'Y') return true;
-        if (selection == 'n' || selection == 'N') return false;
+        if (selection == 'y' || selection == 'Y' || selection == '1') return true;
+        if (selection == 'n' || selection == 'N' || selection == '0') return false;
 
         printf(" - invalid selection\n");
     }
