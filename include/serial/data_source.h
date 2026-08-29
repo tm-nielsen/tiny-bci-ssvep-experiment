@@ -6,6 +6,12 @@
 # define MAKE_OXFF_TERMINATED_BYTE_ARRAY(...) (uint8_t[]){ __VA_ARGS__, 0xFF }
 
 typedef struct {
+    uint32_t index;
+    uint8_t *buffer;
+    uint16_t size;
+} SerialFrame;
+
+typedef struct {
     SerialHandle handle;
     void (*frameCallback)(SerialFrame);
 
@@ -19,12 +25,6 @@ typedef struct {
     uint16_t tail;
     bool isFull;
 } SerialDataSource;
-
-typedef struct {
-    uint32_t index;
-    uint8_t *buffer;
-    uint16_t size;
-} SerialFrame;
 
 SerialDataSource createSerialDataSource(
     uint16_t frameSize,

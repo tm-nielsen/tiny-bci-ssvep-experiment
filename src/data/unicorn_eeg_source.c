@@ -56,7 +56,7 @@ void connectUnicornEEGSource(const char *port, uint32_t timeout)
         UNICORN_END_BYTES
     );
     if (openSerialDataSource(&dataSource, port, timeout)) exit(EXIT_FAILURE);
-    SerialHandle handlePointer = &(dataSource.handle);
+    SerialHandle *handlePointer = &(dataSource.handle);
 
     serialWrite(handlePointer,
         UNICORN_START_ACQUISITION_COMMAND,

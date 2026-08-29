@@ -24,7 +24,9 @@ static bool stimulusEnabled = true;
 static bool textureEnabled = true;
 
 // ---
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
+# ifndef MIN
+#   define MIN(a, b) ((a) < (b) ? (a) : (b))
+# endif
 
 float getGridSize(float safeArea, uint16_t itemCount)
 {

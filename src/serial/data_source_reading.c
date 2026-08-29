@@ -64,6 +64,9 @@ bool hasValidFrameAtTail(SerialDataSource *source)
 }
 
 // ---
+# ifndef MIN
+#   define MIN(a, b) ((a) < (b) ? (a) : (b))
+# endif
 
 void readIntoBuffer(SerialDataSource *source)
 {
@@ -71,7 +74,7 @@ void readIntoBuffer(SerialDataSource *source)
     int bytesRead = serialRead(
         &(source->handle),
         source->buffer + source->tip,
-        min(
+        MIN(
             source->bufferLength - source->tip,
             countRemainingBufferSize(source)
         )
