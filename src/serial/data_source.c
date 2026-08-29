@@ -1,12 +1,5 @@
 # include "serial/data_source.h"
 
-uint8_t count0xFFTerminatedBytes(uint8_t *bytes)
-{
-    uint8_t count = 0;
-    while (bytes[count++] != 0xFF);
-    return count;
-}
-
 static uint8_t * copyBytes(uint8_t *bytes)
 {
     int16_t count = 0;
