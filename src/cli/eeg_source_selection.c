@@ -15,7 +15,7 @@ static uint8_t (*channelCountGetMethod)();
 static uint32_t (*sampleRateGetMethod)();
 
 static char selectedPortName[MAXIMUM_PORT_NAME_LENGTH];
-static bool shouldStreamSelectedSource = false;
+static bool userHasSelectedToStreamData = false;
 
 void safeInvoke(void (*method)())
 {
@@ -140,7 +140,7 @@ void runEEGSourceSelection()
         || type == UnicornSource
         || type == DSI7Source
     ) {
-        shouldStreamSelectedSource = promptEEGOutletUsageSelection();
+        userHasSelectedToStreamData = promptEEGOutletUsageSelection();
     }
 }
 
@@ -164,5 +164,5 @@ uint32_t getSampleRateOfSelectedEEGSource()
 }
 
 bool shouldStreamSelectedEEGSource() {
-    return shouldStreamSelectedEEGSource;
+    return userHasSelectedToStreamData;
 }
