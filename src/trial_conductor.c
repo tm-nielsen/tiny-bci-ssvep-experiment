@@ -42,14 +42,14 @@ void setAllTrialsCompletedCallback(void (*onTrialsCompleted))
 
 // ---
 
-void startTrial()
+static void startTrial()
 {
     state = STIMULUS;
     if (trialStartCallback != NULL) trialStartCallback(target);
     resetMicrosecondTimer(&stimulusTimer);
 }
 
-void endTrial()
+static void endTrial()
 {
     state = BREAK;
     target = (target + 1) % targetCount;

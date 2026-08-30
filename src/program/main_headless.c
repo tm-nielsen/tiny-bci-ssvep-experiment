@@ -21,14 +21,14 @@ static void onTriggerReceived(uint16_t code)
 
 // ---
 
-void cleanUp()
+static void cleanUp()
 {
     cleanUpEEGSourceAndPipeline();
     closeLslTriggerSource();
     closeLslInferenceOutlet();
 }
 
-void handleDisconnection(const char *message)
+static void handleDisconnection(const char *message)
 {
     printf("---\n%s\n\n", message);
     cleanUp();
@@ -38,7 +38,7 @@ void handleDisconnection(const char *message)
     exit(EXIT_SUCCESS);
 }
 
-void updateProgram()
+static void updateProgram()
 {    
     if (!isSelectedEEGSourceConnected())
     {

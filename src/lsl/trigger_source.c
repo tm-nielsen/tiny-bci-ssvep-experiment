@@ -4,7 +4,7 @@
 static LSLDataSource dataSource;
 static TriggerCallback triggerCallback = NULL;
 
-void passTrigger(void *sampleBuffer)
+static void passTrigger(void *sampleBuffer)
 {
     int16_t sample = *(int16_t*)(dataSource.sampleBuffer);
     triggerCallback(sample);

@@ -1,8 +1,8 @@
 # include "pipeline.h"
 
-void initializeTinyBCIPipelineStorage(uint8_t, uint32_t);
-void setTinyBCIPipelineConfiguration(uint8_t, float);
-void addCCANodesToTinyBCIPipeline(const float *);
+static void initializeTinyBCIPipelineStorage(uint8_t, uint32_t);
+static void setTinyBCIPipelineConfiguration(uint8_t, float);
+static void addCCANodesToTinyBCIPipeline(const float *);
 
 int initializeTinyBCIPipeline(const float *frequencies, uint8_t channelCount, uint32_t sampleRate)
 {
@@ -19,7 +19,7 @@ int initializeTinyBCIPipeline(const float *frequencies, uint8_t channelCount, ui
     return reportAndReturnPipelineStatus(initializationStatus, "initialize");
 }
 
-void initializeTinyBCIPipelineStorage(uint8_t channelCount, uint32_t sampleRate)
+static void initializeTinyBCIPipelineStorage(uint8_t channelCount, uint32_t sampleRate)
 {
     allocateDynamicStorage(channelCount, sampleRate);
 
@@ -38,7 +38,7 @@ void initializeTinyBCIPipelineStorage(uint8_t channelCount, uint32_t sampleRate)
     tbciInputs.n_channels = channelCount;
 }
 
-void setTinyBCIPipelineConfiguration(uint8_t channelCount, float sampleRate)
+static void setTinyBCIPipelineConfiguration(uint8_t channelCount, float sampleRate)
 {
     tbciConfiguration.paradigm = TBCI_PARADIGM_SSVEP;
     tbciConfiguration.nominal_srate = sampleRate;
@@ -59,7 +59,7 @@ void setTinyBCIPipelineConfiguration(uint8_t channelCount, float sampleRate)
     tbciConfiguration.log_session[0] = '\0';
 }
 
-void addCCANodesToTinyBCIPipeline(const float *frequencies)
+static void addCCANodesToTinyBCIPipeline(const float *frequencies)
 {
     /* register notch & bandpass node in preprocessing group */
     notchConfiguration.freq_hz = 60.0f;

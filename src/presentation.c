@@ -28,12 +28,12 @@ static bool textureEnabled = true;
 #   define MIN(a, b) ((a) < (b) ? (a) : (b))
 # endif
 
-float getGridSize(float safeArea, uint16_t itemCount)
+static float getGridSize(float safeArea, uint16_t itemCount)
 {
     return (safeArea - (GRID_GAP * (itemCount - 1))) / itemCount;
 }
 
-void initializeWindow()
+static void initializeWindow()
 {
     SetTraceLogLevel(LOG_WARNING);
 
@@ -57,7 +57,7 @@ void initializeWindow()
     UnloadImage(samplingImage);
 }
 
-void initializePresenters(const float *pFrequencies, uint16_t pFrequencyCount)
+static void initializePresenters(const float *pFrequencies, uint16_t pFrequencyCount)
 {
     frequencyCount = pFrequencyCount;
     size_t memorySize = frequencyCount * sizeof(float);
@@ -85,7 +85,7 @@ void initializePresentation(const float *pFrequencies, uint16_t pFrequencyCount)
 
 // ---
 
-Vector2 getGridOrigin(uint16_t index)
+static Vector2 getGridOrigin(uint16_t index)
 {
     uint16_t rowIndex = index % columnCount;
     uint16_t columnIndex = index / columnCount;
@@ -97,7 +97,7 @@ Vector2 getGridOrigin(uint16_t index)
     };
 }
 
-Vector2 getGridCentre(uint16_t index)
+static Vector2 getGridCentre(uint16_t index)
 {
     Vector2 gridOrigin = getGridOrigin(index);
     return (Vector2)
@@ -107,7 +107,7 @@ Vector2 getGridCentre(uint16_t index)
     };
 }
 
-Rectangle getGridRect(uint16_t index, int16_t padding)
+static Rectangle getGridRect(uint16_t index, int16_t padding)
 {
     Vector2 gridOrigin = getGridOrigin(index);
 
@@ -129,7 +129,7 @@ void setPresentationTarget(uint16_t index)
 }
 void clearPresentationTarget() { hasTarget = false; }
 
-void drawTargetIndicator()
+static void drawTargetIndicator()
 {
     if (!hasTarget) return;
 
@@ -166,7 +166,7 @@ void displaySelection(uint16_t index)
     selectionTime = GetTime();
 }
 
-void drawSelectionIndicator()
+static void drawSelectionIndicator()
 {
     if (GetTime() > selectionTime + SELECTION_DISPLAY_TIME) return;
 
@@ -174,14 +174,14 @@ void drawSelectionIndicator()
     DrawRectangleRec(borderRect, SELECTION_DISPLAY_COLOUR);
 }
 
-void drawStimulusBreakPlaceholder(uint16_t index)
+static void drawStimulusBreakPlaceholder(uint16_t index)
 {
     DrawRectangleRec(getGridRect(index, 0), STIMULUS_BREAK_PLACEHOLDER_COLOUR);
 }
 
 // ---
 
-void drawLetterboxedTarget()
+static void drawLetterboxedTarget()
 {
     BeginDrawing();
         ClearBackground(LETTERBOX_COLOUR);
@@ -206,7 +206,7 @@ void drawLetterboxedTarget()
 
 // ---
 
-void drawMessage(const char *message)
+static void drawMessage(const char *message)
 {
     int textWidth = MeasureText(message, MESSAGE_SCREEN_FONT_SIZE);
     DrawText(
@@ -244,7 +244,7 @@ void drawMessageScreen(const char *message)
 
 // ---
 
-void drawStimulusPresenter(uint16_t index)
+static void drawStimulusPresenter(uint16_t index)
 {
     Rectangle gridRect = getGridRect(index, 0);
 

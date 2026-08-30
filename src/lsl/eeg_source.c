@@ -15,7 +15,7 @@ static uint32_t sampleIndex = 0;
 
 // ---
 
-void pushSample(void *sampleBuffer)
+static void pushSample(void *sampleBuffer)
 {
 # ifdef USE_LSL_TIMESTAMPS
     uint64_t microsecondTimestamp = (uint64_t)(lslTimestamp * 1000000);

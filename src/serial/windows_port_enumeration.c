@@ -54,7 +54,7 @@ uint32_t  __stdcall QueryDosDeviceA(const char *lpDeviceName, char *lpTargetPath
 
 // ---
 
-const char * findPattern(const char *string, const char *pattern, int *value)
+static const char * findPattern(const char *string, const char *pattern, int *value)
 {
     char c, n = 0;
     const char *sp = string;

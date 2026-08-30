@@ -38,7 +38,7 @@ ProgramMode promptProgramModeSelection()
 
 // ---
 
-void onTrialStart(uint16_t target)
+static void onTrialStart(uint16_t target)
 {
     IF_STANDALONE(
         uint64_t triggerTimestamp = pushTrigger(target + 1);
@@ -49,7 +49,7 @@ void onTrialStart(uint16_t target)
     resumeStimulus();
 }
 
-void onTrialEnd(uint16_t nextTarget)
+static void onTrialEnd(uint16_t nextTarget)
 {
     IF_STANDALONE(pushTrigger(TRIAL_END_CODE);)
     pushLslTrigger(TRIAL_END_CODE);
@@ -58,13 +58,13 @@ void onTrialEnd(uint16_t nextTarget)
 }
 
 static bool allTrialsCompleted = false;
-void onAllTrialsCompleted()
+static void onAllTrialsCompleted()
 {
     allTrialsCompleted = true;
     clearPresentationTarget();
 }
 
-bool tryGetInference(TinyBCIInference *inference, uint64_t *timestamp)
+static bool tryGetInference(TinyBCIInference *inference, uint64_t *timestamp)
 {
     IF_STANDALONE(
         *timestamp = getCurrentMicrosecondTimestamp();
@@ -78,12 +78,12 @@ bool tryGetInference(TinyBCIInference *inference, uint64_t *timestamp)
 
 // ---
 
-void displayHeadlessRuntimeConnectionWaitMessage()
+static void displayHeadlessRuntimeConnectionWaitMessage()
 {
     displayMessageOrExit("Waiting for BCI Engine...", &cleanUpProgram);
 }
 
-void connectToHeadlessRuntime()
+static void connectToHeadlessRuntime()
 {
     while (!doesLslTriggerOutletHaveConsumers())
     {

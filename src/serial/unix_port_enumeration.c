@@ -56,7 +56,7 @@ static char *deviceNames[MAXIMUM_KNOWN_SERIAL_DEVICES];
 static uint32_t deviceCount = 0;
 
 /** Private functions */
-void appendDevices(const char *baseName)
+static void appendDevices(const char *baseName)
 {
     uint8_t baseNameLength = strlen(baseName);
     struct dirent *dp;

@@ -1,6 +1,6 @@
 # include "serial/data_source.h"
 
-uint16_t countStoredBytes(SerialDataSource *source)
+static uint16_t countStoredBytes(SerialDataSource *source)
 {
     if (source->isFull) return source->bufferLength;
     uint16_t tip = source->tip;
@@ -9,7 +9,7 @@ uint16_t countStoredBytes(SerialDataSource *source)
     return tip - tail;
 }
 
-uint16_t countRemainingBufferSize(SerialDataSource *source)
+static uint16_t countRemainingBufferSize(SerialDataSource *source)
 {
     if (source->isFull) return 0;
     uint16_t tip = source->tip;
@@ -18,7 +18,7 @@ uint16_t countRemainingBufferSize(SerialDataSource *source)
     return tail - tip;
 }
 
-void discardBytes(SerialDataSource *source, uint16_t count)
+static void discardBytes(SerialDataSource *source, uint16_t count)
 {
     if (count == 0) return;
     uint16_t storedBytes = countStoredBytes(source);
@@ -29,7 +29,7 @@ void discardBytes(SerialDataSource *source, uint16_t count)
 
 // ---
 
-bool tailMatchesFrameStart(SerialDataSource *source)
+static bool tailMatchesFrameStart(SerialDataSource *source)
 {
     for (uint8_t i = 0; source->startBytes[i] != 0xFF; i++)
     {
@@ -39,7 +39,7 @@ bool tailMatchesFrameStart(SerialDataSource *source)
     return true;
 }
 
-bool tailMatchesFrameEnd(SerialDataSource *source)
+static bool tailMatchesFrameEnd(SerialDataSource *source)
 {
     uint16_t endBytesTail = source->tail + source->frameSize - 1;
 
@@ -51,12 +51,12 @@ bool tailMatchesFrameEnd(SerialDataSource *source)
     return true;
 }
 
-bool hasAFrameWorthOfData(SerialDataSource *source)
+static bool hasAFrameWorthOfData(SerialDataSource *source)
 {
     return countStoredBytes(source) >= source->frameSize;
 }
 
-bool hasValidFrameAtTail(SerialDataSource *source)
+static bool hasValidFrameAtTail(SerialDataSource *source)
 {
     if (!hasAFrameWorthOfData(source)) return false;
     if (!tailMatchesFrameStart(source)) return false;
@@ -68,7 +68,7 @@ bool hasValidFrameAtTail(SerialDataSource *source)
 #   define MIN(a, b) ((a) < (b) ? (a) : (b))
 # endif
 
-void readIntoBuffer(SerialDataSource *source)
+static void readIntoBuffer(SerialDataSource *source)
 {
     if (source->isFull) return;
     int bytesRead = serialRead(
@@ -86,7 +86,7 @@ void readIntoBuffer(SerialDataSource *source)
     }
 }
 
-SerialFrame extractFrame(SerialDataSource *source)
+static SerialFrame extractFrame(SerialDataSource *source)
 {
     SerialFrame frame = createSerialFrame(source->frameSize);
     for (
@@ -101,7 +101,7 @@ SerialFrame extractFrame(SerialDataSource *source)
     return frame;
 }
 
-void seekFrameStart(SerialDataSource *source)
+static void seekFrameStart(SerialDataSource *source)
 {
     while (!tailMatchesFrameStart(source))
     {

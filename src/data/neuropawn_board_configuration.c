@@ -1,7 +1,7 @@
 # include "data/neuropawn_eeg_source.h"
 # include "serial/data_source.h"
 
-NeuroPawnBoardType scanFrameSize(const uint8_t *buffer, size_t bufferLength)
+static NeuroPawnBoardType scanFrameSize(const uint8_t *buffer, size_t bufferLength)
 {
     for (size_t i = 0; i < bufferLength; i++) {
         if (buffer[i] != NEUROPAWN_START_BYTE)
@@ -51,13 +51,13 @@ NeuroPawnBoardType detectNeuropawnBoardType(SerialHandle *handle)
 
 // ---
 
-void sendCommand(SerialHandle *handle, const char *command)
+static void sendCommand(SerialHandle *handle, const char *command)
 {
     serialWrite(handle, (uint8_t *)command, strlen(command));
     serialFlush(handle);
 }
 
-void configureChannel(
+static void configureChannel(
     SerialDataSource *target, const char *cmd,
     uint8_t channelIndex, bool expectNonZeroSamples
 )

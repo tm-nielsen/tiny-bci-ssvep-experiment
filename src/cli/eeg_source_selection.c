@@ -17,7 +17,7 @@ static uint32_t (*sampleRateGetMethod)();
 static char selectedPortName[MAXIMUM_PORT_NAME_LENGTH];
 static bool userHasSelectedToStreamData = false;
 
-void safeInvoke(void (*method)())
+static void safeInvoke(void (*method)())
 {
     if (method != NULL) method();
     else
@@ -68,7 +68,7 @@ static void initializeDsi7Source()
 
 // ---
 
-void selectEEGSource(unsigned int selection)
+static void selectEEGSource(unsigned int selection)
 {
     if (selection == DSI7_SOURCE && !isDsiLibraryAvailable())
     {

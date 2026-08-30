@@ -5,7 +5,7 @@
 
 static lsl_outlet outlet = NULL;
 
-void onFrame(
+static void onFrame(
     const float *samples, size_t n_samples,
     const TBCI_Frame *frame, uint16_t trigger_val,
     void *user_data
