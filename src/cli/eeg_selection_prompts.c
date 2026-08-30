@@ -14,7 +14,7 @@ EEGSourceType promptEEGSourceSelection()
     return (EEGSourceType)getCLIIntegerSelection(SYNTHETIC_SOURCE);
 }
 
-const char* promptSerialPortSelection()
+const char * promptSerialPortSelection()
 {
     while (true)
     {

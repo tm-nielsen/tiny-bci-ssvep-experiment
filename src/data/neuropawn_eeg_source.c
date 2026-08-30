@@ -83,7 +83,7 @@ void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config)
     uint16_t frameSize = boardType == NEUROPAWN_BOARD_IMU
         ? NEUROPAWN_IMU_FRAME_SIZE
         : NEUROPAWN_EEG_FRAME_SIZE;
-    const char * typeString = (boardType == NEUROPAWN_BOARD_IMU) ? "IMU" : "non-IMU";
+    const char *typeString = (boardType == NEUROPAWN_BOARD_IMU) ? "IMU" : "non-IMU";
     printf("neuropawn: %s board detected\n", typeString);
 
     dataSource = createSerialDataSourceFromOpenHandle(

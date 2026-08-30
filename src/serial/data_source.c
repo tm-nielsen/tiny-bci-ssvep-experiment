@@ -43,7 +43,7 @@ SerialDataSource createSerialDataSource(
 
 int openSerialDataSource(
     SerialDataSource *source,
-    const char* port, uint32_t readTimeout
+    const char *port, uint32_t readTimeout
 ) {
     if (source == NULL) return EXIT_FAILURE;
     if (source->buffer == NULL)

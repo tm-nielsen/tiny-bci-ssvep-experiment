@@ -12,7 +12,7 @@ bool pollLslInferenceSource(TinyBCIInference *out, uint64_t *microsecondTimestam
 {
     if (pollLSLDataSource(&dataSource))
     {
-        double* sample = (double*)dataSource.sampleBuffer;
+        double *sample = (double*)dataSource.sampleBuffer;
 
         out->predictedLabel = (uint16_t)sample[0];
         out->confidence = (float)sample[1];

@@ -41,12 +41,12 @@
 
 /** Base name for COM devices */
 # if defined(__APPLE__) && defined(__MACH__)
-    static const char * deviceBaseNames[] = {
+    static const char *deviceBaseNames[] = {
         "tty."
     };
     const static uint8_t BaseNameCount = 1;
 # else
-    static const char * deviceBaseNames[] = {
+    static const char *deviceBaseNames[] = {
         "ttyACM", "ttyUSB", "rfcomm", "ttyS"
     };
     const static uint8_t baseNameCount = 4;
@@ -56,12 +56,12 @@ static char *deviceNames[MAXIMUM_KNOWN_SERIAL_DEVICES];
 static uint32_t deviceCount = 0;
 
 /** Private functions */
-void appendDevices(const char * baseName)
+void appendDevices(const char *baseName)
 {
     uint8_t baseNameLength = strlen(baseName);
-    struct dirent * dp;
+    struct dirent *dp;
 // Enumerate devices
-    DIR * dirp = opendir("/dev");
+    DIR *dirp = opendir("/dev");
     while ((dp = readdir(dirp)) && deviceCount < MAXIMUM_KNOWN_SERIAL_DEVICES) {
         if (strlen(dp->d_name) >= baseNameLength) {
             if (memcmp(baseName, dp->d_name, baseNameLength) == 0) {
@@ -88,7 +88,7 @@ uint32_t enumerateSerialPorts()
     return deviceCount;
 }
 
-const char* getSerialPortName(uint32_t index)
+const char * getSerialPortName(uint32_t index)
 {
     if (index >= deviceCount || index < 0) return NULL;
     return deviceNames[index];

@@ -31,7 +31,7 @@ bool tryConnectLSLDataSource(LSLDataSource *source)
     return false;
 }
 
-LSLDataSource createLSLDataSource(const char* streamResolutionPredicate)
+LSLDataSource createLSLDataSource(const char *streamResolutionPredicate)
 {
     LSLDataSource dataSource = (LSLDataSource)
     {

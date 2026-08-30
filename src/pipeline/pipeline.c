@@ -1,6 +1,6 @@
 # include "pipeline.h"
 
-int reportAndReturnPipelineStatus(TBCI_Status status, const char* actionLabel)
+int reportAndReturnPipelineStatus(TBCI_Status status, const char *actionLabel)
 {
     if (status)
     {

@@ -57,7 +57,7 @@ void connectLslEEGSource()
     channelCount = (uint8_t)lsl_get_channel_count(inletInfo);
     sampleRate = (uint32_t)lsl_get_nominal_srate(inletInfo);
 
-    const char* streamName = lsl_get_name(inletInfo);
+    const char *streamName = lsl_get_name(inletInfo);
     printf(
         "Connected to LSL EEG stream '%s' with "
         "%d channels sampling at %d Hz\n"

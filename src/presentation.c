@@ -57,7 +57,7 @@ void initializeWindow()
     UnloadImage(samplingImage);
 }
 
-void initializePresenters(const float* pFrequencies, uint16_t pFrequencyCount)
+void initializePresenters(const float *pFrequencies, uint16_t pFrequencyCount)
 {
     frequencyCount = pFrequencyCount;
     size_t memorySize = frequencyCount * sizeof(float);

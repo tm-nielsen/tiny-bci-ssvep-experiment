@@ -13,7 +13,7 @@ int startTinyBCIPipelineInState(TBCI_State initialState);
 int updateTinyBCIPipeline();
 int stopTinyBCIPipeline();
 
-int reportAndReturnPipelineStatus(TBCI_Status status, const char* actionLabel);
+int reportAndReturnPipelineStatus(TBCI_Status status, const char *actionLabel);
 
 typedef struct {
     int16_t predictedLabel;

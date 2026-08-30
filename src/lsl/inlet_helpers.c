@@ -38,7 +38,7 @@ void closeLslInlet(lsl_inlet *inlet)
     *inlet = NULL;
 }
 
-lsl_continuous_resolver createLslResolver(const char* predicate)
+lsl_continuous_resolver createLslResolver(const char *predicate)
 {
     return lsl_create_continuous_resolver_bypred(predicate, LSL_FORGET_AFTER);
 }

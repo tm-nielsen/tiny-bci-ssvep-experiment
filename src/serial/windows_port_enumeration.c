@@ -41,7 +41,7 @@ static int32_t enumeratedPorts[MAXIMUM_KNOWN_SERIAL_DEVICES];
 static uint32_t deviceCount = 0;
 
 # define COM_MINDEVNAME 16384
-const char * portNamePattern = "COM???";
+const char *portNamePattern = "COM???";
 
 /** Windows system constants */
 # define ERROR_INSUFFICIENT_BUFFER   122
@@ -50,15 +50,15 @@ const char * portNamePattern = "COM???";
 uint32_t __stdcall GetLastError(void);
 void __stdcall SetLastError(uint32_t dwErrCode);
 
-uint32_t  __stdcall QueryDosDeviceA(const char * lpDeviceName, char * lpTargetPath, uint32_t ucchMax);
+uint32_t  __stdcall QueryDosDeviceA(const char *lpDeviceName, char *lpTargetPath, uint32_t ucchMax);
 
 // ---
 
-const char * findPattern(const char * string, const char * pattern, int * value)
+const char * findPattern(const char *string, const char *pattern, int *value)
 {
     char c, n = 0;
-    const char * sp = string;
-    const char * pp = pattern;
+    const char *sp = string;
+    const char *pp = pattern;
 // Check for the string pattern
     while (1) {
         c = *sp ++;
@@ -89,7 +89,7 @@ const char * findPattern(const char * string, const char * pattern, int * value)
         }
     }
 // Return the value
-    * value = n;
+    *value = n;
     return sp;
 }
 
@@ -99,12 +99,12 @@ uint32_t enumerateSerialPorts()
 {
 // Get devices information text
     uint32_t size = COM_MINDEVNAME;
-    char * list = (char *) malloc(size);
+    char *list = (char *) malloc(size);
     SetLastError(0);
     QueryDosDeviceA(NULL, list, size);
     while (GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
         size *= 2;
-        char * nlist = realloc(list, size);
+        char *nlist = realloc(list, size);
         if (!nlist) {
             free(list);
             return 0;
@@ -115,7 +115,7 @@ uint32_t enumerateSerialPorts()
     }
 // Gather all COM ports
     int port;
-    const char * nlist = findPattern(list, portNamePattern, &port);
+    const char *nlist = findPattern(list, portNamePattern, &port);
     deviceCount = 0;
     while(port > 0 && deviceCount < MAXIMUM_KNOWN_SERIAL_DEVICES) {
         enumeratedPorts[deviceCount++] = port;
@@ -125,7 +125,7 @@ uint32_t enumerateSerialPorts()
     return deviceCount;
 }
 
-const char* getSerialPortName(uint32_t index)
+const char * getSerialPortName(uint32_t index)
 {
     static char name[MAXIMUM_PORT_NAME_LENGTH];
     if (index < 0 || index >= deviceCount)

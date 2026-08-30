@@ -3,7 +3,7 @@
 # include "microsecond_timer.h"
 
 static MicrosecondTimer timer;
-static float* samples = NULL;
+static float *samples = NULL;
 static uint32_t sampleIndex = 0;
 
 static uint8_t channelCount = 0;

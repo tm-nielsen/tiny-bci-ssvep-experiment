@@ -4,7 +4,7 @@ lsl_outlet openIrregularRateLslOutlet(
     const char *streamName, const char *streamType,
     int32_t channelCount,
     lsl_channel_format_t channelFormat,
-    const char* sourceId
+    const char *sourceId
 )
 {
     lsl_streaminfo outletInfo = lsl_create_streaminfo(

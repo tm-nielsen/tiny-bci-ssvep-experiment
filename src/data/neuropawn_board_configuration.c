@@ -58,7 +58,7 @@ void sendCommand(SerialHandle *handle, const char *command)
 }
 
 void configureChannel(
-    SerialDataSource *target, const char* cmd,
+    SerialDataSource *target, const char *cmd,
     uint8_t channelIndex, bool expectNonZeroSamples
 )
 {

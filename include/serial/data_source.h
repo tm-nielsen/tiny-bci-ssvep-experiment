@@ -36,7 +36,7 @@ SerialDataSource createSerialDataSourceFromOpenHandle(
 );
 int openSerialDataSource(
     SerialDataSource *source,
-    const char* port, uint32_t readTimeout
+    const char *port, uint32_t readTimeout
 );
 void updateSerialDataSource(SerialDataSource *source);
 void closeSerialDataSource(SerialDataSource *source);

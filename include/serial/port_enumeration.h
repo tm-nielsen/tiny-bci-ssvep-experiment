@@ -41,6 +41,6 @@
 # define MAXIMUM_PORT_NAME_LENGTH 32
 
 uint32_t enumerateSerialPorts();
-const char* getSerialPortName(uint32_t index);
+const char * getSerialPortName(uint32_t index);
 
 # endif
