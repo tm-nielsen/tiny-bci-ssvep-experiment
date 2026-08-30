@@ -18,15 +18,15 @@
 #   endif
 # endif
 
-int serialOpen(SerialHandle *, const char *, uint32_t);
+int serialOpen(SerialHandle *handle, const char *port, uint32_t readTimeout);
 
-int serialWrite(SerialHandle *, uint8_t *, size_t);
-int serialRead(SerialHandle *, uint8_t *, size_t);
+int serialWrite(SerialHandle *handle, uint8_t *buffer, size_t bufferLength);
+int serialRead(SerialHandle *handle, uint8_t *buffer, size_t bufferLength);
 
-void serialFlush(SerialHandle *);
-void serialClose(SerialHandle *);
+void serialFlush(SerialHandle *handle);
+void serialClose(SerialHandle *handle);
 
-void sleepMilliseconds(uint32_t);
+void sleepMilliseconds(uint32_t ms);
 
 bool isSerialHandleInvalid(SerialHandle *handle);
 

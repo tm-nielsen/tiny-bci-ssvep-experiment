@@ -6,7 +6,7 @@ typedef struct {
     uint64_t nextTimeout;
 } MicrosecondTimer;
 
-bool checkMicrosecondTimer(MicrosecondTimer*);
-void resetMicrosecondTimer(MicrosecondTimer*);
+bool checkMicrosecondTimer(MicrosecondTimer *timer);
+void resetMicrosecondTimer(MicrosecondTimer *timer);
 
 MicrosecondTimer createMicrosecondTimer(float);

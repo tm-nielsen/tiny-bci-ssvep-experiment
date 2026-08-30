@@ -37,9 +37,9 @@
 
 # define TAU 6.28318530717958647692528676655900576839433879875021
 
-void initializePresentation(const float *, uint16_t);
-void drawPreparationScreen(const char*);
-void drawMessageScreen(const char*);
+void initializePresentation(const float *pFrequencies, uint16_t pFrequencyCount);
+void drawPreparationScreen(const char *message);
+void drawMessageScreen(const char *message);
 void drawStimulusScreen();
 void stopPresentation();
 
@@ -49,6 +49,6 @@ void resumeStimulus();
 void disableTextureStimulus();
 void enableTextureStimulus();
 
-void setPresentationTarget(uint16_t);
+void setPresentationTarget(uint16_t index);
 void clearPresentationTarget();
-void displaySelection(uint16_t);
+void displaySelection(uint16_t index);

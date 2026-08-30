@@ -4,7 +4,7 @@
 
 # define TRIAL_END_CODE 10u
 
-uint64_t pushTrigger(uint16_t);
+uint64_t pushTrigger(uint16_t value);
 uint64_t pushTrialEndCode();
 
 # endif

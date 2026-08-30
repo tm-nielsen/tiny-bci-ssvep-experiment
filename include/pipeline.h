@@ -5,11 +5,11 @@
 # include "pipeline/storage.h"
 # include "pipeline/triggers.h"
 
-int initializeTinyBCIPipeline(const float *, uint8_t, uint32_t);
+int initializeTinyBCIPipeline(const float *frequencies, uint8_t channelCount, uint32_t sampleRate);
 void cleanUpTinyBCIPipeline();
 
 int startTinyBCIPipeline();
-int startTinyBCIPipelineInState(TBCI_State);
+int startTinyBCIPipelineInState(TBCI_State initialState);
 int updateTinyBCIPipeline();
 int stopTinyBCIPipeline();
 
