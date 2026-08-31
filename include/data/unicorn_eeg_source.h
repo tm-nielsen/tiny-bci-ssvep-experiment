@@ -24,11 +24,11 @@
 # define UNICORN_EEG_SCALE         (UNICORN_ADC_REFERENCE_UV / UNICORN_ADC_MAX_VALUE)
 
 void connectUnicornEEGSource(const char *port, uint32_t timeout);
-void updateUnicornEEGSource();
-void closeUnicornEEGSource();
+void updateUnicornEEGSource(void);
+void closeUnicornEEGSource(void);
 
-bool isUnicornEEGSourceConnected();
-uint8_t getUnicornEEGSourceChannelCount();
-uint32_t getUnicornEEGSourceSampleRate();
+bool isUnicornEEGSourceConnected(void);
+uint8_t getUnicornEEGSourceChannelCount(void);
+uint32_t getUnicornEEGSourceSampleRate(void);
 
 # endif

@@ -2,10 +2,10 @@
 
 # ifdef USE_LSL_TIMESTAMPS
 #   include "lsl_c.h"
-uint64_t getTimestamp() { return (uint64_t)(lsl_local_clock() * 1000000); }
+uint64_t getTimestamp(void) { return (uint64_t)(lsl_local_clock() * 1000000); }
 # else
 #   include "microsecond_timer.h"
-uint64_t getTimestamp() { return getCurrentMicrosecondTimestamp(); }
+uint64_t getTimestamp(void) { return getCurrentMicrosecondTimestamp(); }
 # endif
 
 uint64_t pushTrigger(uint16_t value)
@@ -22,7 +22,7 @@ uint64_t pushTrigger(uint16_t value)
     return timestamp;
 }
 
-uint64_t pushTrialEndCode()
+uint64_t pushTrialEndCode(void)
 {
     return pushTrigger(TRIAL_END_CODE);
 }

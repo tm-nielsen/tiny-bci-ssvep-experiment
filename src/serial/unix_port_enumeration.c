@@ -76,7 +76,7 @@ static void appendDevices(const char *baseName)
 
 // ---
 
-uint32_t enumerateSerialPorts()
+uint32_t enumerateSerialPorts(void)
 {
     for (uint32_t i = 0; i < deviceCount; i++) {
         if (deviceNames[i]) free(deviceNames[i]);

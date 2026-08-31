@@ -20,7 +20,7 @@ void initializeSyntheticEEGSource(uint8_t pChannelCount, uint32_t pSampleRate)
     samples = malloc(channelCount * sizeof(float));
 }
 
-void updateSyntheticEEGSource()
+void updateSyntheticEEGSource(void)
 {
     if (checkMicrosecondTimer(&timer))
     {
@@ -45,14 +45,14 @@ void updateSyntheticEEGSource()
     }
 }
 
-void closeSyntheticEEGSource() { free(samples); }
+void closeSyntheticEEGSource(void) { free(samples); }
 
-bool isSyntheticEEGSourceReady()
+bool isSyntheticEEGSourceReady(void)
 {
     return channelCount > 0
         && sampleRate > 0
         && samples != NULL;
 }
 
-uint8_t getSyntheticEEGSourceChannelCount() { return channelCount; }
-uint32_t getSyntheticEEGSourceSampleRate() { return sampleRate; }
+uint8_t getSyntheticEEGSourceChannelCount(void) { return channelCount; }
+uint32_t getSyntheticEEGSourceSampleRate(void) { return sampleRate; }

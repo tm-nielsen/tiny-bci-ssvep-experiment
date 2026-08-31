@@ -3,7 +3,7 @@
 
 static LSLDataSource dataSource;
 
-void initializeLslInferenceSource()
+void initializeLslInferenceSource(void)
 {
     dataSource = createLSLDataSource(INFERENCE_STREAM_PREDICATE);
 }
@@ -28,8 +28,8 @@ bool pollLslInferenceSource(TinyBCIInference *out, uint64_t *microsecondTimestam
     return false;
 }
 
-void closeLslInferenceSource() { closeLSLDataSource(&dataSource); }
+void closeLslInferenceSource(void) { closeLSLDataSource(&dataSource); }
 
-bool tryConnectLslInferenceSource() { return tryConnectLSLDataSource(&dataSource); }
-bool isLslInferenceSourceConnected() { return isLSLDataSourceConnected(&dataSource); }
-bool isLslInferenceSourceConsumable() { return isLSLDataSourceConsumable(&dataSource); }
+bool tryConnectLslInferenceSource(void) { return tryConnectLSLDataSource(&dataSource); }
+bool isLslInferenceSourceConnected(void) { return isLSLDataSourceConnected(&dataSource); }
+bool isLslInferenceSourceConsumable(void) { return isLSLDataSourceConsumable(&dataSource); }

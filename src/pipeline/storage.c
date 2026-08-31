@@ -78,7 +78,7 @@ void allocateDynamicStorage(uint8_t channelCount, uint32_t sampleRate)
     refSignals = malloc(referenceSignalsCapacity * sizeof(float));
 }
 
-void deallocateDynamicStorage()
+void deallocateDynamicStorage(void)
 {
     free(signalStorage);
     free(processedSignalStorage);

@@ -3,9 +3,9 @@
 # define USER_PROMPT_HELPERS
 
 uint32_t getCLIIntegerSelection(uint32_t maximum);
-bool getCLIYesNo();
+bool getCLIYesNo(void);
 
-void flushInput();
-void awaitCLINewline();
+void flushInput(void);
+void awaitCLINewline(void);
 
 # endif

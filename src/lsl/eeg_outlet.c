@@ -18,7 +18,7 @@ static void onFrame(
     lsl_push_sample_f(outlet, samples);
 }
 
-void createAndConnectPipelineEEGOutlet()
+void createAndConnectPipelineEEGOutlet(void)
 {
     lsl_streaminfo streamInfo = lsl_create_streaminfo(
         LSL_EEG_PIPE_STREAM_NAME, LSL_EEG_PIPE_STREAM_TYPE,
@@ -39,7 +39,7 @@ void createAndConnectPipelineEEGOutlet()
     tbciContext.core_node.raw_out.on_frame = &onFrame;
 }
 
-void closePipelineEEGOutlet()
+void closePipelineEEGOutlet(void)
 {
     tbciContext.core_node.raw_out.on_frame = NULL;
     closeLslOutlet(&outlet);

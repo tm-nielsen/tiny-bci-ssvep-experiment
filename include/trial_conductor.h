@@ -7,5 +7,5 @@ void setTrialEndCallback(void (*onTrialEnd)(uint16_t));
 void setStimulusRoundCompleteCallback(void (*onStimulusRoundCompleted));
 void setAllTrialsCompletedCallback(void (*onAllTrialsCompleted));
 
-void updateTrialConductor();
-void resetTrialConductor();
+void updateTrialConductor(void);
+void resetTrialConductor(void);

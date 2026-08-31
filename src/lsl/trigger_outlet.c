@@ -4,7 +4,7 @@
 
 static lsl_outlet outlet = NULL;
 
-void openLslTriggerOutlet()
+void openLslTriggerOutlet(void)
 {
     outlet = openIrregularRateLslOutlet(
         TRIGGER_STREAM_NAME, TRIGGER_STREAM_TYPE,
@@ -18,11 +18,11 @@ void pushLslTrigger(uint16_t value)
     pushLslSample(outlet, sample);
 }
 
-void closeLslTriggerOutlet() {
+void closeLslTriggerOutlet(void) {
     closeLslOutlet(&outlet);
 }
 
-bool doesLslTriggerOutletHaveConsumers()
+bool doesLslTriggerOutletHaveConsumers(void)
 {
     return lsl_have_consumers(outlet);
 }

@@ -6,12 +6,12 @@
 # include "pipeline/triggers.h"
 
 int initializeTinyBCIPipeline(const float *frequencies, uint8_t channelCount, uint32_t sampleRate);
-void cleanUpTinyBCIPipeline();
+void cleanUpTinyBCIPipeline(void);
 
-int startTinyBCIPipeline();
+int startTinyBCIPipeline(void);
 int startTinyBCIPipelineInState(TBCI_State initialState);
-int updateTinyBCIPipeline();
-int stopTinyBCIPipeline();
+int updateTinyBCIPipeline(void);
+int stopTinyBCIPipeline(void);
 
 int reportAndReturnPipelineStatus(TBCI_Status status, const char *actionLabel);
 

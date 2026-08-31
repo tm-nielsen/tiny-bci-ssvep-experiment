@@ -5,9 +5,9 @@
 # include "microsecond_timer.h"
 
 void awaitConnection(
-    bool (*predicate)(),
-    void (*updateMethod)(),
-    bool (*attemptMethod)()
+    bool (*predicate)(void),
+    void (*updateMethod)(void),
+    bool (*attemptMethod)(void)
 )
 {
     MicrosecondTimer connectionAttemptTimer =

@@ -8,19 +8,19 @@
 
 # define TRIGGER_STREAM_PREDICATE "type='" TRIGGER_STREAM_TYPE "'"
 
-void openLslTriggerOutlet();
+void openLslTriggerOutlet(void);
 void pushLslTrigger(uint16_t value);
-void closeLslTriggerOutlet();
+void closeLslTriggerOutlet(void);
 
-bool doesLslTriggerOutletHaveConsumers();
+bool doesLslTriggerOutletHaveConsumers(void);
 
 typedef void (*TriggerCallback)(uint16_t value);
 
 void initializeLslTriggerSource(TriggerCallback callback);
-void updateLslTriggerSource();
-void closeLslTriggerSource();
+void updateLslTriggerSource(void);
+void closeLslTriggerSource(void);
 
-bool tryConnectLslTriggerSource();
-bool isLslTriggerSourceConnected();
+bool tryConnectLslTriggerSource(void);
+bool isLslTriggerSourceConnected(void);
 
 # endif

@@ -12,13 +12,13 @@
  * montage: comma-separated electrode list, e.g. "P3,Pz,P4,O1,O2".
  *          Determines channelCount reported below. */
 void connectDsiEEGSource(const char *port, const char *montage);
-void updateDsiEEGSource();
-void disconnectDsiEEGSource();
+void updateDsiEEGSource(void);
+void disconnectDsiEEGSource(void);
 
-bool isDsiEEGSourceConnected();
-uint8_t getDsiEEGSourceChannelCount();
-uint32_t getDsiEEGSourceSampleRate();
+bool isDsiEEGSourceConnected(void);
+uint8_t getDsiEEGSourceChannelCount(void);
+uint32_t getDsiEEGSourceSampleRate(void);
 
-bool isDsiLibraryAvailable();
+bool isDsiLibraryAvailable(void);
  
 #endif

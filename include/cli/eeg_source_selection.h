@@ -2,11 +2,11 @@
 # ifndef EEG_SOURCES
 # define EEG_SOURCES
 
-void runEEGSourceSelection();
+void runEEGSourceSelection(void);
 
-void initializeSelectedEEGSource();
-void updateSelectedEEGSource();
-void cleanUpSelectedEEGSource();
+void initializeSelectedEEGSource(void);
+void updateSelectedEEGSource(void);
+void cleanUpSelectedEEGSource(void);
 
 typedef enum {
     LSL_SOURCE,
@@ -16,14 +16,14 @@ typedef enum {
     SYNTHETIC_SOURCE
 } EEGSourceType;
 
-EEGSourceType promptEEGSourceSelection();
+EEGSourceType promptEEGSourceSelection(void);
 const char * promptSerialPortSelection();
-bool promptEEGOutletUsageSelection();
+bool promptEEGOutletUsageSelection(void);
 
-bool isSelectedEEGSourceConnected();
-uint8_t getChannelCountOfSelectedEEGSource();
-uint32_t getSampleRateOfSelectedEEGSource();
+bool isSelectedEEGSourceConnected(void);
+uint8_t getChannelCountOfSelectedEEGSource(void);
+uint32_t getSampleRateOfSelectedEEGSource(void);
 
-bool shouldStreamSelectedEEGSource();
+bool shouldStreamSelectedEEGSource(void);
 
 # endif

@@ -6,7 +6,7 @@ static uint16_t currentTarget = 0;
 static uint64_t targetAssignmentTimestamp = 0;
 static uint16_t roundNumber = 0;
 
-void initializeInferenceLogger()
+void initializeInferenceLogger(void)
 {
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
@@ -64,7 +64,7 @@ void logInference(TinyBCIInference inference, uint64_t timestamp)
     fflush(logFile);
 }
 
-void closeInferenceLogger()
+void closeInferenceLogger(void)
 {
     if (logFile)
     {

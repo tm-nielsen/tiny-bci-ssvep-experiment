@@ -33,7 +33,7 @@ static float getGridSize(float safeArea, uint16_t itemCount)
     return (safeArea - (GRID_GAP * (itemCount - 1))) / itemCount;
 }
 
-static void initializeWindow()
+static void initializeWindow(void)
 {
     SetTraceLogLevel(LOG_WARNING);
 
@@ -127,9 +127,9 @@ void setPresentationTarget(uint16_t index)
     targetIndex = index;
     hasTarget = true;
 }
-void clearPresentationTarget() { hasTarget = false; }
+void clearPresentationTarget(void) { hasTarget = false; }
 
-static void drawTargetIndicator()
+static void drawTargetIndicator(void)
 {
     if (!hasTarget) return;
 
@@ -166,7 +166,7 @@ void displaySelection(uint16_t index)
     selectionTime = GetTime();
 }
 
-static void drawSelectionIndicator()
+static void drawSelectionIndicator(void)
 {
     if (GetTime() > selectionTime + SELECTION_DISPLAY_TIME) return;
 
@@ -181,7 +181,7 @@ static void drawStimulusBreakPlaceholder(uint16_t index)
 
 // ---
 
-static void drawLetterboxedTarget()
+static void drawLetterboxedTarget(void)
 {
     BeginDrawing();
         ClearBackground(LETTERBOX_COLOUR);
@@ -276,7 +276,7 @@ static void drawStimulusPresenter(uint16_t index)
     }
 }
 
-void drawStimulusScreen()
+void drawStimulusScreen(void)
 {
     BeginTextureMode(renderTarget);
         ClearBackground(BACKGROUND_COLOUR);
@@ -295,15 +295,15 @@ void drawStimulusScreen()
     drawLetterboxedTarget();
 }
 
-void pauseStimulus() { stimulusEnabled = false; }
-void resumeStimulus() { stimulusEnabled = true; }
+void pauseStimulus(void) { stimulusEnabled = false; }
+void resumeStimulus(void) { stimulusEnabled = true; }
 
-void disableTextureStimulus() { textureEnabled = false; }
-void enableTextureStimulus() { textureEnabled = true; }
+void disableTextureStimulus(void) { textureEnabled = false; }
+void enableTextureStimulus(void) { textureEnabled = true; }
 
 // ---
 
-void stopPresentation()
+void stopPresentation(void)
 {
     free(frequencies);
     UnloadRenderTexture(renderTarget);

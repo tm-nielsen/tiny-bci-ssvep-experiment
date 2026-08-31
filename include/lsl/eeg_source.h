@@ -4,12 +4,12 @@
 
 # define EEG_STREAM_PREDICATE "type='EEG' or type='eeg'"
 
-void connectLslEEGSource();
-void updateLslEEGSource();
-void closeLslEEGSource();
+void connectLslEEGSource(void);
+void updateLslEEGSource(void);
+void closeLslEEGSource(void);
 
-bool isLslEEGSourceConnected();
-uint8_t getLslEEGSourceChannelCount();
-uint32_t getLslEEGSourceSampleRate();
+bool isLslEEGSourceConnected(void);
+uint8_t getLslEEGSourceChannelCount(void);
+uint32_t getLslEEGSourceSampleRate(void);
 
 # endif

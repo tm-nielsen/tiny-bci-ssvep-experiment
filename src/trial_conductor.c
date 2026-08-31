@@ -42,14 +42,14 @@ void setAllTrialsCompletedCallback(void (*onTrialsCompleted))
 
 // ---
 
-static void startTrial()
+static void startTrial(void)
 {
     state = STIMULUS;
     if (trialStartCallback != NULL) trialStartCallback(target);
     resetMicrosecondTimer(&stimulusTimer);
 }
 
-static void endTrial()
+static void endTrial(void)
 {
     state = BREAK;
     target = (target + 1) % targetCount;
@@ -66,7 +66,7 @@ static void endTrial()
     }
 }
 
-void updateTrialConductor()
+void updateTrialConductor(void)
 {
     switch (state)
     {
@@ -81,7 +81,7 @@ void updateTrialConductor()
 
 // ---
 
-void resetTrialConductor()
+void resetTrialConductor(void)
 {
     resetMicrosecondTimer(&breakTimer);
     resetMicrosecondTimer(&stimulusTimer);

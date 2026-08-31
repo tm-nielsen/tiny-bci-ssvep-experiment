@@ -7,7 +7,7 @@
 # include "cli/eeg_source_selection.h"
 # include "lsl/eeg_outlet.h"
 
-void initializePipelineWithEEGSourceParameters()
+void initializePipelineWithEEGSourceParameters(void)
 {
     uint8_t channelCount = getChannelCountOfSelectedEEGSource();
     uint32_t sampleRate = getSampleRateOfSelectedEEGSource();
@@ -28,7 +28,7 @@ void initializePipelineWithEEGSourceParameters()
     printf("---\nTiny BCI Pipeline Running.\n\n");
 }
 
-void updateEEGSourceAndPipeline(void (*cleanUpMethod)())
+void updateEEGSourceAndPipeline(void (*cleanUpMethod)(void))
 {
     updateSelectedEEGSource();
     TBCI_Status pipelineStatus = updateTinyBCIPipeline();
@@ -39,7 +39,7 @@ void updateEEGSourceAndPipeline(void (*cleanUpMethod)())
     }
 }
 
-void awaitFilterStabilization(void (*cleanUpMethod)())
+void awaitFilterStabilization(void (*cleanUpMethod)(void))
 {
     printf("Waiting for filter to settle...\n");
 
@@ -53,7 +53,7 @@ void awaitFilterStabilization(void (*cleanUpMethod)())
     printf("Filter settled.\n");
 }
 
-void cleanUpEEGSourceAndPipeline()
+void cleanUpEEGSourceAndPipeline(void)
 {
     cleanUpSelectedEEGSource();
     cleanUpTinyBCIPipeline();

@@ -89,7 +89,7 @@ void connectDsiEEGSource(const char *port, const char *montage)
  
 // ---
  
-void updateDsiEEGSource()
+void updateDsiEEGSource(void)
 {
     if (!isConnected) return;
  
@@ -111,7 +111,7 @@ void updateDsiEEGSource()
  
 // ---
  
-void disconnectDsiEEGSource()
+void disconnectDsiEEGSource(void)
 {
     if (isConnected)
     {
@@ -125,13 +125,13 @@ void disconnectDsiEEGSource()
  
 // ---
  
-bool isDsiEEGSourceConnected() { return DSI_Headset_IsConnected(headset); }
-uint8_t getDsiEEGSourceChannelCount() { return channelCount; }
-uint32_t getDsiEEGSourceSampleRate() { return sampleRate; }
+bool isDsiEEGSourceConnected(void) { return DSI_Headset_IsConnected(headset); }
+uint8_t getDsiEEGSourceChannelCount(void) { return channelCount; }
+uint32_t getDsiEEGSourceSampleRate(void) { return sampleRate; }
 
 // ---
 
-bool isDsiLibraryAvailable()
+bool isDsiLibraryAvailable(void)
 {
 # if defined(_WIN32) || defined(_WIN64)
 #   define WIN32_LEAN_AND_MEAN

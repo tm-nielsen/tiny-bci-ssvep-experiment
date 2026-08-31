@@ -8,7 +8,7 @@
 void initializeTrialPresentation(
     void (*trialStartCallback)(uint16_t),
     void (*trialEndCallback)(uint16_t),
-    void (*allTrialsCompletedCallback)()
+    void (*allTrialsCompletedCallback)(void)
 )
 {
     initializeTrialConductor(
@@ -33,13 +33,13 @@ void displayInference(TinyBCIInference inference, uint64_t timestamp)
     }
 }
 
-void displayMessageOrExit(const char *message, void (*cleanUpMethod)())
+void displayMessageOrExit(const char *message, void (*cleanUpMethod)(void))
 {
     drawMessageScreen(message);
     closeIfPromptedTo(cleanUpMethod);
 }
 
-void closeIfPromptedTo(void (*cleanUpMethod)())
+void closeIfPromptedTo(void (*cleanUpMethod)(void))
 {
     if (WindowShouldClose())
     {

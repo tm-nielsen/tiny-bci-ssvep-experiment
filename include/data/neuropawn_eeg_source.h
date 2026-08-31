@@ -36,12 +36,12 @@ typedef struct {
 # define NEUROPAWN_DEFAULT_CONFIGURATION (NeuropawnConfiguration) { 12, 50, TRUE_8_ARRAY, FALSE_8_ARRAY }
 
 void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config);
-void updateNeuropawnEEGSource();
-void closeNeuropawnEEGSource();
+void updateNeuropawnEEGSource(void);
+void closeNeuropawnEEGSource(void);
 
-bool isNeuropawnEEGSourceConnected();
-uint8_t getNeuropawnEEGSourceChannelCount();
-uint32_t getNeuropawnEEGSourceSampleRate();
+bool isNeuropawnEEGSourceConnected(void);
+uint8_t getNeuropawnEEGSourceChannelCount(void);
+uint32_t getNeuropawnEEGSourceSampleRate(void);
 
 NeuroPawnBoardType detectNeuropawnBoardType(SerialHandle *handle);
 

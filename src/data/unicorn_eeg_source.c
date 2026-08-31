@@ -86,12 +86,12 @@ void connectUnicornEEGSource(const char *port, uint32_t timeout)
     }
 }
 
-void updateUnicornEEGSource()
+void updateUnicornEEGSource(void)
 {
     updateSerialDataSource(&dataSource);
 }
 
-void closeUnicornEEGSource()
+void closeUnicornEEGSource(void)
 {
     serialWrite(
         &(dataSource.handle),
@@ -101,6 +101,6 @@ void closeUnicornEEGSource()
     closeSerialDataSource(&dataSource);
 }
 
-bool isUnicornEEGSourceConnected() { return isSerialDataSourceConnected(&dataSource); }
-uint8_t getUnicornEEGSourceChannelCount() { return UNICORN_EEG_CHANNEL_COUNT; }
-uint32_t getUnicornEEGSourceSampleRate() { return UNICORN_SAMPLE_RATE; }
+bool isUnicornEEGSourceConnected(void) { return isSerialDataSourceConnected(&dataSource); }
+uint8_t getUnicornEEGSourceChannelCount(void) { return UNICORN_EEG_CHANNEL_COUNT; }
+uint32_t getUnicornEEGSourceSampleRate(void) { return UNICORN_SAMPLE_RATE; }

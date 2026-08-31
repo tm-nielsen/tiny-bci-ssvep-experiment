@@ -19,18 +19,18 @@
 
 # define INFERENCE_STREAM_PREDICATE "type='" INFERENCE_STREAM_TYPE "'"
 
-void openLslInferenceOutlet();
+void openLslInferenceOutlet(void);
 void pushLslInference(const TinyBCIInference *inference, uint64_t microsecondTimestamp, uint16_t targetLabel);
-void closeLslInferenceOutlet();
+void closeLslInferenceOutlet(void);
 
-bool doesLslInferenceOutletHaveConsumers();
+bool doesLslInferenceOutletHaveConsumers(void);
 
-void initializeLslInferenceSource();
+void initializeLslInferenceSource(void);
 bool pollLslInferenceSource(TinyBCIInference *out, uint64_t *microsecondTimestamp);
-void closeLslInferenceSource();
+void closeLslInferenceSource(void);
 
-bool tryConnectLslInferenceSource();
-bool isLslInferenceSourceConnected();
-bool isLslInferenceSourceConsumable();
+bool tryConnectLslInferenceSource(void);
+bool isLslInferenceSourceConnected(void);
+bool isLslInferenceSourceConsumable(void);
 
 # endif

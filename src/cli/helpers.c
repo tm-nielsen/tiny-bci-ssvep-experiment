@@ -14,7 +14,7 @@ uint32_t getCLIIntegerSelection(uint32_t maximum)
     return selection;
 }
 
-bool getCLIYesNo()
+bool getCLIYesNo(void)
 {
     while (true)
     {
@@ -31,13 +31,13 @@ bool getCLIYesNo()
     return false;
 }
 
-void flushInput()
+void flushInput(void)
 {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
-void awaitCLINewline()
+void awaitCLINewline(void)
 {
     flushInput();
     getchar();

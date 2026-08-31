@@ -7,11 +7,11 @@ typedef enum {
     PRESENTATION_ONLY
 } ProgramMode;
 
-ProgramMode promptProgramModeSelection();
+ProgramMode promptProgramModeSelection(void);
 
 void initializeProgram(ProgramMode mode);
-void awaitPromptedProgramStart();
-void updateProgram();
-void cleanUpProgram();
+void awaitPromptedProgramStart(void);
+void updateProgram(void);
+void cleanUpProgram(void);
 
 # endif

@@ -1,5 +1,5 @@
 # pragma once
-uint64_t getCurrentMicrosecondTimestamp();
+uint64_t getCurrentMicrosecondTimestamp(void);
 
 typedef struct {
     uint64_t interval;

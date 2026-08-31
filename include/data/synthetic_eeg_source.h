@@ -6,9 +6,9 @@
 # define NOISE_60HZ_AMPLITUDE 0.5f
 
 void initializeSyntheticEEGSource(uint8_t channelCount, uint32_t sampleRate);
-void updateSyntheticEEGSource();
-void closeSyntheticEEGSource();
+void updateSyntheticEEGSource(void);
+void closeSyntheticEEGSource(void);
 
-bool isSyntheticEEGSourceReady();
-uint8_t getSyntheticEEGSourceChannelCount();
-uint32_t getSyntheticEEGSourceSampleRate();
+bool isSyntheticEEGSourceReady(void);
+uint8_t getSyntheticEEGSourceChannelCount(void);
+uint32_t getSyntheticEEGSourceSampleRate(void);

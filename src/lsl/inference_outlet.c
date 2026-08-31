@@ -4,7 +4,7 @@
 
 static lsl_outlet outlet = NULL;
 
-void openLslInferenceOutlet()
+void openLslInferenceOutlet(void)
 {
     outlet = openIrregularRateLslOutlet(
         INFERENCE_STREAM_NAME, INFERENCE_STREAM_TYPE,
@@ -28,12 +28,12 @@ void pushLslInference(const TinyBCIInference *inference, uint64_t microsecondTim
     pushLslSample(outlet, sample);
 }
 
-void closeLslInferenceOutlet()
+void closeLslInferenceOutlet(void)
 {
     closeLslOutlet(&outlet);
 }
 
-bool doesLslInferenceOutletHaveConsumers()
+bool doesLslInferenceOutletHaveConsumers(void)
 {
     return lsl_have_consumers(outlet);
 }

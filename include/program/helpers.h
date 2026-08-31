@@ -7,24 +7,24 @@
 void initializeTrialPresentation(
     void (*trialStartCallback)(uint16_t),
     void (*trialEndCallback)(uint16_t),
-    void (*allTrialsCompletedCallback)()
+    void (*allTrialsCompletedCallback)(void)
 );
 
-void initializePipelineWithEEGSourceParameters();
-void updateEEGSourceAndPipeline(void (*cleanUpMethod)());
-void cleanUpEEGSourceAndPipeline();
+void initializePipelineWithEEGSourceParameters(void);
+void updateEEGSourceAndPipeline(void (*cleanUpMethod)(void));
+void cleanUpEEGSourceAndPipeline(void);
 
-void awaitFilterStabilization(void (*cleanUpMethod)());
+void awaitFilterStabilization(void (*cleanUpMethod)(void));
 void awaitConnection(
-    bool (*predicate)(),
-    void (*updateMethod)(),
-    bool (*attemptMethod)()
+    bool (*predicate)(void),
+    void (*updateMethod)(void),
+    bool (*attemptMethod)(void)
 );
 
 void displayInference(TinyBCIInference inference, uint64_t timestamp);
 void printInference(TinyBCIInference inference, uint64_t timestamp);
 
-void displayMessageOrExit(const char *message, void (*cleanUpMethod)());
-void closeIfPromptedTo(void (*cleanUpMethod)());
+void displayMessageOrExit(const char *message, void (*cleanUpMethod)(void));
+void closeIfPromptedTo(void (*cleanUpMethod)(void));
 
 # endif

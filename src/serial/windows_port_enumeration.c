@@ -95,7 +95,7 @@ static const char * findPattern(const char *string, const char *pattern, int *va
 
 // ---
 
-uint32_t enumerateSerialPorts()
+uint32_t enumerateSerialPorts(void)
 {
 // Get devices information text
     uint32_t size = COM_MINDEVNAME;

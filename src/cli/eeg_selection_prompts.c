@@ -2,7 +2,7 @@
 # include "cli/helpers.h"
 # include "serial/port_enumeration.h"
 
-EEGSourceType promptEEGSourceSelection()
+EEGSourceType promptEEGSourceSelection(void)
 {
     printf("Select EEG Source:\n");
     printf("\t%u - LSL Stream\n", LSL_SOURCE);
@@ -34,7 +34,7 @@ const char * promptSerialPortSelection()
     }
 }
 
-bool promptEEGOutletUsageSelection()
+bool promptEEGOutletUsageSelection(void)
 {
     printf("Would you like to stream the raw EEG to LSL for recording?\n");
     return getCLIYesNo();

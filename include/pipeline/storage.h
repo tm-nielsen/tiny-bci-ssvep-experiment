@@ -20,7 +20,7 @@
 // ---
 
 void allocateDynamicStorage(uint8_t channelCount, uint32_t sampleRate);
-void deallocateDynamicStorage();
+void deallocateDynamicStorage(void);
 
 // ---
 

@@ -40,7 +40,7 @@
 # define MAXIMUM_KNOWN_SERIAL_DEVICES 64
 # define MAXIMUM_PORT_NAME_LENGTH 32
 
-uint32_t enumerateSerialPorts();
+uint32_t enumerateSerialPorts(void);
 const char * getSerialPortName(uint32_t index);
 
 # endif

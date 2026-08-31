@@ -98,13 +98,13 @@ void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config)
     setSerialDataSourceCallback(&dataSource, &parseAndPushNeuropawnFrame);
 }
 
-void updateNeuropawnEEGSource()
+void updateNeuropawnEEGSource(void)
 {
     updateSerialDataSource(&dataSource);
 }
 
-void closeNeuropawnEEGSource() { closeSerialDataSource(&dataSource); }
+void closeNeuropawnEEGSource(void) { closeSerialDataSource(&dataSource); }
 
-bool isNeuropawnEEGSourceConnected() { return isSerialDataSourceConnected(&dataSource); }
-uint8_t getNeuropawnEEGSourceChannelCount() { return NEUROPAWN_EEG_CHANNEL_COUNT; }
-uint32_t getNeuropawnEEGSourceSampleRate() { return NEUROPAWN_SAMPLE_RATE; }
+bool isNeuropawnEEGSourceConnected(void) { return isSerialDataSourceConnected(&dataSource); }
+uint8_t getNeuropawnEEGSourceChannelCount(void) { return NEUROPAWN_EEG_CHANNEL_COUNT; }
+uint32_t getNeuropawnEEGSourceSampleRate(void) { return NEUROPAWN_SAMPLE_RATE; }

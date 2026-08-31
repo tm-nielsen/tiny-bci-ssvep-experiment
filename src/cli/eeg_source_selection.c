@@ -6,34 +6,34 @@
 # include "data/dsi_eeg_source.h"
 # include "lsl/eeg_source.h"
 
-static void (*initializationMethod)();
-static void (*updateMethod)();
-static void (*cleanupMethod)();
+static void (*initializationMethod)(void);
+static void (*updateMethod)(void);
+static void (*cleanupMethod)(void);
 
-static bool (*connectionPredicate)();
-static uint8_t (*channelCountGetMethod)();
-static uint32_t (*sampleRateGetMethod)();
+static bool (*connectionPredicate)(void);
+static uint8_t (*channelCountGetMethod)(void);
+static uint32_t (*sampleRateGetMethod)(void);
 
 static char selectedPortName[MAXIMUM_PORT_NAME_LENGTH];
 static bool userHasSelectedToStreamData = false;
 
-static void safeInvoke(void (*method)())
+static void safeInvoke(void (*method)(void))
 {
     if (method != NULL) method();
     else
     fprintf(stderr, "Error: can't invoke null method\n");
 }
 
-void initializeSelectedEEGSource() { safeInvoke(initializationMethod); }
-void updateSelectedEEGSource() { safeInvoke(updateMethod); }
-void cleanUpSelectedEEGSource() { safeInvoke(cleanupMethod); }
+void initializeSelectedEEGSource(void) { safeInvoke(initializationMethod); }
+void updateSelectedEEGSource(void) { safeInvoke(updateMethod); }
+void cleanUpSelectedEEGSource(void) { safeInvoke(cleanupMethod); }
 
 // ---
 
 static const uint8_t testEEGChannelCount = 8;
 static const uint32_t testEEGSampleRate = 250;
 
-static void initializeTestSource()
+static void initializeTestSource(void)
 {
     initializeSyntheticEEGSource(
         testEEGChannelCount,
@@ -43,7 +43,7 @@ static void initializeTestSource()
 
 static const uint32_t serialTimeout = 50;
 
-static void initializeNeuropawnSource()
+static void initializeNeuropawnSource(void)
 {
     connectNeuropawnEEGSource(
         selectedPortName,
@@ -56,12 +56,12 @@ static void initializeNeuropawnSource()
     );
 }
 
-static void initializeUnicornSource()
+static void initializeUnicornSource(void)
 {
     connectUnicornEEGSource(selectedPortName, serialTimeout);
 }
 
-static void initializeDsi7Source()
+static void initializeDsi7Source(void)
 {
     connectDsiEEGSource(selectedPortName, DSI_7_MONTAGE);
 }
@@ -130,7 +130,7 @@ static void selectEEGSource(unsigned int selection)
     }
 }
 
-void runEEGSourceSelection()
+void runEEGSourceSelection(void)
 {
     EEGSourceType type = promptEEGSourceSelection();
     selectEEGSource(type);
@@ -146,23 +146,23 @@ void runEEGSourceSelection()
 
 // ---
 
-bool isSelectedEEGSourceConnected()
+bool isSelectedEEGSourceConnected(void)
 {
     if (connectionPredicate == NULL) return 0;
     return connectionPredicate();
 }
 
-uint8_t getChannelCountOfSelectedEEGSource()
+uint8_t getChannelCountOfSelectedEEGSource(void)
 {
     if (channelCountGetMethod == NULL) return 0;
     return channelCountGetMethod();
 }
-uint32_t getSampleRateOfSelectedEEGSource()
+uint32_t getSampleRateOfSelectedEEGSource(void)
 {
     if (sampleRateGetMethod == NULL) return 0;
     return sampleRateGetMethod();
 }
 
-bool shouldStreamSelectedEEGSource() {
+bool shouldStreamSelectedEEGSource(void) {
     return userHasSelectedToStreamData;
 }

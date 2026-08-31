@@ -18,8 +18,8 @@ void initializeLslTriggerSource(TriggerCallback callback)
     setLSLDataSourceCallback(&dataSource, passTrigger);
 }
 
-void updateLslTriggerSource() { pollLSLDataSource(&dataSource); }
-void closeLslTriggerSource() { closeLSLDataSource(&dataSource); }
+void updateLslTriggerSource(void) { pollLSLDataSource(&dataSource); }
+void closeLslTriggerSource(void) { closeLSLDataSource(&dataSource); }
 
-bool tryConnectLslTriggerSource() { return tryConnectLSLDataSource(&dataSource); }
-bool isLslTriggerSourceConnected() { return dataSource.isConnected; }
+bool tryConnectLslTriggerSource(void) { return tryConnectLSLDataSource(&dataSource); }
+bool isLslTriggerSourceConnected(void) { return dataSource.isConnected; }

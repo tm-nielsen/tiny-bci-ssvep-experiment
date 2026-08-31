@@ -17,7 +17,7 @@ static ProgramMode programMode;
 # define IF_STANDALONE(code) if(programMode == STANDALONE) { code }
 # define IF_PRESENTATION_ONLY(code) if(programMode == PRESENTATION_ONLY) { code }
 
-ProgramMode promptProgramModeSelection()
+ProgramMode promptProgramModeSelection(void)
 {
     printf("Select program mode\n");
     printf("\t%u - Standalone\n", STANDALONE);
@@ -58,7 +58,7 @@ static void onTrialEnd(uint16_t nextTarget)
 }
 
 static bool allTrialsCompleted = false;
-static void onAllTrialsCompleted()
+static void onAllTrialsCompleted(void)
 {
     allTrialsCompleted = true;
     clearPresentationTarget();
@@ -78,12 +78,12 @@ static bool tryGetInference(TinyBCIInference *inference, uint64_t *timestamp)
 
 // ---
 
-static void displayHeadlessRuntimeConnectionWaitMessage()
+static void displayHeadlessRuntimeConnectionWaitMessage(void)
 {
     displayMessageOrExit("Waiting for BCI Engine...", &cleanUpProgram);
 }
 
-static void connectToHeadlessRuntime()
+static void connectToHeadlessRuntime(void)
 {
     while (!doesLslTriggerOutletHaveConsumers())
     {
@@ -123,7 +123,7 @@ void initializeProgram(ProgramMode mode)
     IF_PRESENTATION_ONLY(connectToHeadlessRuntime();)
 }
 
-void awaitPromptedProgramStart()
+void awaitPromptedProgramStart(void)
 {
     while (!IsKeyPressed(KEY_SPACE))
     {
@@ -139,7 +139,7 @@ void awaitPromptedProgramStart()
     }
 }
 
-void updateProgram()
+void updateProgram(void)
 {
     if (allTrialsCompleted)
     {
@@ -177,7 +177,7 @@ void updateProgram()
     drawStimulusScreen();
 }
 
-void cleanUpProgram()
+void cleanUpProgram(void)
 {
     IF_STANDALONE(cleanUpEEGSourceAndPipeline();)
     IF_PRESENTATION_ONLY(closeLslInferenceSource();)

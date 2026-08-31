@@ -11,7 +11,7 @@ int reportAndReturnPipelineStatus(TBCI_Status status, const char *actionLabel)
 
 // ---
 
-void cleanUpTinyBCIPipeline()
+void cleanUpTinyBCIPipeline(void)
 {
     stopTinyBCIPipeline();
     deallocateDynamicStorage();
@@ -19,7 +19,7 @@ void cleanUpTinyBCIPipeline()
 
 // ---
 
-int startTinyBCIPipeline()
+int startTinyBCIPipeline(void)
 {
     TBCI_Status status = tbci_context_start(&tbciContext, TBCI_STATE_INFERENCE);
     return reportAndReturnPipelineStatus(status, "start");
@@ -30,13 +30,13 @@ int startTinyBCIPipelineInState(TBCI_State initialState)
     return reportAndReturnPipelineStatus(status, "start");
 }
 
-int updateTinyBCIPipeline()
+int updateTinyBCIPipeline(void)
 {
     TBCI_Status status = tbci_context_tick(&tbciContext);
     return reportAndReturnPipelineStatus(status, "update");
 }
 
-int stopTinyBCIPipeline()
+int stopTinyBCIPipeline(void)
 {
     TBCI_Status status = tbci_context_stop(&tbciContext);
     return reportAndReturnPipelineStatus(status, "stop");

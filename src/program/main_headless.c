@@ -21,7 +21,7 @@ static void onTriggerReceived(uint16_t code)
 
 // ---
 
-static void cleanUp()
+static void cleanUp(void)
 {
     cleanUpEEGSourceAndPipeline();
     closeLslTriggerSource();
@@ -38,7 +38,7 @@ static void handleDisconnection(const char *message)
     exit(EXIT_SUCCESS);
 }
 
-static void updateProgram()
+static void updateProgram(void)
 {    
     if (!isSelectedEEGSourceConnected())
     {

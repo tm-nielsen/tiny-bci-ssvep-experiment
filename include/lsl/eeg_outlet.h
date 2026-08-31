@@ -6,7 +6,7 @@
 # define LSL_EEG_PIPE_STREAM_TYPE "EEG"
 # define LSL_EEG_PIPE_SOURCE_ID "tiny_bci_ssvep_experiment"
 
-void createAndConnectPipelineEEGOutlet();
-void closePipelineEEGOutlet();
+void createAndConnectPipelineEEGOutlet(void);
+void closePipelineEEGOutlet(void);
 
 # endif

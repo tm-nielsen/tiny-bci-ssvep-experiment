@@ -29,7 +29,7 @@ static void pushSample(void *sampleBuffer)
     );
 }
 
-void connectLslEEGSource()
+void connectLslEEGSource(void)
 {
     dataSource = createLSLDataSource(EEG_STREAM_PREDICATE);
     setLSLDataSourceCallback(&dataSource, pushSample);
@@ -66,12 +66,12 @@ void connectLslEEGSource()
     lsl_destroy_streaminfo(inletInfo);
 }
 
-void updateLslEEGSource() { pollLSLDataSource(&dataSource); }
-void closeLslEEGSource() { closeLSLDataSource(&dataSource); }
+void updateLslEEGSource(void) { pollLSLDataSource(&dataSource); }
+void closeLslEEGSource(void) { closeLSLDataSource(&dataSource); }
 
-bool isLslEEGSourceConnected() { return dataSource.isConnected; }
+bool isLslEEGSourceConnected(void) { return dataSource.isConnected; }
 
 // ---
 
-uint8_t getLslEEGSourceChannelCount() { return channelCount; }
-uint32_t getLslEEGSourceSampleRate() { return sampleRate; }
+uint8_t getLslEEGSourceChannelCount(void) { return channelCount; }
+uint32_t getLslEEGSourceSampleRate(void) { return sampleRate; }

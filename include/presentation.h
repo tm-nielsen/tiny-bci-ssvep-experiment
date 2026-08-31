@@ -40,15 +40,15 @@
 void initializePresentation(const float *pFrequencies, uint16_t pFrequencyCount);
 void drawPreparationScreen(const char *message);
 void drawMessageScreen(const char *message);
-void drawStimulusScreen();
-void stopPresentation();
+void drawStimulusScreen(void);
+void stopPresentation(void);
 
-void pauseStimulus();
-void resumeStimulus();
+void pauseStimulus(void);
+void resumeStimulus(void);
 
-void disableTextureStimulus();
-void enableTextureStimulus();
+void disableTextureStimulus(void);
+void enableTextureStimulus(void);
 
 void setPresentationTarget(uint16_t index);
-void clearPresentationTarget();
+void clearPresentationTarget(void);
 void displaySelection(uint16_t index);
