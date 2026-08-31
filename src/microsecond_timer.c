@@ -4,7 +4,7 @@
 
 # define WIN32_LEAN_AND_MEAN
 # include <windows.h>
-uint64_t getCurrentMicrosecondTimestamp()
+uint64_t getCurrentMicrosecondTimestamp(void)
 {
     FILETIME fileTime;
     uint64_t time;
@@ -19,7 +19,7 @@ uint64_t getCurrentMicrosecondTimestamp()
 # else
 
 # include <time.h>
-uint64_t getCurrentMicrosecondTimestamp()
+uint64_t getCurrentMicrosecondTimestamp(void)
 {
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);

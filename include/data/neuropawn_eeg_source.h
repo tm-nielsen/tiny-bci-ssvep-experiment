@@ -1,20 +1,25 @@
 # pragma once
-# include "storage.h"
+# ifndef NEUROPAWN_EEG_SOURCE
+# define NEUROPAWN_EEG_SOURCE
 
-# define SAMPLE_INTERVAL (uint64_t)(1000000.0f / SAMPLE_RATE)
+# include "serial/serial.h"
 
-# define NEUROPAWN_N_IMU             9       /**< Number of IMU channels (IMU board).       */
+# define NEUROPAWN_IMU_CHANNEL_COUNT 9
 # define NEUROPAWN_EEG_CHANNEL_COUNT 8
-# define NEUROPAWN_SAMPLE_RATE       125.0f  /**< Sampling rate in Hz.                      */
-# define NEUROPAWN_START_BYTE        0xA0    /**< Frame start byte.                         */
-# define NEUROPAWN_END_BYTE          0xC0    /**< Frame end byte.                           */
-# define NEUROPAWN_EEG_PAYLOAD_LEN   21      /**< Payload bytes including 0xA0, non-IMU.    */
-# define NEUROPAWN_IMU_PAYLOAD_LEN   57      /**< Payload bytes including 0xA0, IMU board.  */
-# define NEUROPAWN_DEFAULT_GAIN      12      /**< Default channel gain.                     */
-# define NEUROPAWN_CMD_PAUSE_MS      200u    /**< Delay between config commands (ms).       */
+# define NEUROPAWN_START_BYTE 0xA0
+# define NEUROPAWN_END_BYTE 0xC0
+# define NEUROPAWN_SAMPLE_RATE 125
+# define NEUROPAWN_EEG_FRAME_SIZE 21
+# define NEUROPAWN_IMU_FRAME_SIZE 57
+# define NEUROPAWN_DEFAULT_GAIN 12
+# define NEUROPAWN_CONFIGURATION_COMMAND_DELAY 200u
+
+# define NEUROPAWN_START_BYTES MAKE_OXFF_TERMINATED_BYTE_ARRAY(NEUROPAWN_START_BYTE)
+# define NEUROPAWN_END_BYTES MAKE_OXFF_TERMINATED_BYTE_ARRAY(NEUROPAWN_END_BYTE)
+# define NEUROPAWN_EEG_SCALE(gain) (4.0f / (float)(pow(2, 15) - 1) / gain / 79.57f * 1000000.0f)
 
 typedef enum {
-    NEUROPAWN_BOARD_UNKNOWN = 0,
+    NEUROPAWN_BOARD_UNKNOWN,
     NEUROPAWN_BOARD_EEG,
     NEUROPAWN_BOARD_IMU
 } NeuroPawnBoardType;
@@ -30,7 +35,19 @@ typedef struct {
 # define FALSE_8_ARRAY {false, false, false, false, false, false, false, false}
 # define NEUROPAWN_DEFAULT_CONFIGURATION (NeuropawnConfiguration) { 12, 50, TRUE_8_ARRAY, FALSE_8_ARRAY }
 
-void connectNeuropawnEEGSource(const char *, NeuropawnConfiguration);
-void resetNeuropawnEEGSource();
-void updateNeuropawnEEGSource();
-void disconnectNeuropawnEEGSource();
+void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config);
+void updateNeuropawnEEGSource(void);
+void closeNeuropawnEEGSource(void);
+
+bool isNeuropawnEEGSourceConnected(void);
+uint8_t getNeuropawnEEGSourceChannelCount(void);
+uint32_t getNeuropawnEEGSourceSampleRate(void);
+
+NeuroPawnBoardType detectNeuropawnBoardType(SerialHandle *handle);
+
+void configureNeuropawnChannels(
+    SerialHandle *handle, uint16_t frameSize,
+    NeuropawnConfiguration config
+);
+
+# endif

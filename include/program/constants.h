@@ -1,0 +1,16 @@
+# pragma once
+# ifndef PROGRAM_CONSTANTS
+# define PROGRAM_CONSTANTS
+
+# define FREQUENCIES (float[]){ 5.0f, 5.5f, 6.0f, 6.5f, 7.0f, 7.5f }
+# define FILTER_STABILIZATION_DELAY 5.0f
+
+# define TRIAL_COUNT 4
+# define STIMULUS_DURATION 6.0f
+# define BREAK_DURATION 3.0f
+
+# define SELECTION_DISPLAY_THRESHOLD 0.95f
+
+# define CONNECTION_ATTEMPT_INTERVAL 0.5f
+
+# endif

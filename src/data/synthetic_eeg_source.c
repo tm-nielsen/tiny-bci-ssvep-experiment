@@ -1,22 +1,26 @@
 # include "data/synthetic_eeg_source.h"
+# include "pipeline.h"
 # include "microsecond_timer.h"
 
 static MicrosecondTimer timer;
-static float* samples = NULL;
+static float *samples = NULL;
 static uint32_t sampleIndex = 0;
+
 static uint8_t channelCount = 0;
+static uint32_t sampleRate = 0;
 
 static float tau = (float)(2 * TBCI_M_PI);
 
 
-void initializeSyntheticEEGSource(uint8_t pChannelCount, uint32_t sampleRate)
+void initializeSyntheticEEGSource(uint8_t pChannelCount, uint32_t pSampleRate)
 {
     channelCount = pChannelCount;
+    sampleRate = pSampleRate;
     timer = createMicrosecondTimer(1.0f / sampleRate);
     samples = malloc(channelCount * sizeof(float));
 }
 
-void updateSyntheticEEGSource()
+void updateSyntheticEEGSource(void)
 {
     if (checkMicrosecondTimer(&timer))
     {
@@ -41,12 +45,14 @@ void updateSyntheticEEGSource()
     }
 }
 
-void cleanUpSyntheticEEGSource()
+void closeSyntheticEEGSource(void) { free(samples); }
+
+bool isSyntheticEEGSourceReady(void)
 {
-    free(samples);
+    return channelCount > 0
+        && sampleRate > 0
+        && samples != NULL;
 }
 
-void resetSyntheticEEGSource()
-{
-    resetMicrosecondTimer(&timer);
-}
+uint8_t getSyntheticEEGSourceChannelCount(void) { return channelCount; }
+uint32_t getSyntheticEEGSourceSampleRate(void) { return sampleRate; }

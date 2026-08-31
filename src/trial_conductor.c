@@ -28,8 +28,8 @@ void initializeTrialConductor(
     breakTimer = createMicrosecondTimer(breakDuration);
 }
 
-void setTrialStartCallback(void (*onTrialStart)) { trialStartCallback = onTrialStart; }
-void setTrialEndCallback(void (*onTrialEnd)) { trialEndCallback = onTrialEnd; }
+void setTrialStartCallback(void (*onTrialStart)(uint16_t)) { trialStartCallback = onTrialStart; }
+void setTrialEndCallback(void (*onTrialEnd)(uint16_t)) { trialEndCallback = onTrialEnd; }
 
 void setStimulusRoundCompleteCallback(void (*onStimulusRoundCompleted))
 {
@@ -42,14 +42,14 @@ void setAllTrialsCompletedCallback(void (*onTrialsCompleted))
 
 // ---
 
-void startTrial()
+static void startTrial(void)
 {
     state = STIMULUS;
     if (trialStartCallback != NULL) trialStartCallback(target);
     resetMicrosecondTimer(&stimulusTimer);
 }
 
-void endTrial()
+static void endTrial(void)
 {
     state = BREAK;
     target = (target + 1) % targetCount;
@@ -66,7 +66,7 @@ void endTrial()
     }
 }
 
-void updateTrialConductor()
+void updateTrialConductor(void)
 {
     switch (state)
     {
@@ -81,7 +81,7 @@ void updateTrialConductor()
 
 // ---
 
-void resetTrialConductor()
+void resetTrialConductor(void)
 {
     resetMicrosecondTimer(&breakTimer);
     resetMicrosecondTimer(&stimulusTimer);
