@@ -17,7 +17,8 @@ void runRecordingOptionSelection(void)
     printf("Enter session identifier [S04]: ");
     scanf("%s", tbciConfiguration.log_session);
 
-    if (dataStreamingIsDesired = promptDataStreamingSelection())
+    dataStreamingIsDesired = promptDataStreamingSelection();
+    if (dataStreamingIsDesired)
     {
         printf(
             "EEG and Trigger streams will be created"
