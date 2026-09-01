@@ -41,7 +41,7 @@ static void initializeTestSource(void)
     );
 }
 
-static const uint32_t serialTimeout = 50;
+static const uint32_t serialTimeout = 0;
 
 static void initializeNeuropawnSource(void)
 {
