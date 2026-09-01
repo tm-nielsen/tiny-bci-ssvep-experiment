@@ -59,16 +59,6 @@ int serialRead(SerialHandle *handle, uint8_t *buffer, size_t bufferLength)
         return 0;
     }
 
-    fd_set readfds;
-    FD_ZERO(&readfds);
-    FD_SET(*handle, &readfds);
-
-    struct timeval timeout = { .tv_sec = 0, .tv_usec = 50000 }; /* 50 ms */
-
-    int ready = select(*handle + 1, &readfds, NULL, NULL, &timeout);
-    if (ready <= 0)
-        return 0;  /* timeout or error — no data */
-
     ssize_t n = read(*handle, buffer, bufferLength);
 
     if (n <= 0)
