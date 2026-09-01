@@ -70,8 +70,10 @@ void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config)
     printf("neuropawn: connected on %s\n", port);
     eegScale = NEUROPAWN_EEG_SCALE(config.gain);
 
-    printf("neuropawn: attempting to detect board type...\n");
+    printf("neuropawn: attempting to detect board type...");
     NeuroPawnBoardType boardType = detectNeuropawnBoardType(&handle);
+    printf("\n");
+
     if (boardType == NEUROPAWN_BOARD_UNKNOWN)
     {
         fprintf(stderr, "neuropawn: detection failed - no valid packets.\n");
@@ -96,6 +98,7 @@ void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config)
     configureNeuropawnChannels(&handle, frameSize, config);
 
     setSerialDataSourceCallback(&dataSource, &parseAndPushNeuropawnFrame);
+    printf("neuropawn: configuration complete\n---\n");
 }
 
 void updateNeuropawnEEGSource(void)
