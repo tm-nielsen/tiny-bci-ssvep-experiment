@@ -45,7 +45,7 @@ static void updateProgram(void)
         handleDisconnection("EEG Source Disconnected");
     }
 
-    updateEEGSourceAndPipeline(&cleanUp);
+    updatePipeline(&cleanUp);
 }
 
 int main(void)
@@ -55,6 +55,7 @@ int main(void)
     initializeSelectedEEGSource();
     initializePipelineWithEEGSourceParameters();
     initializeLslTriggerSource(&onTriggerReceived);
+    startUpdateThreadForSelectedEEGSource();
 
     printf("---\nSearching for Presenter App...\n");
     awaitConnection(
