@@ -33,9 +33,3 @@ const char * promptSerialPortSelection()
         return getSerialPortName(selection - 1);
     }
 }
-
-bool promptEEGOutletUsageSelection(void)
-{
-    printf("Would you like to stream the raw EEG to LSL for recording?\n");
-    return getCLIYesNo();
-}

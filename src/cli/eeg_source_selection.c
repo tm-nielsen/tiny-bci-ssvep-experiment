@@ -1,4 +1,6 @@
 # include "cli/eeg_source_selection.h"
+# include "cli/recording_options.h"
+# include "cli/helpers.h"
 # include "serial/port_enumeration.h"
 # include "data/synthetic_eeg_source.h"
 # include "data/neuropawn_eeg_source.h"
@@ -15,7 +17,7 @@ static uint8_t (*channelCountGetMethod)(void);
 static uint32_t (*sampleRateGetMethod)(void);
 
 static char selectedPortName[MAXIMUM_PORT_NAME_LENGTH];
-static bool userHasSelectedToStreamData = false;
+static bool selectedSourceShouldBeStreamed = false;
 
 static void safeInvoke(void (*method)(void))
 {
@@ -41,7 +43,7 @@ static void initializeTestSource(void)
     );
 }
 
-static const uint32_t serialTimeout = 50;
+static const uint32_t serialTimeout = 0;
 
 static void initializeNeuropawnSource(void)
 {
@@ -135,13 +137,24 @@ void runEEGSourceSelection(void)
     EEGSourceType type = promptEEGSourceSelection();
     selectEEGSource(type);
 
-    if (
-        type == NEUROPAWN_SOURCE
-        || type == UNICORN_SOURCE
-        || type == DSI7_SOURCE
-    ) {
-        userHasSelectedToStreamData = promptEEGOutletUsageSelection();
+    if (shouldStreamEEGAndTriggers())
+    {
+        switch (type)
+        {
+            case SYNTHETIC_SOURCE:
+                printf(
+                    "LSL outlet will not be opened"
+                    " to stream synthetic data\n"
+                );
+            break;
+            case LSL_SOURCE: break;
+
+            default:
+                selectedSourceShouldBeStreamed = true;
+            break;
+        }
     }
+    printHorizontalRule();
 }
 
 // ---
@@ -164,5 +177,5 @@ uint32_t getSampleRateOfSelectedEEGSource(void)
 }
 
 bool shouldStreamSelectedEEGSource(void) {
-    return userHasSelectedToStreamData;
+    return selectedSourceShouldBeStreamed;
 }

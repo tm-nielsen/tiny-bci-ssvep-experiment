@@ -5,6 +5,7 @@
 # include "microsecond_timer.h"
 
 # include "cli/eeg_source_selection.h"
+# include "cli/helpers.h"
 # include "lsl/eeg_outlet.h"
 
 void initializePipelineWithEEGSourceParameters(void)
@@ -25,13 +26,16 @@ void initializePipelineWithEEGSourceParameters(void)
 
     pipelineStatus = startTinyBCIPipeline();
     if (pipelineStatus != TBCI_OK) exit(EXIT_FAILURE);
-    printf("---\nTiny BCI Pipeline Running.\n\n");
+    printHorizontalRule();
+    printf("Tiny BCI Pipeline Running.\n\n");
 }
 
-void updateEEGSourceAndPipeline(void (*cleanUpMethod)(void))
+void updatePipeline(void (*cleanUpMethod)(void))
 {
-    updateSelectedEEGSource();
+    lockEEGSourceMutex();
     TBCI_Status pipelineStatus = updateTinyBCIPipeline();
+    unlockEEGSourceMutex();
+
     if (pipelineStatus != TBCI_OK)
     {
         if (cleanUpMethod != NULL) cleanUpMethod();
@@ -48,13 +52,14 @@ void awaitFilterStabilization(void (*cleanUpMethod)(void))
 
     while (!checkMicrosecondTimer(&stabilizationTimer)) {
         if (!isSelectedEEGSourceConnected()) return;
-        updateEEGSourceAndPipeline(cleanUpMethod);
+        updatePipeline(cleanUpMethod);
     }
     printf("Filter settled.\n");
 }
 
 void cleanUpEEGSourceAndPipeline(void)
 {
+    cleanUpEEGSourceUpdateThread();
     cleanUpSelectedEEGSource();
     cleanUpTinyBCIPipeline();
     closePipelineEEGOutlet();

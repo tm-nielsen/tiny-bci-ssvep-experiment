@@ -66,7 +66,7 @@ int serialRead(SerialHandle *handle, uint8_t *buffer, size_t bufferLength)
             lastError == ERROR_ACCESS_DENIED ||
             lastError == ERROR_INVALID_HANDLE
         ) {
-            fprintf(stderr, "--\nSerial handle disconnected\n---\n");
+            fprintf(stderr, "--\nSerial handle disconnected\n");
             serialClose(handle);
             return 0;
         }

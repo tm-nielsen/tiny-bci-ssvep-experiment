@@ -8,6 +8,7 @@
 # include "lsl/trigger_stream.h"
 
 # include "cli/eeg_source_selection.h"
+# include "cli/recording_options.h"
 # include "cli/helpers.h"
 
 static uint16_t currentTargetLabel = 0;
@@ -45,25 +46,28 @@ static void updateProgram(void)
         handleDisconnection("EEG Source Disconnected");
     }
 
-    updateEEGSourceAndPipeline(&cleanUp);
+    updatePipeline(&cleanUp);
 }
 
 int main(void)
 {
+    runRecordingOptionSelection();
     runEEGSourceSelection();
 
     initializeSelectedEEGSource();
+    printHorizontalRule();
     initializePipelineWithEEGSourceParameters();
     initializeLslTriggerSource(&onTriggerReceived);
+    startUpdateThreadForSelectedEEGSource();
 
-    printf("---\nSearching for Presenter App...\n");
+    printf("Searching for Presenter App...\n");
     awaitConnection(
         &isLslTriggerSourceConnected,
         &updateProgram,
         &tryConnectLslTriggerSource
     ); 
     printf("Connected to presenter app\n");
-    printf("---\n");
+    printHorizontalRule();
 
     awaitFilterStabilization(&cleanUp);
 

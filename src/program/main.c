@@ -1,5 +1,7 @@
 # include "cli/program_mode_selection.h"
 # include "cli/eeg_source_selection.h"
+# include "cli/recording_options.h"
+# include "cli/helpers.h"
 
 # include "raylib.h"
 
@@ -13,7 +15,13 @@ int main(int argc, char *argv[])
 # endif
 
     ProgramMode mode = promptProgramModeSelection();
-    if (mode == STANDALONE) runEEGSourceSelection();
+    printHorizontalRule();
+
+    if (mode == STANDALONE)
+    {
+        runRecordingOptionSelection();
+        runEEGSourceSelection();
+    }
 
     initializeProgram(mode);
     awaitPromptedProgramStart();
