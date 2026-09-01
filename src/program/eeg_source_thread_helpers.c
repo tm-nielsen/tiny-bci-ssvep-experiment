@@ -10,11 +10,13 @@ static int updateSelectedEEGSourceInThread(void *data)
 {
     while (!exitThread)
     {
+        if (!isSelectedEEGSourceConnected()) return EXIT_FAILURE;
+
         mtx_lock(&mutex);
         updateSelectedEEGSource();
         mtx_unlock(&mutex);
     }
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 void startUpdateThreadForSelectedEEGSource(void)
