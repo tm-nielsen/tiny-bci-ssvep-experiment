@@ -98,7 +98,7 @@ void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config)
     configureNeuropawnChannels(&handle, frameSize, config);
 
     setSerialDataSourceCallback(&dataSource, &parseAndPushNeuropawnFrame);
-    printf("neuropawn: configuration complete\n---\n");
+    printf("neuropawn: configuration complete\n");
 }
 
 void updateNeuropawnEEGSource(void)

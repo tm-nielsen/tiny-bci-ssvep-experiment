@@ -30,7 +30,7 @@ ProgramMode promptProgramModeSelection(void)
     uint32_t selection = getCLIIntegerSelection(PRESENTATION_ONLY);
 
     printf(
-        "\nProceeding in %s mode...\n",
+        "Proceeding in %s mode...\n",
         selection == STANDALONE ? "Standalone" : "Presentation Only"
     );
     return (ProgramMode)selection;

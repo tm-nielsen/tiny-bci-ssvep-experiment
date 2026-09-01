@@ -31,6 +31,11 @@ bool getCLIYesNo(void)
     return false;
 }
 
+void printHorizontalRule(void)
+{
+    printf("---\n");
+}
+
 void flushInput(void)
 {
     int c;

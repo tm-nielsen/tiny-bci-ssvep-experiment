@@ -5,6 +5,7 @@
 # include "microsecond_timer.h"
 
 # include "cli/eeg_source_selection.h"
+# include "cli/helpers.h"
 # include "lsl/eeg_outlet.h"
 
 void initializePipelineWithEEGSourceParameters(void)
@@ -25,7 +26,8 @@ void initializePipelineWithEEGSourceParameters(void)
 
     pipelineStatus = startTinyBCIPipeline();
     if (pipelineStatus != TBCI_OK) exit(EXIT_FAILURE);
-    printf("---\nTiny BCI Pipeline Running.\n\n");
+    printHorizontalRule();
+    printf("Tiny BCI Pipeline Running.\n\n");
 }
 
 void updatePipeline(void (*cleanUpMethod)(void))

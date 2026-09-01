@@ -55,18 +55,19 @@ int main(void)
     runEEGSourceSelection();
 
     initializeSelectedEEGSource();
+    printHorizontalRule();
     initializePipelineWithEEGSourceParameters();
     initializeLslTriggerSource(&onTriggerReceived);
     startUpdateThreadForSelectedEEGSource();
 
-    printf("---\nSearching for Presenter App...\n");
+    printf("Searching for Presenter App...\n");
     awaitConnection(
         &isLslTriggerSourceConnected,
         &updateProgram,
         &tryConnectLslTriggerSource
     ); 
     printf("Connected to presenter app\n");
-    printf("---\n");
+    printHorizontalRule();
 
     awaitFilterStabilization(&cleanUp);
 

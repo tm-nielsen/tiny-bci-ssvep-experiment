@@ -67,7 +67,7 @@ int serialRead(SerialHandle *handle, uint8_t *buffer, size_t bufferLength)
         fstat(*handle, &sb);
         if (sb.st_nlink == 0)
         {
-            fprintf(stderr, "--\nSerial handle disconnected\n---\n");
+            fprintf(stderr, "--\nSerial handle disconnected\n");
             serialClose(handle);
             return 0;
         }

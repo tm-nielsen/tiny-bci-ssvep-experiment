@@ -32,6 +32,7 @@ NeuroPawnBoardType detectNeuropawnBoardType(SerialHandle *handle)
     uint8_t *buffer = malloc(bufferLength);
 
     NeuroPawnBoardType type = NEUROPAWN_BOARD_UNKNOWN;
+    uint8_t attemptCounter = 0;
 
     while (type == NEUROPAWN_BOARD_UNKNOWN)
     {
@@ -43,7 +44,8 @@ NeuroPawnBoardType detectNeuropawnBoardType(SerialHandle *handle)
         }
 
         type = scanFrameSize(buffer, bufferLength);
-        if (type == NEUROPAWN_BOARD_UNKNOWN) printf(".");
+
+        if (type == NEUROPAWN_BOARD_UNKNOWN && attemptCounter++ % 16 == 0) printf(".");
     }
     free(buffer);
     return type;

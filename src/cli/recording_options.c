@@ -21,10 +21,12 @@ void runRecordingOptionSelection(void)
     if (dataStreamingIsDesired)
     {
         printf(
-            "EEG and Trigger streams will be created"
-            " if they do not already exist.\n"
+            "\nEEG and Trigger streams will be created"
+            " if they do not already exist\n"
         );
+        printf("\tYou must record these streams externally\n");
     }
+    printHorizontalRule();
 }
 
 bool shouldStreamEEGAndTriggers(void)

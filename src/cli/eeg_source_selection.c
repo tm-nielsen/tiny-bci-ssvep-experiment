@@ -1,5 +1,6 @@
 # include "cli/eeg_source_selection.h"
 # include "cli/recording_options.h"
+# include "cli/helpers.h"
 # include "serial/port_enumeration.h"
 # include "data/synthetic_eeg_source.h"
 # include "data/neuropawn_eeg_source.h"
@@ -153,6 +154,7 @@ void runEEGSourceSelection(void)
             break;
         }
     }
+    printHorizontalRule();
 }
 
 // ---
