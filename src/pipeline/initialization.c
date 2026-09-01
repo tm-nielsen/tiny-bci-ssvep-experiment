@@ -55,8 +55,6 @@ static void setTinyBCIPipelineConfiguration(uint8_t channelCount, float sampleRa
     tbciConfiguration.use_decoder = true;
     tbciConfiguration.log_enabled = true; /* set true to enable CSV logging */
     tbciConfiguration.log_processed = false; /* set true to enable logging of preprocessed data */
-    tbciConfiguration.log_subject[0] = '\0';
-    tbciConfiguration.log_session[0] = '\0';
 }
 
 static void addCCANodesToTinyBCIPipeline(const float *frequencies)

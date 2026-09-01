@@ -8,6 +8,7 @@
 # include "lsl/trigger_stream.h"
 
 # include "cli/eeg_source_selection.h"
+# include "cli/recording_options.h"
 # include "cli/helpers.h"
 
 static uint16_t currentTargetLabel = 0;
@@ -50,6 +51,7 @@ static void updateProgram(void)
 
 int main(void)
 {
+    runRecordingOptionSelection();
     runEEGSourceSelection();
 
     initializeSelectedEEGSource();

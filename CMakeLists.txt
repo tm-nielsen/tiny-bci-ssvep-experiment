@@ -29,6 +29,7 @@ set(SHARED_SOURCES
   src/cli/helpers.c
   src/cli/eeg_source_selection.c
   src/cli/eeg_selection_prompts.c
+  src/cli/recording_options.c
   
   src/serial/unix.c
   src/serial/windows.c
