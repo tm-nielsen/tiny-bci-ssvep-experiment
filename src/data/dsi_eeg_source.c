@@ -1,6 +1,6 @@
 # include "data/dsi_eeg_source.h"
+# include "program/helpers.h"
 # include "pipeline.h"
-# include "DSI.h"
  
 static DSI_Headset headset = NULL;
 static DSI_Channel *channels = NULL;
@@ -22,13 +22,23 @@ static void dsiSampleCallback(DSI_Headset h, double packetTime, void *userData)
     (void)h;
     (void)packetTime;
     (void)userData;
- 
+
     for (uint8_t ch = 0; ch < channelCount; ch++)
     {
         samples[ch] = (float)DSI_Channel_ReadBuffered(channels[ch]);
     }
 
+    if (tbciInputs.signal == NULL)
+    {
+        printf(".");
+        return;
+    }
     pushEEGSampleToTinyBCIPipeline(samples, sampleIndex++);
+}
+
+static int dsiMessageCallback( const char * msg, int debugLevel )
+{
+    return fprintf( stderr, "DSI Message (level %d): %s\n", debugLevel, msg );
 }
  
 // ---
@@ -40,13 +50,15 @@ void connectDsiEEGSource(const char *port, const char *montage)
      * bare "libDSI.so" won't be found sitting in the source tree. Passing
      * a path containing a '/' makes dlopen load that exact file instead
      * of searching for it. */
-    if (Load_DSI_API(DSI_API_LIBRARY_PATH) != 0)
+    if (Load_DSI_API(DSI_LIBRARY_PATH) != 0)
     {
         fprintf(stderr, "dsi: failed to load DSI API\n");
         exit(EXIT_FAILURE);
     }
  
     headset = DSI_Headset_New(NULL);
+    DSI_Headset_SetMessageCallback(headset, dsiMessageCallback);
+
     DSI_Headset_Connect(headset, port);
     if (!headset || DSI_Error())
     {
@@ -77,13 +89,15 @@ void connectDsiEEGSource(const char *port, const char *montage)
     printf("dsi: %d channels @ %u Hz\n", channelCount, sampleRate);
  
     DSI_Headset_SetSampleCallback(headset, dsiSampleCallback, NULL);
- 
-    if (!DSI_Headset_StartBackgroundAcquisition(headset) || DSI_Error())
+    DSI_Headset_StartDataAcquisition(headset);
+
+    if (DSI_Error())
     {
         fprintf(stderr, "dsi: failed to start background acquisition: %s\n", DSI_ClearError());
         exit(EXIT_FAILURE);
     }
  
+    DSI_Headset_FlushBuffers(headset);
     isConnected = true;
 }
  
@@ -92,6 +106,7 @@ void connectDsiEEGSource(const char *port, const char *montage)
 void updateDsiEEGSource(void)
 {
     if (!isConnected) return;
+    DSI_Headset_Idle(headset, 0.0);
  
     /* Data itself arrives via dsiSampleCallback on the background
      * thread. This just gives the main loop a chance each frame to
@@ -115,7 +130,9 @@ void disconnectDsiEEGSource(void)
 {
     if (isConnected)
     {
+        DSI_Headset_SetSampleCallback(headset, NULL, NULL);
         DSI_Headset_StopBackgroundAcquisition(headset);
+        DSI_Headset_Idle(headset, 1.0);
         DSI_Headset_Delete(headset);
         free(channels);
         free(samples);
@@ -141,5 +158,5 @@ bool isDsiLibraryAvailable(void)
 # else
 #   include <unistd.h>
 # endif
-    return access(DSI_API_LIBRARY_PATH, F_OK) == 0;
+    return access(DSI_LIBRARY_PATH, F_OK) == 0;
 }

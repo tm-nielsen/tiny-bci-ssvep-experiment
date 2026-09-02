@@ -1,5 +1,8 @@
 # include "pipeline.h"
 # include "microsecond_timer.h"
+# include "tinycthread.h"
+
+static mtx_t signalBufferMutex;
 
 bool tryGetTinyBCIInference(TinyBCIInference *out)
 {
@@ -26,5 +29,20 @@ bool tryGetTinyBCIInference(TinyBCIInference *out)
 void pushEEGSampleToTinyBCIPipeline(float *samples, uint32_t index)
 {
     uint64_t timestamp = getCurrentMicrosecondTimestamp();
-    in_push_signal(&tbciInputs, samples, timestamp, index);
+    pushEEGSampleToTinyBCIPipelineWithTimestamp(samples, index, timestamp);
 }
+
+void pushEEGSampleToTinyBCIPipelineWithTimestamp(
+    float *samples, uint32_t index,
+    uint64_t microsecondTimestamp
+)
+{
+    lockSignalBufferMutex();
+    in_push_signal(&tbciInputs, samples, microsecondTimestamp, index);
+    unlockSignalBufferMutex();
+}
+
+void initializeSignalBufferMutex(void) { mtx_init(&signalBufferMutex, mtx_plain); }
+void lockSignalBufferMutex(void) { mtx_lock(&signalBufferMutex); }
+void unlockSignalBufferMutex(void) { mtx_unlock(&signalBufferMutex); }
+void cleanUpSignalBufferMutex(void) { mtx_destroy(&signalBufferMutex); }

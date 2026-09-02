@@ -16,8 +16,6 @@ void cleanUpEEGSourceAndPipeline(void);
 
 void startUpdateThreadForSelectedEEGSource(void);
 void cleanUpEEGSourceUpdateThread(void);
-void lockEEGSourceMutex(void);
-void unlockEEGSourceMutex(void);
 
 void awaitFilterStabilization(void (*cleanUpMethod)(void));
 void awaitConnection(

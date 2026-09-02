@@ -1,10 +1,9 @@
 #ifndef DSI_EEG_SOURCE_H
 #define DSI_EEG_SOURCE_H
- 
-# include <stdint.h>
-# include <stdbool.h>
 
-# define DSI_API_LIBRARY_PATH "./libDSI.so"
+# include "DSI.h"
+
+# define DSI_LIBRARY_PATH "./libDSI" DYLIB_EXTENSION
 # define DSI_7_MONTAGE "F4,C4,S3,S1,S2,C3,F3"
 
 /* port:    serial port to connect on (e.g. "/dev/ttyACM0", "COM4"),

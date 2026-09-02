@@ -74,7 +74,7 @@ static void selectEEGSource(unsigned int selection)
 {
     if (selection == DSI7_SOURCE && !isDsiLibraryAvailable())
     {
-        printf("DSI API Library not present at %s\n", DSI_API_LIBRARY_PATH);
+        printf("DSI API Library not present at %s\n", DSI_LIBRARY_PATH);
         getchar();
         exit(EXIT_SUCCESS);
     }

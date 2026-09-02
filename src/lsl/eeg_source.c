@@ -1,7 +1,7 @@
 # include "lsl/eeg_source.h"
 # include "lsl/helpers.h"
 # include "lsl/constants.h"
-# include "pipeline/storage.h"
+# include "pipeline.h"
 # include "microsecond_timer.h"
 # include "lsl_c.h"
 
@@ -23,9 +23,9 @@ static void pushSample(void *sampleBuffer)
     uint64_t microsecondTimestamp = getCurrentMicrosecondTimestamp();
 # endif
 
-    in_push_signal(
-        &tbciInputs, (float*)sampleBuffer,
-        microsecondTimestamp, sampleIndex++
+    pushEEGSampleToTinyBCIPipelineWithTimestamp(
+        sampleBuffer, sampleIndex++,
+        microsecondTimestamp
     );
 }
 
