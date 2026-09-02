@@ -32,9 +32,9 @@ void initializePipelineWithEEGSourceParameters(void)
 
 void updatePipeline(void (*cleanUpMethod)(void))
 {
-    lockEEGSourceMutex();
+    lockSignalBufferMutex();
     TBCI_Status pipelineStatus = updateTinyBCIPipeline();
-    unlockEEGSourceMutex();
+    unlockSignalBufferMutex();
 
     if (pipelineStatus != TBCI_OK)
     {

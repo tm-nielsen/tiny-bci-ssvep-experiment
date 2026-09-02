@@ -41,7 +41,7 @@ void updateSyntheticEEGSource(void)
             }
         }
 
-        in_push_signal(&tbciInputs, samples, now, sampleIndex++);
+        pushEEGSampleToTinyBCIPipelineWithTimestamp(samples, sampleIndex++, now);
     }
 }
 

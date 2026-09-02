@@ -23,6 +23,16 @@ typedef struct {
 } TinyBCIInference;
 
 bool tryGetTinyBCIInference(TinyBCIInference *out);
+
 void pushEEGSampleToTinyBCIPipeline(float *samples, uint32_t index);
+void pushEEGSampleToTinyBCIPipelineWithTimestamp(
+    float *samples, uint32_t index,
+    uint64_t microsecondTimestamp
+);
+
+void initializeSignalBufferMutex(void);
+void lockSignalBufferMutex(void);
+void unlockSignalBufferMutex(void);
+void cleanUpSignalBufferMutex(void);
 
 # endif
