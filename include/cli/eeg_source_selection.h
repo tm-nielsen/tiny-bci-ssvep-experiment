@@ -12,6 +12,7 @@ typedef enum {
     LSL_SOURCE,
     NEUROPAWN_SOURCE,
     UNICORN_SOURCE,
+    DSI7_FLEX_SOURCE,
     DSI7_SOURCE,
     SYNTHETIC_SOURCE
 } EEGSourceType;

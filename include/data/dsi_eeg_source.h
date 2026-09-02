@@ -4,6 +4,7 @@
 # include "DSI.h"
 
 # define DSI_LIBRARY_PATH "./libDSI" DYLIB_EXTENSION
+# define DSI_7_FLEX_MONTAGE "S2,S3,S4,S5,S6,S7"
 # define DSI_7_MONTAGE "F4,C4,S3,S1,S2,C3,F3"
 
 /* port:    serial port to connect on (e.g. "/dev/ttyACM0", "COM4"),

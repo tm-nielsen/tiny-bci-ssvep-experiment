@@ -63,6 +63,11 @@ static void initializeUnicornSource(void)
     connectUnicornEEGSource(selectedPortName, serialTimeout);
 }
 
+static void initializeDsi7FlexSource(void)
+{
+    connectDsiEEGSource(selectedPortName, DSI_7_FLEX_MONTAGE);
+}
+
 static void initializeDsi7Source(void)
 {
     connectDsiEEGSource(selectedPortName, DSI_7_MONTAGE);
@@ -72,8 +77,10 @@ static void initializeDsi7Source(void)
 
 static void selectEEGSource(unsigned int selection)
 {
-    if (selection == DSI7_SOURCE && !isDsiLibraryAvailable())
-    {
+    if (
+        (selection == DSI7_SOURCE || selection == DSI7_FLEX_SOURCE)
+        && !isDsiLibraryAvailable()
+    ) {
         printf("DSI API Library not present at %s\n", DSI_LIBRARY_PATH);
         getchar();
         exit(EXIT_SUCCESS);
@@ -112,8 +119,10 @@ static void selectEEGSource(unsigned int selection)
             sampleRateGetMethod = getUnicornEEGSourceSampleRate;
         break;
 
+        case DSI7_FLEX_SOURCE:
+            initializationMethod = initializeDsi7FlexSource;
         case DSI7_SOURCE:
-            initializationMethod = initializeDsi7Source;
+            if (selection == DSI7_SOURCE) initializationMethod = initializeDsi7Source;
             updateMethod = updateDsiEEGSource;
             cleanupMethod = disconnectDsiEEGSource;
             connectionPredicate = isDsiEEGSourceConnected;

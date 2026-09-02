@@ -8,6 +8,7 @@ EEGSourceType promptEEGSourceSelection(void)
     printf("\t%u - LSL Stream\n", LSL_SOURCE);
     printf("\t%u - Neuropawn over USB\n", NEUROPAWN_SOURCE);
     printf("\t%u - Unicorn over USB\n", UNICORN_SOURCE);
+    printf("\t%u - DSI-7 FLEX over USB\n", DSI7_FLEX_SOURCE);
     printf("\t%u - DSI-7 over USB\n", DSI7_SOURCE);
     printf("\t%u - Synthetic test data\n", SYNTHETIC_SOURCE);
 
