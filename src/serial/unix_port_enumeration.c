@@ -44,7 +44,7 @@
     static const char *deviceBaseNames[] = {
         "tty."
     };
-    const static uint8_t BaseNameCount = 1;
+    const static uint8_t baseNameCount = 1;
 # else
     static const char *deviceBaseNames[] = {
         "ttyACM", "ttyUSB", "rfcomm", "ttyS"

@@ -1,7 +1,15 @@
 # include "data/dsi_eeg_source.h"
 # include "program/helpers.h"
 # include "pipeline.h"
- 
+# if defined(_WIN32) || defined(_WIN64)
+#   define WIN32_LEAN_AND_MEAN
+#   include <io.h>
+#   define F_OK 0
+#   define access _access
+# else
+#   include <unistd.h>
+# endif
+
 static DSI_Headset headset = NULL;
 static DSI_Channel *channels = NULL;
 static uint8_t channelCount = 0;
@@ -111,7 +119,7 @@ void updateDsiEEGSource(void)
     /* Data itself arrives via dsiSampleCallback on the background
      * thread. This just gives the main loop a chance each frame to
      * notice dropped samples or device alarms. */
-    size_t overflow = DSI_Headset_GetNumberOfOverflowedSamples(headset);
+    unsigned long long overflow = DSI_Headset_GetNumberOfOverflowedSamples(headset);
     if (overflow > 0)
     {
         fprintf(stderr, "dsi: %" PRIu64 " samples overflowed\n", overflow);
@@ -150,13 +158,5 @@ uint32_t getDsiEEGSourceSampleRate(void) { return sampleRate; }
 
 bool isDsiLibraryAvailable(void)
 {
-# if defined(_WIN32) || defined(_WIN64)
-#   define WIN32_LEAN_AND_MEAN
-#   include <io.h>
-#   define F_OK 0
-#   define access _access
-# else
-#   include <unistd.h>
-# endif
     return access(DSI_LIBRARY_PATH, F_OK) == 0;
 }
