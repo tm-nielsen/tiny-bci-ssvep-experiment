@@ -1,4 +1,5 @@
 # include "data/unicorn_eeg_source.h"
+#include <unistd.h>
 # include "serial/data_source.h"
 # include "pipeline.h"
 
@@ -16,7 +17,7 @@ static bool isFrameValid(SerialFrame frame)
     && frame.buffer[frame.size - 1] == UNICORN_STOP_BYTE1;
 }
 
-static void parseUnicornEEG(uint8_t *frameBuffer, float *sampleBuffer)
+static void parseUnicornEEG(uint8_t *frameBuffer, float *sBuffer)
 {
     for (uint8_t channelIndex = 0; channelIndex < UNICORN_EEG_CHANNEL_COUNT; channelIndex++)
     {
@@ -31,7 +32,7 @@ static void parseUnicornEEG(uint8_t *frameBuffer, float *sampleBuffer)
             raw |= 0xFF000000;
             raw -= 0x01000000;
         }
-        sampleBuffer[channelIndex] = (float)raw * UNICORN_EEG_SCALE;
+        sBuffer[channelIndex] = (float)raw * UNICORN_EEG_SCALE;
     }
 }
 
@@ -47,9 +48,28 @@ static void parseAndPushUnicornFrame(SerialFrame frame)
 }
 
 // ---
+static void reset_bluetooth(void)
+{
+    printf("unicorn: bluetooth daemon appears stuck.\n");
+    printf("unicorn: attempting to reset (requires sudo password)...\n");
+
+    int ret = system("sudo -S pkill bluetoothd");
+    if (ret != 0) {
+        fprintf(stderr, "unicorn: failed to reset bluetooth daemon (exit=%d)\n", ret);
+    } else {
+        printf("unicorn: bluetooth daemon reset, waiting...\n");
+    }
+    printf("unicorn: bluetooth daemon resetting, wait 20 seconds.\n");
+    sleep(20);
+    printf("unicorn: done!\n");
+}
+
 
 void connectUnicornEEGSource(const char *port, uint32_t timeout)
 {
+    #ifdef __APPLE__
+        reset_bluetooth();
+    #endif
     dataSource = createSerialDataSource(
         UNICORN_PACKET_SIZE,
         UNICORN_START_BYTES,
@@ -64,11 +84,12 @@ void connectUnicornEEGSource(const char *port, uint32_t timeout)
     );
     serialFlush(handlePointer);
 
-    uint8_t response[3];
+    uint8_t response[3] = {0};
     int attempts = 100;
     while (attempts-- > 0)
     {
         if (serialRead(handlePointer, response, 3) == 3) break;
+        sleepMilliseconds(20);
     }
 
     if (
