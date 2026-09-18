@@ -41,12 +41,15 @@ static bool tailMatchesFrameStart(SerialDataSource *source)
 
 static bool tailMatchesFrameEnd(SerialDataSource *source)
 {
-    uint16_t endBytesTail = source->tail + source->frameSize - 1;
+    uint8_t len = 0;
+    while (source->endBytes[len] != 0xFF) len++;
 
-    for (uint8_t i = 0; source->endBytes[i] != 0xFF; i++)
+    uint16_t frameEnd = source->tail + source->frameSize - 1;  /* last byte of frame */
+
+    for (uint8_t i = 0; i < len; i++)
     {
-        uint16_t cursor = (endBytesTail - i) % source->bufferLength;
-        if (source->buffer[cursor] != source->endBytes[i]) return false;
+        uint16_t cursor = (frameEnd - i) % source->bufferLength;
+        if (source->buffer[cursor] != source->endBytes[len - 1 - i]) return false;
     }
     return true;
 }
@@ -113,7 +116,12 @@ static void seekFrameStart(SerialDataSource *source)
 void updateSerialDataSource(SerialDataSource *source)
 {
     if (source == NULL) return;
-    readIntoBuffer(source);
+
+    uint16_t bytesBefore;
+    do {
+        bytesBefore = countStoredBytes(source);
+        readIntoBuffer(source);
+    } while (countStoredBytes(source) > bytesBefore && !source->isFull);
 
     if (!hasAFrameWorthOfData(source)) return;
 
