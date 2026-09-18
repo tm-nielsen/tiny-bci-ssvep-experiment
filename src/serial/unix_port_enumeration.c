@@ -60,13 +60,14 @@ static void appendDevices(const char *baseName)
 {
     uint8_t baseNameLength = strlen(baseName);
     struct dirent *dp;
-// Enumerate devices
+    // Enumerate devices
     DIR *dirp = opendir("/dev");
     while ((dp = readdir(dirp)) && deviceCount < MAXIMUM_KNOWN_SERIAL_DEVICES) {
         if (strlen(dp->d_name) >= baseNameLength) {
             if (memcmp(baseName, dp->d_name, baseNameLength) == 0) {
-                char *fullName = malloc(strlen(dp->d_name) + 5);
-                sprintf(fullName, "/dev/%s", dp->d_name);
+                size_t len = strlen("/dev/") + strlen(dp->d_name) + 1;
+                char *fullName = malloc(len);
+                snprintf(fullName, len, "/dev/%s", dp->d_name);
                 deviceNames[deviceCount++] = fullName;
             }
         }
