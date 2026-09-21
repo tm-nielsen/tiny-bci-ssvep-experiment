@@ -119,10 +119,10 @@ void updateDsiEEGSource(void)
     /* Data itself arrives via dsiSampleCallback on the background
      * thread. This just gives the main loop a chance each frame to
      * notice dropped samples or device alarms. */
-    unsigned long long overflow = DSI_Headset_GetNumberOfOverflowedSamples(headset);
+    size_t overflow = DSI_Headset_GetNumberOfOverflowedSamples(headset);
     if (overflow > 0)
     {
-        fprintf(stderr, "dsi: %" PRIu64 " samples overflowed\n", overflow);
+        fprintf(stderr, "dsi: %" PRIuMAX " samples overflowed\n", overflow);
     }
  
     while (DSI_Headset_GetNumberOfAlarms(headset) > 0)
