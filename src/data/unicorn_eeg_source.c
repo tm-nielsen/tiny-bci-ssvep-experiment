@@ -1,7 +1,26 @@
 # include "data/unicorn_eeg_source.h"
-#include <unistd.h>
 # include "serial/data_source.h"
 # include "pipeline.h"
+
+# ifdef APPLE
+#   include <unistd.h>
+
+static void reset_bluetooth(void)
+{
+    printf("unicorn: bluetooth daemon appears stuck.\n");
+    printf("unicorn: attempting to reset (requires sudo password)...\n");
+
+    int ret = system("sudo -S pkill bluetoothd");
+    if (ret != 0) {
+        fprintf(stderr, "unicorn: failed to reset bluetooth daemon (exit=%d)\n", ret);
+    } else {
+        printf("unicorn: bluetooth daemon reset, waiting...\n");
+    }
+    printf("unicorn: bluetooth daemon resetting, wait 20 seconds.\n");
+    sleep(20);
+    printf("unicorn: done!\n");
+}
+# endif
 
 static SerialDataSource dataSource;
 static float sampleBuffer[UNICORN_EEG_CHANNEL_COUNT];
@@ -48,22 +67,6 @@ static void parseAndPushUnicornFrame(SerialFrame frame)
 }
 
 // ---
-static void reset_bluetooth(void)
-{
-    printf("unicorn: bluetooth daemon appears stuck.\n");
-    printf("unicorn: attempting to reset (requires sudo password)...\n");
-
-    int ret = system("sudo -S pkill bluetoothd");
-    if (ret != 0) {
-        fprintf(stderr, "unicorn: failed to reset bluetooth daemon (exit=%d)\n", ret);
-    } else {
-        printf("unicorn: bluetooth daemon reset, waiting...\n");
-    }
-    printf("unicorn: bluetooth daemon resetting, wait 20 seconds.\n");
-    sleep(20);
-    printf("unicorn: done!\n");
-}
-
 
 void connectUnicornEEGSource(const char *port, uint32_t timeout)
 {
