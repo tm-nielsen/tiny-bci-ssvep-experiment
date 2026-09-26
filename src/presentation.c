@@ -1,4 +1,5 @@
 # include "presentation.h"
+# include "stimuli/stimulus_pattern.h"
 
 static RenderTexture2D renderTarget;
 static Texture2D renderTexture;
@@ -20,6 +21,9 @@ static bool hasTarget = false;
 static uint16_t selectionIndex;
 static double selectionTime = -SELECTION_DISPLAY_TIME;
 
+static double stimulusStartTime = 0.0;
+static float refreshRate = 60.0f;
+
 static bool stimulusEnabled = true;
 static bool textureEnabled = true;
 
@@ -37,24 +41,17 @@ static void initializeWindow(void)
 {
     SetTraceLogLevel(LOG_WARNING);
 
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
     InitWindow(RENDER_WIDTH, RENDER_HEIGHT, "Tiny BCI SSVEP Experiment");
+    int monitorHz = GetMonitorRefreshRate(GetCurrentMonitor());
+    if (monitorHz > 0) refreshRate = (float)monitorHz;
     SetWindowMinSize(MINIMUM_WINDOW_WIDTH, MINIMUM_WINDOW_HEIGHT);
 
     renderTarget = LoadRenderTexture(RENDER_WIDTH, RENDER_HEIGHT);
-    SetTextureFilter(renderTexture, TEXTURE_FILTER_POINT);
 
     renderTexture = renderTarget.texture;
     renderTextureRect = (Rectangle){ 0, 0, RENDER_WIDTH, -RENDER_HEIGHT };
-
-    stimulusTexture = LoadTexture(TEXTURE_STIMULUS_FILEPATH);
-    stimulusTextureSourceRect = (Rectangle)
-    {
-        0, 0, (float)stimulusTexture.width, (float)stimulusTexture.height
-    };
-    Image samplingImage = LoadImageFromTexture(stimulusTexture);
-    stimulusTextureBackgroundColour = GetImageColor(samplingImage, 0, 0);
-    UnloadImage(samplingImage);
+    SetTextureFilter(renderTexture, TEXTURE_FILTER_BILINEAR);
 }
 
 static void initializePresenters(const float *pFrequencies, uint16_t pFrequencyCount)
@@ -77,10 +74,23 @@ static void initializePresenters(const float *pFrequencies, uint16_t pFrequencyC
     };
 }
 
+void initializeGaborPatches()
+{
+    CellPatternParams params = CELL_PATTERN_DEFAULTS;
+    params.width  = (int)presenterSpacing.width;
+    params.height = (int)presenterSpacing.height;
+
+    stimulusTexture = GenerateCellPatternTexture(&params);
+    stimulusTextureSourceRect = (Rectangle){ 0, 0, (float)stimulusTexture.width, (float)stimulusTexture.height };
+    stimulusTextureBackgroundColour = params.backgroundColour;
+}
+
+
 void initializePresentation(const float *pFrequencies, uint16_t pFrequencyCount)
 {
     initializeWindow();
     initializePresenters(pFrequencies, pFrequencyCount);
+    initializeGaborPatches();
 }
 
 // ---
@@ -244,11 +254,11 @@ void drawMessageScreen(const char *message)
 
 // ---
 
-static void drawStimulusPresenter(uint16_t index)
+static void drawStimulusPresenter(uint16_t index, double frameTime)
 {
     Rectangle gridRect = getGridRect(index, 0);
 
-    double waveValue = sin(frequencies[index] * TAU * GetTime());
+    double waveValue = sin(frequencies[index] * TAU * (double)frameTime);
     float normalizedValue = (float)(waveValue + 1) / 2.0f;
 
     if (textureEnabled)
@@ -278,6 +288,9 @@ static void drawStimulusPresenter(uint16_t index)
 
 void drawStimulusScreen(void)
 {
+    double t = GetTime() - stimulusStartTime;
+    double frameTime = llround(t * refreshRate) / (double)refreshRate;
+
     BeginTextureMode(renderTarget);
         ClearBackground(BACKGROUND_COLOUR);
 
@@ -285,7 +298,7 @@ void drawStimulusScreen(void)
 
         for (uint16_t i = 0; i < frequencyCount; i++)
         {
-            if (stimulusEnabled) drawStimulusPresenter(i);
+            if (stimulusEnabled) drawStimulusPresenter(i, frameTime);
             else drawStimulusBreakPlaceholder(i);
         }
 
@@ -296,7 +309,7 @@ void drawStimulusScreen(void)
 }
 
 void pauseStimulus(void) { stimulusEnabled = false; }
-void resumeStimulus(void) { stimulusEnabled = true; }
+void resumeStimulus(void) { stimulusEnabled = true; stimulusStartTime = GetTime(); }
 
 void disableTextureStimulus(void) { textureEnabled = false; }
 void enableTextureStimulus(void) { textureEnabled = true; }
