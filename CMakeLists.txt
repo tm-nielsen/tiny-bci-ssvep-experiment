@@ -45,6 +45,8 @@ set(SHARED_SOURCES
   src/data/unicorn_eeg_source.c
   src/data/dsi_eeg_source.c
   src/data/DSI_API_Loader.c
+
+  src/stimuli/stimulus_pattern.c
 )
 
 function(ADD_TARGET TARGET_NAME SOURCES)
