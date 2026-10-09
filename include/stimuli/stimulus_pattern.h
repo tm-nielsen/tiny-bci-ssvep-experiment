@@ -2,7 +2,6 @@
 #define STIMULUS_PATTERN_H
 
 #include "raylib.h"
-#include <stdint.h>
 
 typedef struct
 {

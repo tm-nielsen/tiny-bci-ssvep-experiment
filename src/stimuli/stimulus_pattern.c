@@ -1,6 +1,4 @@
 #include "stimuli/stimulus_pattern.h"
-#include <math.h>
-#include <stdlib.h>
 
 
 // Integer hash -> uniform float in [0, 1). Deterministic across platforms.
