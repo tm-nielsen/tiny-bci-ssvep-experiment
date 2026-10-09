@@ -45,8 +45,6 @@ set(SHARED_SOURCES
   src/data/unicorn_eeg_source.c
   src/data/dsi_eeg_source.c
   src/data/DSI_API_Loader.c
-
-  src/stimuli/stimulus_pattern.c
 )
 
 function(ADD_TARGET TARGET_NAME SOURCES)
@@ -64,6 +62,7 @@ endfunction()
 add_target(${PROJECT_NAME}
   src/program/main.c
   src/presentation.c
+  src/stimuli/stimulus_pattern.c
   src/program/presentation_helpers.c
   src/cli/program_mode_selection.c
 )
