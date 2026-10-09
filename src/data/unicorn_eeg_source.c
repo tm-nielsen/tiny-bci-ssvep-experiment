@@ -1,8 +1,10 @@
 # include "data/unicorn_eeg_source.h"
 # include "serial/data_source.h"
 # include "pipeline.h"
-# include <unistd.h>
 
+# ifdef APPLE
+#   include <unistd.h>
+# endif
 
 static SerialDataSource dataSource;
 static float sampleBuffer[UNICORN_EEG_CHANNEL_COUNT];
@@ -10,7 +12,7 @@ static uint32_t sampleIndex = 0;
 
 // ---
 
-
+# ifdef APPLE
 static void reset_bluetooth(void)
 {
     printf("unicorn: bluetooth daemon appears stuck.\n");
@@ -26,6 +28,7 @@ static void reset_bluetooth(void)
     sleep(20);
     printf("unicorn: done!\n");
 }
+# endif
 
 static bool isFrameValid(SerialFrame frame)
 {
