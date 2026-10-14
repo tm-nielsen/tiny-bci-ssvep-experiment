@@ -30,6 +30,9 @@ typedef struct {
 
     int32_t sampleBufferLength;
     bool bufferMemoryAllocated;
+
+    double lastTimestamp;
+    uint32_t postprocessingFlags;
 } LSLDataSource;
 
 LSLDataSource createLSLDataSource(const char *streamResolutionPredicate);
