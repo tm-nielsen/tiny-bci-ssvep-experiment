@@ -1,4 +1,5 @@
 # include "pipeline.h"
+#include "program/constants.h"
 
 static void initializeTinyBCIPipelineStorage(uint8_t, uint32_t);
 static void setTinyBCIPipelineConfiguration(uint8_t, float);
@@ -60,7 +61,7 @@ static void setTinyBCIPipelineConfiguration(uint8_t channelCount, float sampleRa
 static void addCCANodesToTinyBCIPipeline(const float *frequencies)
 {
     /* register notch & bandpass node in preprocessing group */
-    notchConfiguration.freq_hz = 60.0f;
+    notchConfiguration.freq_hz = NOTCH_FREQ;
     notchConfiguration.q_factor = 10.0f;
     notchConfiguration.n_harmonics = 2;
     notch_init(&notchNode, &notchConfiguration);
