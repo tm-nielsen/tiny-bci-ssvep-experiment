@@ -41,6 +41,22 @@ void pushLslSample(lsl_outlet outlet, void *sample)
     }
 }
 
+void pushLslStringSample(lsl_outlet outlet, const char *value)
+{
+    if (outlet == NULL)
+    {
+        fprintf(stderr, "Error: Can't push to a null outlet\n");
+        return;
+    }
+
+    int32_t pushError = lsl_push_sample_str(outlet, &value);
+    if (pushError != lsl_no_error)
+    {
+        printf("Error pushing marker value to LSL stream\n");
+        exit(EXIT_SUCCESS);
+    }
+}
+
 void closeLslOutlet(lsl_outlet *outlet)
 {
     if (*outlet == NULL) return;

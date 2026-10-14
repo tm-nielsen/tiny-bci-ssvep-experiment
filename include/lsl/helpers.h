@@ -11,6 +11,7 @@ lsl_outlet openIrregularRateLslOutlet(
     const char *sourceId
 );
 void pushLslSample(lsl_outlet outlet, void *sample);
+void pushLslStringSample(lsl_outlet outlet, const char *value);
 void closeLslOutlet(lsl_outlet *outlet);
 
 lsl_inlet connectAndOpenLslInlet(lsl_streaminfo targetStream);
@@ -29,6 +30,9 @@ typedef struct {
 
     int32_t sampleBufferLength;
     bool bufferMemoryAllocated;
+
+    double lastTimestamp;
+    uint32_t postprocessingFlags;
 } LSLDataSource;
 
 LSLDataSource createLSLDataSource(const char *streamResolutionPredicate);

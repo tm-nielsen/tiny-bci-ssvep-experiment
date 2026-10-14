@@ -45,6 +45,14 @@ static void initializeTestSource(void)
 
 static const uint32_t serialTimeout = 0;
 
+static void (*waitMethod)(uint32_t timeoutMs) = NULL;
+
+void waitForSelectedEEGSourceData(uint32_t timeoutMs)
+{
+    if (waitMethod != NULL) waitMethod(timeoutMs);
+    else sleepMilliseconds(timeoutMs); // sources that can't wait on data yet
+}
+
 static void initializeNeuropawnSource(void)
 {
     connectNeuropawnEEGSource(
@@ -117,6 +125,7 @@ static void selectEEGSource(unsigned int selection)
             connectionPredicate = isUnicornEEGSourceConnected;
             channelCountGetMethod = getUnicornEEGSourceChannelCount;
             sampleRateGetMethod = getUnicornEEGSourceSampleRate;
+            waitMethod = waitForUnicornEEGSourceData;
         break;
 
         case DSI7_FLEX_SOURCE:

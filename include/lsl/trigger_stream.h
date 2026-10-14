@@ -14,7 +14,7 @@ void closeLslTriggerOutlet(void);
 
 bool doesLslTriggerOutletHaveConsumers(void);
 
-typedef void (*TriggerCallback)(uint16_t value);
+typedef void (*TriggerCallback)(uint16_t value, uint64_t timestamp);
 
 void initializeLslTriggerSource(TriggerCallback callback);
 void updateLslTriggerSource(void);

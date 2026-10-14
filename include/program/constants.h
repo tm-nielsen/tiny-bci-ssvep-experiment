@@ -3,6 +3,7 @@
 # define PROGRAM_CONSTANTS
 
 # define FREQUENCIES (float[]){ 5.0f, 5.5f, 6.0f, 6.5f, 7.0f, 7.5f }
+# define NOTCH_FREQ 60.0f
 # define FILTER_STABILIZATION_DELAY 5.0f
 
 # define TRIAL_COUNT 4

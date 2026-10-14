@@ -25,6 +25,7 @@
 
 void connectUnicornEEGSource(const char *port, uint32_t timeout);
 void updateUnicornEEGSource(void);
+void waitForUnicornEEGSourceData(uint32_t timeoutMs);
 void closeUnicornEEGSource(void);
 
 bool isUnicornEEGSourceConnected(void);

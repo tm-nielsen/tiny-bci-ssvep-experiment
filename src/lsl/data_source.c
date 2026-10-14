@@ -4,6 +4,10 @@
 void connectLSLDataSource(LSLDataSource *source, lsl_streaminfo targetStream)
 {
     source->inlet = connectAndOpenLslInlet(targetStream);
+    if (source->inlet != NULL && source->postprocessingFlags != 0)
+    {
+        lsl_set_postprocessing(source->inlet, source->postprocessingFlags);
+    }
     source->isConnected = true;
 
     int32_t bufferLength = lsl_get_sample_bytes(targetStream);
@@ -87,9 +91,10 @@ bool pollLSLDataSource(LSLDataSource *source)
     }
 
     bool samplePulled = lslTimestamp > 0.0;
-    if (samplePulled && source->sampleCallback != NULL)
+    if (samplePulled)
     {
-        source->sampleCallback(source->sampleBuffer);
+        source->lastTimestamp = lslTimestamp;
+        if (source->sampleCallback != NULL) source->sampleCallback(source->sampleBuffer);
     }
     return samplePulled;
 }

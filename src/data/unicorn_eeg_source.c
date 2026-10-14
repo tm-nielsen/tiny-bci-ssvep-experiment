@@ -1,15 +1,9 @@
 # include "data/unicorn_eeg_source.h"
 # include "serial/data_source.h"
 # include "pipeline.h"
-# include <unistd.h>
 
-
-static SerialDataSource dataSource;
-static float sampleBuffer[UNICORN_EEG_CHANNEL_COUNT];
-static uint32_t sampleIndex = 0;
-
-// ---
-
+# ifdef __APPLE__
+#   include <unistd.h>
 
 static void reset_bluetooth(void)
 {
@@ -26,6 +20,13 @@ static void reset_bluetooth(void)
     sleep(20);
     printf("unicorn: done!\n");
 }
+# endif
+
+static SerialDataSource dataSource;
+static float sampleBuffer[UNICORN_EEG_CHANNEL_COUNT];
+static uint32_t sampleIndex = 0;
+
+// ---
 
 static bool isFrameValid(SerialFrame frame)
 {
@@ -47,7 +48,6 @@ static void parseUnicornEEG(uint8_t *frameBuffer, float *sBuffer)
         /* two's complement for 24-bit */
         if (raw & 0x00800000)
         {
-            raw |= 0xFF000000;
             raw -= 0x01000000;
         }
         sBuffer[channelIndex] = (float)raw * UNICORN_EEG_SCALE;
@@ -112,6 +112,11 @@ void connectUnicornEEGSource(const char *port, uint32_t timeout)
 void updateUnicornEEGSource(void)
 {
     updateSerialDataSource(&dataSource);
+}
+
+void waitForUnicornEEGSourceData(uint32_t timeoutMs)
+{
+    serialWaitReadable(&dataSource.handle, timeoutMs);
 }
 
 void closeUnicornEEGSource(void)

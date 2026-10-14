@@ -5,6 +5,8 @@
 # include "pipeline/storage.h"
 # include "pipeline/triggers.h"
 
+uint64_t getTimestamp(void);
+
 int initializeTinyBCIPipeline(const float *frequencies, uint8_t channelCount, uint32_t sampleRate);
 void cleanUpTinyBCIPipeline(void);
 

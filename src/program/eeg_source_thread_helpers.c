@@ -5,6 +5,7 @@
 
 static thrd_t thread;
 static bool exitThread = false;
+static bool threadStarted = false;
 
 static int updateSelectedEEGSourceInThread(void *data)
 {
@@ -20,13 +21,17 @@ static int updateSelectedEEGSourceInThread(void *data)
 void startUpdateThreadForSelectedEEGSource(void)
 {
     initializeSignalBufferMutex();
-    thrd_create(&thread, updateSelectedEEGSourceInThread, NULL);
+    threadStarted = thrd_create(&thread, updateSelectedEEGSourceInThread, NULL) == thrd_success;
 }
 
 void cleanUpEEGSourceUpdateThread(void)
 {
-    exitThread = true;
-    int threadResult = 0;
-    thrd_join(thread, &threadResult);
+    if (threadStarted)
+    {
+        exitThread = true;
+        int threadResult = 0;
+        thrd_join(thread, &threadResult);
+        threadStarted = false;
+    }
     cleanUpSignalBufferMutex();
 }

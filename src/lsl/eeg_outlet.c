@@ -1,6 +1,7 @@
 # include "lsl/eeg_outlet.h"
 # include "lsl/helpers.h"
 # include "lsl_c.h"
+#include "pipeline.h"
 # include "pipeline/storage.h"
 
 static lsl_outlet outlet = NULL;
@@ -15,7 +16,9 @@ static void onFrame(
         fprintf(stderr, "Error: EEG outlet is NULL\n");
         return;
     }
-    lsl_push_sample_f(outlet, samples);
+    double ageSeconds = (double)(getTimestamp() - frame->timestamp_us) / 1000000.0;
+
+    lsl_push_sample_ft(outlet, samples, lsl_local_clock() - ageSeconds);
 }
 
 void createAndConnectPipelineEEGOutlet(void)
