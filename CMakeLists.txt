@@ -69,3 +69,6 @@ target_link_libraries(${PROJECT_NAME} raylib)
 add_dependencies(${PROJECT_NAME} copy_assets)
 
 add_target("headless_${PROJECT_NAME}" src/program/main_headless.c)
+
+add_target("ssvep_box_${PROJECT_NAME}" src/program/main_ssvep_box.c)
+target_compile_definitions("ssvep_box_${PROJECT_NAME}" PRIVATE N_FREQS=4)
