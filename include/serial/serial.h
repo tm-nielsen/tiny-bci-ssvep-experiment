@@ -30,4 +30,9 @@ void sleepMilliseconds(uint32_t ms);
 
 bool isSerialHandleInvalid(SerialHandle *handle);
 
+// Waits until the port has data to read, or the timeout passes.
+// Returns >0 if readable (or disconnected: serialRead will report it),
+// 0 on timeout or interruption by a signal, <0 on error.
+int serialWaitReadable(SerialHandle *handle, uint32_t timeoutMs);
+
 # endif

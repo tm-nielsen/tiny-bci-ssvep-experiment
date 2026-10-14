@@ -1,6 +1,12 @@
 # include "serial/serial.h"
 
 # if defined(_WIN32) || defined(_WIN64)
+int serialWaitReadable(SerialHandle *handle, uint32_t timeoutMs)
+{
+    (void)handle; (void)timeoutMs;
+    sleepMilliseconds(1);
+    return 1;
+}
 # else
 #include <fcntl.h>
 #include <unistd.h>
@@ -8,6 +14,7 @@
 #include <sys/select.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <poll.h>
 
 int serialOpen(SerialHandle *handle, const char *port, uint32_t readTimeout)
 {
@@ -95,6 +102,17 @@ void sleepMilliseconds(uint32_t ms)
     ts.tv_sec  = ms / 1000u;
     ts.tv_nsec = (long)(ms % 1000u) * 1000000L;
     nanosleep(&ts, NULL);
+}
+
+int serialWaitReadable(SerialHandle *handle, uint32_t timeoutMs)
+{
+    if (isSerialHandleInvalid(handle)) return -1;
+
+    struct pollfd pfd = { .fd = *handle, .events = POLLIN };
+    int ready = poll(&pfd, 1, (int)timeoutMs);
+
+    if (ready < 0) return errno == EINTR ? 0 : -1;
+    return ready;
 }
 
 # endif
