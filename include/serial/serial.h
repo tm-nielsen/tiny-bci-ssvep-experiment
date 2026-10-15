@@ -6,6 +6,11 @@
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
     typedef HANDLE SerialHandle;
+# elif defined(TBCI_PICO)
+// Bluetooth RFCOMM backend (src/serial/pico_rfcomm.c).
+typedef int SerialHandle;
+#   define INVALID_HANDLE_VALUE (-1)
+void setPicoSerialIdleCallback(void (*callback)(void));
 # else
 #   include <termios.h>
     typedef int SerialHandle;

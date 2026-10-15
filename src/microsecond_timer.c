@@ -16,6 +16,14 @@ uint64_t getCurrentMicrosecondTimestamp(void)
     return time / 10;
 }
 
+# elif TBCI_PICO
+# include "pico/time.h"
+
+uint64_t getCurrentMicrosecondTimestamp(void)
+{
+    return time_us_64(); // hardware microsecond counter since boot
+}
+
 # else
 
 # include <time.h>

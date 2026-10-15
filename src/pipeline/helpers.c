@@ -1,5 +1,12 @@
 # include "pipeline.h"
 # include "microsecond_timer.h"
+# ifdef TBCI_PICO
+void initializeSignalBufferMutex(void) {}
+void lockSignalBufferMutex(void) {}
+void unlockSignalBufferMutex(void) {}
+void cleanUpSignalBufferMutex(void) {}
+# else
+
 # include "tinycthread.h"
 
 static mtx_t signalBufferMutex;
@@ -46,3 +53,5 @@ void initializeSignalBufferMutex(void) { mtx_init(&signalBufferMutex, mtx_plain)
 void lockSignalBufferMutex(void) { mtx_lock(&signalBufferMutex); }
 void unlockSignalBufferMutex(void) { mtx_unlock(&signalBufferMutex); }
 void cleanUpSignalBufferMutex(void) { mtx_destroy(&signalBufferMutex); }
+
+# endif

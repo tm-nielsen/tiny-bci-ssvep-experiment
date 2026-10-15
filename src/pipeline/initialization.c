@@ -54,7 +54,7 @@ static void setTinyBCIPipelineConfiguration(uint8_t channelCount, float sampleRa
     tbciConfiguration.use_preprocessing = true;
     tbciConfiguration.use_feature_extraction = true;
     tbciConfiguration.use_decoder = true;
-    tbciConfiguration.log_enabled = true; /* set true to enable CSV logging */
+    tbciConfiguration.log_enabled = false; /* set true to enable CSV logging */
     tbciConfiguration.log_processed = false; /* set true to enable logging of preprocessed data */
 }
 
