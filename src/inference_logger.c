@@ -6,6 +6,22 @@ static uint16_t currentTarget = 0;
 static uint64_t targetAssignmentTimestamp = 0;
 static uint16_t roundNumber = 0;
 
+InferenceRecord makeInferenceRecord(TinyBCIInference inference, uint64_t timestamp)
+{
+    InferenceRecord record = {
+        .timestamp_us = timestamp,
+        .delta_time_us = timestamp - targetAssignmentTimestamp,
+        .true_label = (uint16_t)(currentTarget + 1),
+        .predicted_label = (uint16_t)(inference.predictedLabel + 1),
+        .round_number = roundNumber,
+        .confidence = inference.confidence,
+    };
+    for (int i = 0; i < N_FREQS; i++) record.probabilities[i] = inference.confidences[i];
+    return record;
+}
+
+# ifndef TBCI_PICO
+
 void initializeInferenceLogger(void)
 {
     time_t now = time(NULL);
@@ -37,6 +53,18 @@ void initializeInferenceLogger(void)
     }
 }
 
+void closeInferenceLogger(void)
+{
+    if (logFile)
+    {
+        fclose(logFile);
+        logFile = NULL;
+        printf("Inference Logger: file saved.\n");
+    }
+}
+
+# endif
+
 void notifyInferenceLoggerOfNewTarget(uint16_t target, uint64_t timestamp)
 {
     if (target == 0 && currentTarget != 0) roundNumber++;
@@ -52,24 +80,11 @@ void logInference(TinyBCIInference inference, uint64_t timestamp)
         return;
     }
 
-    fprintf(logFile, "\n%" PRIu64 ",%" PRIu64 ",%d,%d,%.6f,%u",
-        timestamp, timestamp - targetAssignmentTimestamp,
-        currentTarget + 1, inference.predictedLabel + 1,
-        inference.confidence, roundNumber
-    );
-    for (int i = 0; i < N_FREQS; i++)
-    {
-        fprintf(logFile, ",%.6f", inference.confidences[i]);
-    }
+    InferenceRecord r = makeInferenceRecord(inference, timestamp);
+    fprintf(logFile, "\n%" PRIu64 ",%" PRIu64 ",%u,%u,%.6f,%u",
+        r.timestamp_us, r.delta_time_us, r.true_label, r.predicted_label,
+        r.confidence, r.round_number);
+    for (int i = 0; i < N_FREQS; i++) fprintf(logFile, ",%.6f", r.probabilities[i]);
     fflush(logFile);
 }
 
-void closeInferenceLogger(void)
-{
-    if (logFile)
-    {
-        fclose(logFile);
-        logFile = NULL;
-        printf("Inference Logger: file saved.\n");
-    }
-}
