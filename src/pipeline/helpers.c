@@ -11,6 +11,13 @@ void cleanUpSignalBufferMutex(void) {}
 
 static mtx_t signalBufferMutex;
 
+void initializeSignalBufferMutex(void) { mtx_init(&signalBufferMutex, mtx_plain); }
+void lockSignalBufferMutex(void) { mtx_lock(&signalBufferMutex); }
+void unlockSignalBufferMutex(void) { mtx_unlock(&signalBufferMutex); }
+void cleanUpSignalBufferMutex(void) { mtx_destroy(&signalBufferMutex); }
+
+# endif
+
 bool tryGetTinyBCIInference(TinyBCIInference *out)
 {
     if (eq_is_empty(&outputQueue))
@@ -48,10 +55,3 @@ void pushEEGSampleToTinyBCIPipelineWithTimestamp(
     in_push_signal(&tbciInputs, samples, microsecondTimestamp, index);
     unlockSignalBufferMutex();
 }
-
-void initializeSignalBufferMutex(void) { mtx_init(&signalBufferMutex, mtx_plain); }
-void lockSignalBufferMutex(void) { mtx_lock(&signalBufferMutex); }
-void unlockSignalBufferMutex(void) { mtx_unlock(&signalBufferMutex); }
-void cleanUpSignalBufferMutex(void) { mtx_destroy(&signalBufferMutex); }
-
-# endif

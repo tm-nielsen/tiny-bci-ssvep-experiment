@@ -12,8 +12,11 @@
 
 # define SIG_CAPACITY 1024
 # define TRIG_CAPACITY 32
+# ifdef TBCI_PICO
+# define EPOCH_CAPACITY 2
+# else
 # define EPOCH_CAPACITY 8
-
+# endif
 # define WINDOW_LENGTH_MS 2000
 # define WINDOW_OVERLAP_MS 1900
 
