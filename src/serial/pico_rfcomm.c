@@ -10,12 +10,14 @@
 # include "serial/serial.h"
 # include "pico/cyw43_arch.h"
 # include "btstack.h"
+#include "hci_dump_embedded_stdout.h"
 
 # define CONNECT_TIMEOUT_MS   30000
 # define INQUIRY_LENGTH       5       // units of 1.28 s
 # define MAX_CANDIDATES       8
 # define RX_BUFFER_SIZE       4096    // ~0.35 s of Unicorn data
 # define PICO_SERIAL_HANDLE   1       // only one link at a time
+# define DEFAULT_RFCOMM_CHANNEL 1
 
 typedef enum { LINK_CLOSED, LINK_OPENING, LINK_OPEN } LinkState;
 
@@ -139,6 +141,36 @@ static void handleHciEvent(uint8_t packetType, uint16_t channel, uint8_t *packet
             gap_pin_code_negative(address);
             break;
         }
+        case HCI_EVENT_CONNECTION_COMPLETE:
+            printf("bluetooth: link status 0x%02x\n",
+                hci_event_connection_complete_get_status(packet));
+            break;
+        case HCI_EVENT_AUTHENTICATION_COMPLETE:
+            printf("bluetooth: authentication status 0x%02x\n",
+                hci_event_authentication_complete_get_status(packet));
+            break;
+        case HCI_EVENT_DISCONNECTION_COMPLETE:
+            printf("bluetooth: disconnected, reason 0x%02x\n",
+                hci_event_disconnection_complete_get_reason(packet));
+            break;
+        case HCI_EVENT_USER_CONFIRMATION_REQUEST:
+            printf("bluetooth: confirming pairing code %06lu\n",
+                (unsigned long)hci_event_user_confirmation_request_get_numeric_value(packet));
+            break;
+        case HCI_EVENT_SIMPLE_PAIRING_COMPLETE:
+            printf("bluetooth: pairing status 0x%02x\n",
+                hci_event_simple_pairing_complete_get_status(packet));
+            break;
+        case HCI_EVENT_ENCRYPTION_CHANGE:
+            {
+                hci_con_handle_t handle = hci_event_encryption_change_get_connection_handle(packet);
+                printf("bluetooth: encryption %s (status 0x%02x), security level %u, key size %u\n",
+                    hci_event_encryption_change_get_encryption_enabled(packet) ? "on" : "off",
+                    hci_event_encryption_change_get_status(packet),
+                    gap_security_level(handle),
+                    gap_encryption_key_size(handle));
+                break;
+            }
         default:
             break;
     }
@@ -170,6 +202,7 @@ static bool findDevice(uint32_t deadline)
 }
 
 static uint8_t serialPortChannel = 0;
+static uint8_t sdpStatus = 0;
 static bool sdpRunning = false;
 
 static void handleSdpEvent(uint8_t packetType, uint16_t channel, uint8_t *packet, uint16_t size)
@@ -184,6 +217,7 @@ static void handleSdpEvent(uint8_t packetType, uint16_t channel, uint8_t *packet
                 serialPortChannel = sdp_event_query_rfcomm_service_get_rfcomm_channel(packet);
             break;
         case SDP_EVENT_QUERY_COMPLETE:
+            sdpStatus = sdp_event_query_complete_get_status(packet);
             sdpRunning = false;
             break;
         default:
@@ -218,8 +252,12 @@ static void handleRfcommEvent(uint8_t packetType, uint16_t channel, uint8_t *pac
             {
                 rfcommCid = rfcomm_event_channel_opened_get_rfcomm_cid(packet);
                 linkState = LINK_OPEN;
+            }else
+            {
+                printf("bluetooth: RFCOMM open failed (0x%02x)\n",
+                    rfcomm_event_channel_opened_get_status(packet));
+                linkState = LINK_CLOSED;
             }
-            else linkState = LINK_CLOSED;
             break;
 
         case RFCOMM_EVENT_CAN_SEND_NOW:
@@ -244,20 +282,36 @@ static void handleRfcommEvent(uint8_t packetType, uint16_t channel, uint8_t *pac
 static bool connectToDevice(uint32_t deadline)
 {
     serialPortChannel = 0;
+    sdpStatus = 0;
     sdpRunning = true;
-    if (sdp_client_query_rfcomm_channel_and_name_for_service_class_uuid(
-            handleSdpEvent, deviceAddress, BLUETOOTH_SERVICE_CLASS_SERIAL_PORT) != ERROR_CODE_SUCCESS)
-        return false;
+    uint8_t error = sdp_client_query_rfcomm_channel_and_name_for_service_class_uuid(
+        handleSdpEvent, deviceAddress, BLUETOOTH_SERVICE_CLASS_SERIAL_PORT);
+    if (error != ERROR_CODE_SUCCESS)
+    {
+        printf("bluetooth: SDP query could not start (0x%02x)\n", error);
+        sdpRunning = false;
+    }
     while (sdpRunning && nowMs() < deadline) pumpWhileWaiting();
-    if (serialPortChannel == 0) return false;
+    if (sdpRunning) printf("bluetooth: SDP query timed out\n");
+
+    if (serialPortChannel == 0)
+    {
+        printf("bluetooth: SDP found no serial port (status 0x%02x), trying channel %u\n",
+            sdpStatus, DEFAULT_RFCOMM_CHANNEL);
+        serialPortChannel = DEFAULT_RFCOMM_CHANNEL;
+    }
+    else printf("bluetooth: serial port on channel %u\n", serialPortChannel);
 
     linkState = LINK_OPENING;
-    if (rfcomm_create_channel(handleRfcommEvent, deviceAddress, serialPortChannel, &rfcommCid) != ERROR_CODE_SUCCESS)
+    error = rfcomm_create_channel(handleRfcommEvent, deviceAddress, serialPortChannel, &rfcommCid);
+    if (error != ERROR_CODE_SUCCESS)
     {
+        printf("bluetooth: RFCOMM could not start (0x%02x)\n", error);
         linkState = LINK_CLOSED;
         return false;
     }
     while (linkState == LINK_OPENING && nowMs() < deadline) pumpWhileWaiting();
+    if (linkState == LINK_OPENING) printf("bluetooth: RFCOMM open timed out\n");
     return linkState == LINK_OPEN;
 }
 
@@ -270,7 +324,9 @@ static bool startBluetoothStack(void)
         l2cap_init();
         rfcomm_init();
         gap_set_local_name("TinyBCI Engine");
-        gap_ssp_set_io_capability(SSP_IO_CAPABILITY_NO_INPUT_NO_OUTPUT);
+        gap_ssp_set_io_capability(SSP_IO_CAPABILITY_DISPLAY_YES_NO);
+        gap_ssp_set_authentication_requirement(SSP_IO_AUTHREQ_MITM_PROTECTION_REQUIRED_GENERAL_BONDING);
+        gap_set_required_encryption_key_size(7);
         gap_ssp_set_auto_accept(1);
 
         hciRegistration.callback = &handleHciEvent;
