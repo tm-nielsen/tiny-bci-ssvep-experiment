@@ -5,11 +5,11 @@
 # include "pico/bootrom.h"
 # include "tusb.h"
 
-# define LINK_PORT  0
 # define DEBUG_PORT 1
 # define BOOTSEL_MAGIC_BAUD 1200
 
-static BCILinkParser parser;
+static const uint8_t linkPorts[USB_LINK_CLIENTS] = { 0, 2 };
+static BCILinkParser parsers[USB_LINK_CLIENTS];
 
 // --- printf -> debug port
 
@@ -36,7 +36,7 @@ static stdio_driver_t debugDriver = {
 # endif
 };
 
-// --- 1200 baud on either port: reboot into BOOTSEL (replaces the SDK's stdio_usb feature)
+// --- 1200 baud on any port: reboot into BOOTSEL (replaces the SDK's stdio_usb feature)
 
 void tud_cdc_line_coding_cb(uint8_t itf, cdc_line_coding_t const *coding)
 {
@@ -48,7 +48,7 @@ void tud_cdc_line_coding_cb(uint8_t itf, cdc_line_coding_t const *coding)
 
 void initializeUsbLink(void)
 {
-    resetBCILinkParser(&parser);
+    for (uint8_t i = 0; i < USB_LINK_CLIENTS; i++) resetBCILinkParser(&parsers[i]);
     tud_init(0); // root hub port 0: the RP2350 has one USB controller
     stdio_set_driver_enabled(&debugDriver, true);
 }
@@ -56,35 +56,38 @@ void initializeUsbLink(void)
 void updateUsbLink(void)
 {
     tud_task();
-    tud_cdc_n_write_flush(LINK_PORT);
+    for (uint8_t i = 0; i < USB_LINK_CLIENTS; i++) tud_cdc_n_write_flush(linkPorts[i]);
     tud_cdc_n_write_flush(DEBUG_PORT);
 }
 
-bool isUsbLinkOpen(void)
+bool isUsbLinkOpen(uint8_t client)
 {
-    return tud_cdc_n_connected(LINK_PORT);
+    return client < USB_LINK_CLIENTS && tud_cdc_n_connected(linkPorts[client]);
 }
 
-bool sendUsbLinkFrame(const uint8_t frame[BCI_LINK_FRAME_SIZE])
+bool sendUsbLinkFrame(uint8_t client, const uint8_t frame[BCI_LINK_FRAME_SIZE])
 {
-    if (!isUsbLinkOpen()) return false;
-    if (tud_cdc_n_write_available(LINK_PORT) < BCI_LINK_FRAME_SIZE)
+    if (!isUsbLinkOpen(client)) return false;
+    uint8_t port = linkPorts[client];
+    if (tud_cdc_n_write_available(port) < BCI_LINK_FRAME_SIZE)
     {
         tud_task(); // give TinyUSB a chance to drain, then retry once
-        tud_cdc_n_write_flush(LINK_PORT);
-        if (tud_cdc_n_write_available(LINK_PORT) < BCI_LINK_FRAME_SIZE) return false;
+        tud_cdc_n_write_flush(port);
+        if (tud_cdc_n_write_available(port) < BCI_LINK_FRAME_SIZE) return false;
     }
-    tud_cdc_n_write(LINK_PORT, frame, BCI_LINK_FRAME_SIZE);
+    tud_cdc_n_write(port, frame, BCI_LINK_FRAME_SIZE);
     return true;
 }
 
-bool tryReceiveUsbLinkMessage(BCILinkMessage *message)
+bool tryReceiveUsbLinkMessage(uint8_t client, BCILinkMessage *message)
 {
+    if (client >= USB_LINK_CLIENTS) return false;
+    uint8_t port = linkPorts[client];
     uint8_t byte;
-    while (tud_cdc_n_available(LINK_PORT) > 0)
+    while (tud_cdc_n_available(port) > 0)
     {
-        if (tud_cdc_n_read(LINK_PORT, &byte, 1) != 1) break;
-        if (pushBCILinkParserByte(&parser, byte, message)) return true;
+        if (tud_cdc_n_read(port, &byte, 1) != 1) break;
+        if (pushBCILinkParserByte(&parsers[client], byte, message)) return true;
     }
     return false;
 }

@@ -1,7 +1,8 @@
 /*
- * USB descriptors: one device, two serial (CDC-ACM) ports.
- *   port 0 "TinyBCI Link"  : binary bci_link frames
- *   port 1 "TinyBCI Debug" : printf text
+ * USB descriptors: one device, three serial (CDC-ACM) ports.
+ *   port 0 "TinyBCI Link A" : bci_link frames (e.g. presenter)
+ *   port 1 "TinyBCI Debug"  : printf text
+ *   port 2 "TinyBCI Link B" : bci_link frames (e.g. collector)
  */
 
 # include "tusb.h"
@@ -17,6 +18,7 @@ enum
 {
     ITF_LINK = 0, ITF_LINK_DATA,
     ITF_DEBUG,    ITF_DEBUG_DATA,
+    ITF_LINK_B,   ITF_LINK_B_DATA,
     ITF_TOTAL
 };
 
@@ -26,10 +28,13 @@ enum
 # define EP_DEBUG_NOTIF 0x83
 # define EP_DEBUG_OUT   0x04
 # define EP_DEBUG_IN    0x84
+# define EP_LINK_B_NOTIF 0x85
+# define EP_LINK_B_OUT   0x06
+# define EP_LINK_B_IN    0x86
 
 # define CONFIG_TOTAL_LEN (TUD_CONFIG_DESC_LEN + CFG_TUD_CDC * TUD_CDC_DESC_LEN)
 
-enum { STR_LANG = 0, STR_MANUFACTURER, STR_PRODUCT, STR_SERIAL, STR_LINK, STR_DEBUG, STR_COUNT };
+enum { STR_LANG = 0, STR_MANUFACTURER, STR_PRODUCT, STR_SERIAL, STR_LINK, STR_DEBUG, STR_LINK_B, STR_COUNT };
 
 static const tusb_desc_device_t deviceDescriptor = {
     .bLength            = sizeof(tusb_desc_device_t),
@@ -52,14 +57,16 @@ static const uint8_t configurationDescriptor[] = {
     TUD_CONFIG_DESCRIPTOR(1, ITF_TOTAL, 0, CONFIG_TOTAL_LEN, 0x00, 250),
     TUD_CDC_DESCRIPTOR(ITF_LINK,  STR_LINK,  EP_LINK_NOTIF,  8, EP_LINK_OUT,  EP_LINK_IN,  64),
     TUD_CDC_DESCRIPTOR(ITF_DEBUG, STR_DEBUG, EP_DEBUG_NOTIF, 8, EP_DEBUG_OUT, EP_DEBUG_IN, 64),
+    TUD_CDC_DESCRIPTOR(ITF_LINK_B, STR_LINK_B, EP_LINK_B_NOTIF, 8, EP_LINK_B_OUT, EP_LINK_B_IN, 64),
 };
 
 static const char *strings[STR_COUNT] = {
     [STR_MANUFACTURER] = "TinyBCI",
     [STR_PRODUCT]      = "TinyBCI Engine",
     [STR_SERIAL]       = NULL, // board unique ID, filled at runtime
-    [STR_LINK]         = "TinyBCI Link",
+    [STR_LINK]         = "TinyBCI Link A",
     [STR_DEBUG]        = "TinyBCI Debug",
+    [STR_LINK_B]       = "TinyBCI Link B",
 };
 
 uint8_t const *tud_descriptor_device_cb(void)
