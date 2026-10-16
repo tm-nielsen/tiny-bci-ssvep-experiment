@@ -4,7 +4,8 @@
 
 typedef enum {
     STANDALONE,
-    PRESENTATION_ONLY
+    PRESENTATION_ONLY,
+    PRESENTATION_ONLY_SERIAL
 } ProgramMode;
 
 ProgramMode promptProgramModeSelection(void);

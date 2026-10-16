@@ -48,10 +48,20 @@ static void initializeWindow(void)
     SetWindowMinSize(MINIMUM_WINDOW_WIDTH, MINIMUM_WINDOW_HEIGHT);
 
     renderTarget = LoadRenderTexture(RENDER_WIDTH, RENDER_HEIGHT);
+    SetTextureFilter(renderTexture, TEXTURE_FILTER_POINT);
 
     renderTexture = renderTarget.texture;
     renderTextureRect = (Rectangle){ 0, 0, RENDER_WIDTH, -RENDER_HEIGHT };
-    SetTextureFilter(renderTexture, TEXTURE_FILTER_BILINEAR);
+    //SetTextureFilter(renderTexture, TEXTURE_FILTER_BILINEAR);
+
+    stimulusTexture = LoadTexture(TEXTURE_STIMULUS_FILEPATH);
+    stimulusTextureSourceRect = (Rectangle)
+    {
+        0, 0, (float)stimulusTexture.width, (float)stimulusTexture.height
+    };
+    Image samplingImage = LoadImageFromTexture(stimulusTexture);
+    stimulusTextureBackgroundColour = GetImageColor(samplingImage, 0, 0);
+    UnloadImage(samplingImage);
 }
 
 static void initializePresenters(const float *pFrequencies, uint16_t pFrequencyCount)
@@ -90,7 +100,7 @@ void initializePresentation(const float *pFrequencies, uint16_t pFrequencyCount)
 {
     initializeWindow();
     initializePresenters(pFrequencies, pFrequencyCount);
-    initializeGaborPatches();
+    //initializeGaborPatches();
 }
 
 // ---

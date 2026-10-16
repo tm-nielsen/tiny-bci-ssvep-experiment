@@ -63,7 +63,7 @@ static void addCCANodesToTinyBCIPipeline(const float *frequencies)
     /* register notch & bandpass node in preprocessing group */
     notchConfiguration.freq_hz = NOTCH_FREQ;
     notchConfiguration.q_factor = 10.0f;
-    notchConfiguration.n_harmonics = 2;
+    notchConfiguration.n_harmonics = 1;
     notch_init(&notchNode, &notchConfiguration);
 
     bp_configure(&bandpassConfiguration,2.0f, 45.0f, 3);

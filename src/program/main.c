@@ -4,6 +4,7 @@
 # include "cli/helpers.h"
 
 # include "raylib.h"
+#include "engine/serial_engine.h"
 
 int main(int argc, char *argv[])
 {
@@ -22,6 +23,7 @@ int main(int argc, char *argv[])
         runRecordingOptionSelection();
         runEEGSourceSelection();
     }
+    if (mode == PRESENTATION_ONLY_SERIAL) runSerialEnginePortSelection();
 
     initializeProgram(mode);
     awaitPromptedProgramStart();
