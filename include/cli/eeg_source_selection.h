@@ -1,7 +1,6 @@
 # pragma once
 # ifndef EEG_SOURCES
 # define EEG_SOURCES
-# include "serial/serial.h"
 
 void runEEGSourceSelection(void);
 

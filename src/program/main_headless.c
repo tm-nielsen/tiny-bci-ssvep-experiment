@@ -1,7 +1,4 @@
 # include <signal.h>
-# include <unistd.h>
-# include <time.h>
-
 # include "program/helpers.h"
 
 # include "pipeline.h"
@@ -34,23 +31,18 @@ static volatile sig_atomic_t stopRequested = 0;
 
 static void onStopSignal(int signalNumber)
 {
-    (void)signalNumber;
-    if (stopRequested) _exit(EXIT_FAILURE); // second Ctrl+C: leave immediately
+    if (stopRequested) exit(EXIT_SUCCESS); // second stop signal: leave immediately
     stopRequested = 1;
+    printf("\n-!-\n");
+    signal(signalNumber, onStopSignal);
 }
 
 static void installStopHandlers(void)
 {
-# if defined(_WIN32) || defined(_WIN64)
     signal(SIGINT, onStopSignal);
-# else
-    struct sigaction action = { 0 };
-    action.sa_handler = onStopSignal;
-    sigemptyset(&action.sa_mask);
-    action.sa_flags = 0; // no SA_RESTART: interrupts the poll() wait
-    sigaction(SIGINT, &action, NULL);
-    sigaction(SIGTERM, &action, NULL);
-    sigaction(SIGHUP, &action, NULL);
+    signal(SIGTERM, onStopSignal);
+# if defined(SIGHUP)
+    signal(SIGHUP, onStopSignal);
 # endif
 }
 
