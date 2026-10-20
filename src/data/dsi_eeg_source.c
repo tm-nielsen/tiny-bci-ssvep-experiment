@@ -41,7 +41,7 @@ static void dsiSampleCallback(DSI_Headset h, double packetTime, void *userData)
         printf(".");
         return;
     }
-    pushEEGSampleToTinyBCIPipeline(samples, sampleIndex++);
+    pushEEGSampleToTinyBCIPipelineWithCurrentTimestamp(samples, sampleIndex++);
 }
 
 static int dsiMessageCallback( const char * msg, int debugLevel )

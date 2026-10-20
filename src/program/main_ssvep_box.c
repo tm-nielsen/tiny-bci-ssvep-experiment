@@ -150,7 +150,7 @@ static void updateProgram(void)
         handleDisconnection("EEG Source Disconnected");
     }
 
-    updatePipeline(&cleanUp);
+    updateEEGSourceAndPipeline(&cleanUp);
 
     TinyBCIInference inference;
     if (tryGetTinyBCIInference(&inference))
@@ -160,24 +160,6 @@ static void updateProgram(void)
         logInference(inference, timestamp);
         pushLslInference(&inference, timestamp, currentTargetLabel);
     }
-}
-
-static void initializePipeline(void)
-{
-    uint8_t channelCount = getChannelCountOfSelectedEEGSource();
-    uint32_t sampleRate = getSampleRateOfSelectedEEGSource();
-    TBCI_Status status = initializeTinyBCIPipeline(
-        STIMULUS_FREQUENCIES, channelCount, sampleRate
-    );
-    if (status != TBCI_OK) exit(EXIT_FAILURE);
-
-    initializeInferenceLogger();
-    if (shouldStreamSelectedEEGSource()) createAndConnectPipelineEEGOutlet();
-
-    status = startTinyBCIPipeline();
-    if (status != TBCI_OK) exit(EXIT_FAILURE);
-    printHorizontalRule();
-    printf("Tiny BCI Pipeline Running.\n\n");
 }
 
 static void shuffleTargets(uint16_t targets[N_FREQS])
@@ -267,8 +249,7 @@ int main(void)
 
     initializeSelectedEEGSource();
     printHorizontalRule();
-    initializePipeline();
-    startUpdateThreadForSelectedEEGSource();
+    initializePipelineWithEEGSourceParameters();
     awaitFilterStabilization(&cleanUp);
 
     openLslInferenceOutlet();

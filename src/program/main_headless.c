@@ -65,25 +65,12 @@ static void handleDisconnection(const char *message)
 
 static void updateProgram(void)
 {
-    waitForSelectedEEGSourceData(IDLE_TIMEOUT_MS);
-    updateSelectedEEGSource();
-
     if (!isSelectedEEGSourceConnected())
     {
         handleDisconnection("EEG Source Disconnected");
     }
 
-    updatePipeline(&cleanUp);
-}
-
-static void awaitFilterStabilizationSingleThread(void)
-{
-    printf("Waiting for filter to settle...\n");
-    MicrosecondTimer stabilizationTimer = createMicrosecondTimer(FILTER_STABILIZATION_DELAY);
-    resetMicrosecondTimer(&stabilizationTimer);
-
-    while (!checkMicrosecondTimer(&stabilizationTimer)) updateProgram();
-    printf("Filter settled.\n");
+    updateEEGSourceAndPipeline(&cleanUp);
 }
 
 int main(void)
@@ -99,8 +86,6 @@ int main(void)
     printHorizontalRule();
     initializePipelineWithEEGSourceParameters();
     initializeLslTriggerSource(&onTriggerReceived);
-    //startUpdateThreadForSelectedEEGSource();
-    initializeSignalBufferMutex();
 
     printf("Searching for Presenter App...\n");
     awaitConnection(
@@ -111,7 +96,7 @@ int main(void)
     printf("Connected to presenter app\n");
     printHorizontalRule();
 
-    awaitFilterStabilizationSingleThread();
+    awaitFilterStabilization(&cleanUp);
 
     while (!stopRequested)
     {
@@ -122,7 +107,7 @@ int main(void)
             handleDisconnection("Presenter App Disconnected");
         }
 
-        updateProgram();
+        updateEEGSourceAndPipeline(&cleanUp);
 
         TinyBCIInference inference;
         if (tryGetTinyBCIInference(&inference)) {

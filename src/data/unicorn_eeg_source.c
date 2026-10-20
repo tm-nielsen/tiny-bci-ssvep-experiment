@@ -62,7 +62,7 @@ static void parseAndPushUnicornFrame(SerialFrame frame)
         return;
     }
     parseUnicornEEG(frame.buffer, sampleBuffer);
-    pushEEGSampleToTinyBCIPipeline(sampleBuffer, sampleIndex++);
+    pushEEGSampleToTinyBCIPipelineWithAnchoredTimestamp(sampleBuffer, sampleIndex++);
 }
 
 // ---
@@ -111,6 +111,7 @@ void connectUnicornEEGSource(const char *port, uint32_t timeout)
 
 void updateUnicornEEGSource(void)
 {
+    renewEEGSampleTimestampAnchor(sampleIndex);
     updateSerialDataSource(&dataSource);
 }
 

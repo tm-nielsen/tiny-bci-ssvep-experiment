@@ -12,6 +12,7 @@ void initializePipelineWithEEGSourceParameters(void)
 {
     uint8_t channelCount = getChannelCountOfSelectedEEGSource();
     uint32_t sampleRate = getSampleRateOfSelectedEEGSource();
+    configureEEGTimestampAnchorSamplePeriod(sampleRate);
 
     TBCI_Status pipelineStatus = initializeTinyBCIPipeline(
         FREQUENCIES, channelCount, sampleRate
@@ -30,11 +31,10 @@ void initializePipelineWithEEGSourceParameters(void)
     printf("Tiny BCI Pipeline Running.\n\n");
 }
 
-void updatePipeline(void (*cleanUpMethod)(void))
+void updateEEGSourceAndPipeline(void (*cleanUpMethod)(void))
 {
-    lockSignalBufferMutex();
+    updateSelectedEEGSource();
     TBCI_Status pipelineStatus = updateTinyBCIPipeline();
-    unlockSignalBufferMutex();
 
     if (pipelineStatus != TBCI_OK)
     {
@@ -52,14 +52,13 @@ void awaitFilterStabilization(void (*cleanUpMethod)(void))
 
     while (!checkMicrosecondTimer(&stabilizationTimer)) {
         if (!isSelectedEEGSourceConnected()) return;
-        updatePipeline(cleanUpMethod);
+        updateEEGSourceAndPipeline(cleanUpMethod);
     }
     printf("Filter settled.\n");
 }
 
 void cleanUpEEGSourceAndPipeline(void)
 {
-    cleanUpEEGSourceUpdateThread();
     cleanUpSelectedEEGSource();
     cleanUpTinyBCIPipeline();
     closePipelineEEGOutlet();

@@ -7,7 +7,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 include(cmake/TinyBCI.cmake)
 include(cmake/LSL.cmake)
-include(cmake/TinyCThread.cmake)
 include(cmake/Raylib.cmake)
 include(cmake/CopyAssets.cmake)
 
@@ -24,7 +23,6 @@ set(SHARED_SOURCES
 
   src/program/helpers.c
   src/program/pipeline_helpers.c
-  src/program/eeg_source_thread_helpers.c
 
   src/cli/helpers.c
   src/cli/eeg_source_selection.c
@@ -56,7 +54,6 @@ function(ADD_TARGET TARGET_NAME SOURCES)
 
   target_link_libraries(${TARGET_NAME} tiny_bci)
   target_link_libraries(${TARGET_NAME} lsl)
-  target_link_libraries(${TARGET_NAME} tinycthread)
 endfunction()
 
 add_target(${PROJECT_NAME}

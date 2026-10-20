@@ -58,7 +58,7 @@ static void parseAndPushNeuropawnFrame(SerialFrame frame)
 {
     if (validateEXGFrame(frame) == EXG_STATUS_MISALIGNED) return;
     parseEXG(frame.buffer, sampleBuffer);
-    pushEEGSampleToTinyBCIPipeline(sampleBuffer, frame.buffer[1]);
+    pushEEGSampleToTinyBCIPipelineWithAnchoredTimestamp(sampleBuffer, frame.buffer[1]);
 }
 
 void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config)
@@ -103,6 +103,7 @@ void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config)
 
 void updateNeuropawnEEGSource(void)
 {
+    renewEEGSampleTimestampAnchor(expectedSampleIndex);
     updateSerialDataSource(&dataSource);
 }
 

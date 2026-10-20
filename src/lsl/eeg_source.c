@@ -70,7 +70,7 @@ void connectLslEEGSource(void)
     lsl_destroy_streaminfo(inletInfo);
 }
 
-void updateLslEEGSource(void) { pollLSLDataSource(&dataSource); }
+void updateLslEEGSource(void) { while(pollLSLDataSource(&dataSource)) {} }
 void closeLslEEGSource(void) { closeLSLDataSource(&dataSource); }
 
 bool isLslEEGSourceConnected(void) { return dataSource.isConnected; }
