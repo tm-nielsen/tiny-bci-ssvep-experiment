@@ -182,5 +182,6 @@ void cleanUpProgram(void)
     IF_STANDALONE(cleanUpEEGSourceAndPipeline();)
     IF_PRESENTATION_ONLY(closeLslInferenceSource();)
     closeLslTriggerOutlet();
+    cleanUpTrialConductor();
     stopPresentation();
 }

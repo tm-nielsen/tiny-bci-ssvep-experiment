@@ -21,7 +21,7 @@ enum State { BREAK, STIMULUS };
 static uint16_t state = BREAK;
 
 
-void initializeTrialConductor(
+uint16_t initializeTrialConductor(
     uint16_t pTargetCount, uint16_t stimulusRoundsToComplete,
     float stimulusDuration, float breakDuration)
 {
@@ -33,7 +33,7 @@ void initializeTrialConductor(
     targetOrder = malloc(targetCount * sizeof(uint16_t));
     seedRandomizationWithCurrentTime();
     randomizeTargetOrder(targetOrder, targetCount);
-    target = targetOrder[0];
+    return target = targetOrder[0];
 }
 
 void setTrialStartCallback(void (*onTrialStart)(uint16_t)) { trialStartCallback = onTrialStart; }

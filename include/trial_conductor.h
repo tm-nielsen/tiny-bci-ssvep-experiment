@@ -1,6 +1,6 @@
 # pragma once
 
-void initializeTrialConductor(uint16_t, uint16_t, float, float);
+uint16_t initializeTrialConductor(uint16_t, uint16_t, float, float);
 
 void setTrialStartCallback(void (*onTrialStart)(uint16_t));
 void setTrialEndCallback(void (*onTrialEnd)(uint16_t));

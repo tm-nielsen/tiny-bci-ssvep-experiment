@@ -11,7 +11,7 @@ void initializeTrialPresentation(
     void (*allTrialsCompletedCallback)(void)
 )
 {
-    initializeTrialConductor(
+    uint16_t initialTarget = initializeTrialConductor(
         N_FREQS, TRIAL_COUNT,
         STIMULUS_DURATION, BREAK_DURATION
     );
@@ -20,7 +20,7 @@ void initializeTrialPresentation(
     setAllTrialsCompletedCallback(allTrialsCompletedCallback);
 
     initializePresentation((float[])FREQUENCIES, N_FREQS);
-    setPresentationTarget(0);
+    setPresentationTarget(initialTarget);
 }
 
 void displayInference(TinyBCIInference inference, uint64_t timestamp)
