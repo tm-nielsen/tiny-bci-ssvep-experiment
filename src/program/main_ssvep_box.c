@@ -25,9 +25,7 @@
 #   include <unistd.h>
 # endif
 
-static const float STIMULUS_FREQUENCIES[N_FREQS] = {
-    5.0f, 6.0f, 7.0f, 7.5f
-};
+static const float STIMULUS_FREQUENCIES[N_FREQS] = FREQUENCIES;
 static const uint32_t TRIAL_DURATION_SECONDS = 30;
 
 # define MARKER_STREAM_NAME "Tiny_BCI_Experiment_Markers"

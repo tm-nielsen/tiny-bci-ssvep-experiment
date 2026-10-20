@@ -19,7 +19,7 @@ void initializeTrialPresentation(
     setTrialEndCallback(trialEndCallback);
     setAllTrialsCompletedCallback(allTrialsCompletedCallback);
 
-    initializePresentation(FREQUENCIES, N_FREQS);
+    initializePresentation((float[])FREQUENCIES, N_FREQS);
     setPresentationTarget(0);
 }
 
