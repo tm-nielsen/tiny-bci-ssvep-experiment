@@ -9,3 +9,7 @@ void setAllTrialsCompletedCallback(void (*onAllTrialsCompleted));
 
 void updateTrialConductor(void);
 void resetTrialConductor(void);
+void cleanUpTrialConductor(void);
+
+void seedRandomizationWithCurrentTime(void);
+void randomizeTargetOrder(uint16_t *targets, uint16_t targetCount);
