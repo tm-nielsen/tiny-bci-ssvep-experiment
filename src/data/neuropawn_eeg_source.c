@@ -7,8 +7,10 @@ static SerialDataSource dataSource;
 static float eegScale;
 static float sampleBuffer[NEUROPAWN_EEG_CHANNEL_COUNT];
 
-static uint8_t expectedSampleIndex = 0;
-static bool sampleIndexExpectationSet = false;
+static uint32_t sampleIndex = 0;
+
+static uint8_t expectedFrameIndex = 0;
+static bool frameIndexExpectationSet = false;
 
 typedef enum {
     EXG_STATUS_VALID,
@@ -29,18 +31,18 @@ static EXGStatus validateEXGFrame(SerialFrame frame)
     }
 
     uint8_t frameIndex = frame.buffer[1];
-    if (sampleIndexExpectationSet && frameIndex != expectedSampleIndex)
+    if (frameIndexExpectationSet && frameIndex != expectedFrameIndex)
     {
         fprintf(stderr,
             "neuropawn: payload index %u doesn't "
             "match expected index of %u\n",
-            frameIndex, expectedSampleIndex
+            frameIndex, expectedFrameIndex
         );
-        expectedSampleIndex = frameIndex + 1;
+        expectedFrameIndex = frameIndex + 1;
         return EXG_STATUS_UNEXPECTED_SAMPLE_INDEX;
     }
-    expectedSampleIndex = frameIndex + 1;
-    sampleIndexExpectationSet = true;
+    expectedFrameIndex = frameIndex + 1;
+    frameIndexExpectationSet = true;
     return EXG_STATUS_VALID;
 }
 
@@ -58,7 +60,7 @@ static void parseAndPushNeuropawnFrame(SerialFrame frame)
 {
     if (validateEXGFrame(frame) == EXG_STATUS_MISALIGNED) return;
     parseEXG(frame.buffer, sampleBuffer);
-    pushEEGSampleToTinyBCIPipelineWithAnchoredTimestamp(sampleBuffer, frame.buffer[1]);
+    pushEEGSampleToTinyBCIPipelineWithAnchoredTimestamp(sampleBuffer, sampleIndex++);
 }
 
 void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config)
@@ -103,7 +105,7 @@ void connectNeuropawnEEGSource(const char *port, NeuropawnConfiguration config)
 
 void updateNeuropawnEEGSource(void)
 {
-    renewEEGSampleTimestampAnchor(expectedSampleIndex);
+    renewEEGSampleTimestampAnchor(sampleIndex);
     updateSerialDataSource(&dataSource);
 }
 
