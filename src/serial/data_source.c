@@ -15,7 +15,7 @@ SerialDataSource createSerialDataSourceFromOpenHandle(
     uint8_t *startBytes, uint8_t *endBytes
 )
 {
-    uint16_t bufferLength = frameSize * 8;
+    uint16_t bufferLength = frameSize * BUFFER_SIZE_IN_FRAMES;
 
     return (SerialDataSource) {
         .handle = handle,
