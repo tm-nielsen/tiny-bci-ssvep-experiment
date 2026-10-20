@@ -4,6 +4,7 @@
 # include "pipeline.h"
 # include "pipeline/storage.h"
 # include "inference_logger.h"
+# include "trial_conductor.h"
 # include "microsecond_timer.h"
 
 # include "lsl/eeg_outlet.h"
