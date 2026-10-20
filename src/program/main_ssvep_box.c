@@ -240,7 +240,7 @@ int main(void)
 
     seedRandomizationWithCurrentTime();
     uint16_t targets[N_FREQS];
-    randomizeTargetOrder(targets);
+    randomizeTargetOrder(targets, N_FREQS);
 
     experimentStarted = true;
     pushMarker("experiment_start", 0, -1, 0.0f, 0);
