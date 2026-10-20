@@ -41,7 +41,7 @@ static void dsiSampleCallback(DSI_Headset h, double packetTime, void *userData)
         printf(".");
         return;
     }
-    pushEEGSampleToTinyBCIPipelineWithCurrentTimestamp(samples, sampleIndex++);
+    pushEEGSampleToTinyBCIPipelineWithAnchoredTimestamp(samples, sampleIndex++);
 }
 
 static int dsiMessageCallback( const char * msg, int debugLevel )
@@ -114,6 +114,7 @@ void connectDsiEEGSource(const char *port, const char *montage)
 void updateDsiEEGSource(void)
 {
     if (!isConnected) return;
+    renewEEGSampleTimestampAnchor(sampleIndex);
     DSI_Headset_Idle(headset, 0.0);
  
     /* Data itself arrives via dsiSampleCallback on the background
