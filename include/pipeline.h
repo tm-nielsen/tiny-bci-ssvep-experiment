@@ -26,15 +26,14 @@ typedef struct {
 
 bool tryGetTinyBCIInference(TinyBCIInference *out);
 
-void pushEEGSampleToTinyBCIPipeline(float *samples, uint32_t index);
+void pushEEGSampleToTinyBCIPipelineWithCurrentTimestamp(float *samples, uint32_t index);
 void pushEEGSampleToTinyBCIPipelineWithTimestamp(
     float *samples, uint32_t index,
     uint64_t microsecondTimestamp
 );
 
-void initializeSignalBufferMutex(void);
-void lockSignalBufferMutex(void);
-void unlockSignalBufferMutex(void);
-void cleanUpSignalBufferMutex(void);
+void configureEEGTimestampAnchorSamplePeriod(uint32_t sampleRate);
+void renewEEGSampleTimestampAnchor(uint32_t nextSampleIndex);
+void pushEEGSampleToTinyBCIPipelineWithAnchoredTimestamp(float *samples, uint32_t index);
 
 # endif

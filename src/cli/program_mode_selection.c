@@ -137,7 +137,6 @@ void initializeProgram(ProgramMode mode)
 
     IF_STANDALONE(
         initializePipelineWithEEGSourceParameters();
-        startUpdateThreadForSelectedEEGSource();
         drawMessageScreen("Awaiting Filter Stabilization...");
         awaitFilterStabilization(&cleanUpProgram);
     )
@@ -153,7 +152,7 @@ void awaitPromptedProgramStart(void)
         drawPreparationScreen("Press Spacebar to Start");
         IF_STANDALONE(
             if (!isSelectedEEGSourceConnected()) return;
-            updatePipeline(&cleanUpProgram);
+            updateEEGSourceAndPipeline(&cleanUpProgram);
         )
         IF_PRESENTATION_ONLY(
             if(!isLslInferenceSourceConsumable()) return;
@@ -201,7 +200,7 @@ void updateProgram(void)
     )
 
     updateTrialConductor();
-    IF_STANDALONE(updatePipeline(&cleanUpProgram);)
+    IF_STANDALONE(updateEEGSourceAndPipeline(&cleanUpProgram);)
 
     TinyBCIInference inference;
     uint64_t timestamp;
@@ -220,5 +219,6 @@ void cleanUpProgram(void)
     IF_PRESENTATION_ONLY(closeLslInferenceSource();)
     IF_PRESENTATION_ONLY_SERIAL(closeSerialEngine();)
     closeLslTriggerOutlet();
+    cleanUpTrialConductor();
     stopPresentation();
 }

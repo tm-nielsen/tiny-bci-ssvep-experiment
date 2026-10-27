@@ -3,6 +3,7 @@
 # define SERIAL_DATA_SOURCE
 
 # include "serial.h"
+# define BUFFER_SIZE_IN_FRAMES 16
 # define MAKE_OXFF_TERMINATED_BYTE_ARRAY(...) (uint8_t[]){ __VA_ARGS__, 0xFF }
 
 typedef struct {

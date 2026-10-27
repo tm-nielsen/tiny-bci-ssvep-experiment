@@ -23,6 +23,9 @@ static void pushSample(void *sampleBuffer)
     uint64_t microsecondTimestamp = getCurrentMicrosecondTimestamp();
 # endif
 
+    double age = lsl_local_clock() - dataSource.lastTimestamp;
+    microsecondTimestamp = getCurrentMicrosecondTimestamp() - (uint64_t)(age * 1e6);
+
     pushEEGSampleToTinyBCIPipelineWithTimestamp(
         sampleBuffer, sampleIndex++,
         microsecondTimestamp
@@ -32,6 +35,7 @@ static void pushSample(void *sampleBuffer)
 void connectLslEEGSource(void)
 {
     dataSource = createLSLDataSource(EEG_STREAM_PREDICATE);
+    dataSource.postprocessingFlags = proc_clocksync | proc_dejitter;
     setLSLDataSourceCallback(&dataSource, pushSample);
 
     MicrosecondTimer connectionAttemptTimer = createMicrosecondTimer(ConnectionAttemptInterval);
@@ -66,7 +70,7 @@ void connectLslEEGSource(void)
     lsl_destroy_streaminfo(inletInfo);
 }
 
-void updateLslEEGSource(void) { pollLSLDataSource(&dataSource); }
+void updateLslEEGSource(void) { while(pollLSLDataSource(&dataSource)) {} }
 void closeLslEEGSource(void) { closeLSLDataSource(&dataSource); }
 
 bool isLslEEGSourceConnected(void) { return dataSource.isConnected; }

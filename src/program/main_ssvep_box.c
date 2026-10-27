@@ -4,6 +4,7 @@
 # include "pipeline.h"
 # include "pipeline/storage.h"
 # include "inference_logger.h"
+# include "trial_conductor.h"
 # include "microsecond_timer.h"
 
 # include "lsl/eeg_outlet.h"
@@ -15,8 +16,6 @@
 # include "cli/helpers.h"
 # include "serial/serial.h"
 
-# include <time.h>
-
 # if defined(_WIN32) || defined(_WIN64)
 #   include <conio.h>
 # else
@@ -25,9 +24,7 @@
 #   include <unistd.h>
 # endif
 
-static const float STIMULUS_FREQUENCIES[N_FREQS] = {
-    5.0f, 6.0f, 7.0f, 7.5f
-};
+static const float STIMULUS_FREQUENCIES[N_FREQS] = FREQUENCIES;
 static const uint32_t TRIAL_DURATION_SECONDS = 30;
 
 # define MARKER_STREAM_NAME "Tiny_BCI_Experiment_Markers"
@@ -150,7 +147,7 @@ static void updateProgram(void)
         handleDisconnection("EEG Source Disconnected");
     }
 
-    updatePipeline(&cleanUp);
+    updateEEGSourceAndPipeline(&cleanUp);
 
     TinyBCIInference inference;
     if (tryGetTinyBCIInference(&inference))
@@ -159,40 +156,6 @@ static void updateProgram(void)
         printInference(inference, timestamp);
         logInference(inference, timestamp);
         pushLslInference(&inference, timestamp, currentTargetLabel);
-    }
-}
-
-static void initializePipeline(void)
-{
-    uint8_t channelCount = getChannelCountOfSelectedEEGSource();
-    uint32_t sampleRate = getSampleRateOfSelectedEEGSource();
-    TBCI_Status status = initializeTinyBCIPipeline(
-        STIMULUS_FREQUENCIES, channelCount, sampleRate
-    );
-    if (status != TBCI_OK) exit(EXIT_FAILURE);
-
-    initializeInferenceLogger();
-    if (shouldStreamSelectedEEGSource()) createAndConnectPipelineEEGOutlet();
-
-    status = startTinyBCIPipeline();
-    if (status != TBCI_OK) exit(EXIT_FAILURE);
-    printHorizontalRule();
-    printf("Tiny BCI Pipeline Running.\n\n");
-}
-
-static void shuffleTargets(uint16_t targets[N_FREQS])
-{
-    for (uint16_t target = 0; target < N_FREQS; target++)
-    {
-        targets[target] = target;
-    }
-
-    for (uint16_t remaining = N_FREQS; remaining > 1; remaining--)
-    {
-        uint16_t selected = (uint16_t)(rand() % remaining);
-        uint16_t last = targets[remaining - 1];
-        targets[remaining - 1] = targets[selected];
-        targets[selected] = last;
     }
 }
 
@@ -267,8 +230,7 @@ int main(void)
 
     initializeSelectedEEGSource();
     printHorizontalRule();
-    initializePipeline();
-    startUpdateThreadForSelectedEEGSource();
+    initializePipelineWithEEGSourceParameters();
     awaitFilterStabilization(&cleanUp);
 
     openLslInferenceOutlet();
@@ -277,9 +239,9 @@ int main(void)
         1, cft_string, MARKER_STREAM_SOURCE_ID
     );
 
-    srand((unsigned int)time(NULL));
+    seedRandomizationWithCurrentTime();
     uint16_t targets[N_FREQS];
-    shuffleTargets(targets);
+    randomizeTargetOrder(targets, N_FREQS);
 
     experimentStarted = true;
     pushMarker("experiment_start", 0, -1, 0.0f, 0);

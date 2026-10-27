@@ -1,7 +1,4 @@
 # include <signal.h>
-# include <unistd.h>
-# include <time.h>
-
 # include "program/helpers.h"
 
 # include "pipeline.h"
@@ -34,23 +31,18 @@ static volatile sig_atomic_t stopRequested = 0;
 
 static void onStopSignal(int signalNumber)
 {
-    (void)signalNumber;
-    if (stopRequested) _exit(EXIT_FAILURE); // second Ctrl+C: leave immediately
+    if (stopRequested) exit(EXIT_SUCCESS); // second stop signal: leave immediately
     stopRequested = 1;
+    printf("\n-!-\n");
+    signal(signalNumber, onStopSignal);
 }
 
 static void installStopHandlers(void)
 {
-# if defined(_WIN32) || defined(_WIN64)
     signal(SIGINT, onStopSignal);
-# else
-    struct sigaction action = { 0 };
-    action.sa_handler = onStopSignal;
-    sigemptyset(&action.sa_mask);
-    action.sa_flags = 0; // no SA_RESTART: interrupts the poll() wait
-    sigaction(SIGINT, &action, NULL);
-    sigaction(SIGTERM, &action, NULL);
-    sigaction(SIGHUP, &action, NULL);
+    signal(SIGTERM, onStopSignal);
+# if defined(SIGHUP)
+    signal(SIGHUP, onStopSignal);
 # endif
 }
 
@@ -73,25 +65,12 @@ static void handleDisconnection(const char *message)
 
 static void updateProgram(void)
 {
-    waitForSelectedEEGSourceData(IDLE_TIMEOUT_MS);
-    updateSelectedEEGSource();
-
     if (!isSelectedEEGSourceConnected())
     {
         handleDisconnection("EEG Source Disconnected");
     }
 
-    updatePipeline(&cleanUp);
-}
-
-static void awaitFilterStabilizationSingleThread(void)
-{
-    printf("Waiting for filter to settle...\n");
-    MicrosecondTimer stabilizationTimer = createMicrosecondTimer(FILTER_STABILIZATION_DELAY);
-    resetMicrosecondTimer(&stabilizationTimer);
-
-    while (!checkMicrosecondTimer(&stabilizationTimer)) updateProgram();
-    printf("Filter settled.\n");
+    updateEEGSourceAndPipeline(&cleanUp);
 }
 
 int main(void)
@@ -107,8 +86,6 @@ int main(void)
     printHorizontalRule();
     initializePipelineWithEEGSourceParameters();
     initializeLslTriggerSource(&onTriggerReceived);
-    //startUpdateThreadForSelectedEEGSource();
-    initializeSignalBufferMutex();
 
     printf("Searching for Presenter App...\n");
     awaitConnection(
@@ -119,7 +96,7 @@ int main(void)
     printf("Connected to presenter app\n");
     printHorizontalRule();
 
-    awaitFilterStabilizationSingleThread();
+    awaitFilterStabilization(&cleanUp);
 
     while (!stopRequested)
     {
@@ -130,7 +107,7 @@ int main(void)
             handleDisconnection("Presenter App Disconnected");
         }
 
-        updateProgram();
+        updateEEGSourceAndPipeline(&cleanUp);
 
         TinyBCIInference inference;
         if (tryGetTinyBCIInference(&inference)) {

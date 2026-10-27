@@ -38,6 +38,7 @@
 # define STATUS_PERIOD_US  1000000
 # define SELF_TEST_TARGET  0   // >0: push this trigger after stabilization (no presenter needed)
 
+static const float STIMULUS_FREQUENCIES[N_FREQS] = FREQUENCIES;
 static BCIEngineState engineState = BCI_ENGINE_BOOTING;
 static bool pipelineRunning = false;
 static uint32_t maxTickUs = 0;
@@ -156,7 +157,7 @@ int main(void)
     setLed(false);
 
     if (initializeTinyBCIPipeline(
-            FREQUENCIES,
+            STIMULUS_FREQUENCIES,
             getUnicornEEGSourceChannelCount(),
             getUnicornEEGSourceSampleRate()) != 0) halt("pipeline init failed");
     installEEGLinkTap();

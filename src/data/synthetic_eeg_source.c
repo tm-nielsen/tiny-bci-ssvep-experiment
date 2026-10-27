@@ -22,11 +22,10 @@ void initializeSyntheticEEGSource(uint8_t pChannelCount, uint32_t pSampleRate)
 
 void updateSyntheticEEGSource(void)
 {
-    if (checkMicrosecondTimer(&timer))
+    while (checkMicrosecondTimer(&timer))
     {
-        uint64_t now = getCurrentMicrosecondTimestamp();
-
-        float currentSeconds = (float)now / 1000000.0f;
+        uint64_t sampleTime = timer.nextTimeout;
+        float currentSeconds = (float)sampleTime / 1000000.0f;
         for (uint16_t channelIndex = 0; channelIndex < channelCount; channelIndex++)
         {
             float phaseOffset = channelIndex * (tau / channelCount);
@@ -41,7 +40,7 @@ void updateSyntheticEEGSource(void)
             }
         }
 
-        pushEEGSampleToTinyBCIPipelineWithTimestamp(samples, sampleIndex++, now);
+        pushEEGSampleToTinyBCIPipelineWithTimestamp(samples, sampleIndex++, sampleTime);
     }
 }
 
