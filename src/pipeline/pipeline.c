@@ -41,3 +41,8 @@ int stopTinyBCIPipeline(void)
     TBCI_Status status = tbci_context_stop(&tbciContext);
     return reportAndReturnPipelineStatus(status, "stop");
 }
+
+bool hasTinyBCIInference(void)
+{
+    return !eq_is_empty(&outputQueue);
+}

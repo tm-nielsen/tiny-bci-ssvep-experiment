@@ -43,6 +43,32 @@ static BCIEngineState engineState = BCI_ENGINE_BOOTING;
 static bool pipelineRunning = false;
 static uint32_t maxTickUs = 0;
 
+#define BCI_LINK_TICKS  0x87   // add next to your other message types
+#define TICK_BATCH_MAX  11
+
+#define PROFILE_PIN  15
+#define DECISION_PIN 14
+
+static uint32_t tickBatch[TICK_BATCH_MAX];
+static uint16_t tickDecisionMask = 0;
+static uint16_t tickBatchCount = 0;
+
+static void recordTick(uint32_t elapsedUs, bool isDecision)
+{
+    if (isDecision) tickDecisionMask |= (uint16_t)(1u << tickBatchCount);
+    tickBatch[tickBatchCount++] = elapsedUs;
+    if (tickBatchCount < TICK_BATCH_MAX) return;
+
+    BCILinkMessage message = {0};
+    message.type = BCI_LINK_TICKS;
+    memcpy(&message.payload[0], &tickBatchCount, 2);
+    memcpy(&message.payload[2], &tickDecisionMask, 2);
+    memcpy(&message.payload[4], tickBatch, sizeof(tickBatch));
+    broadcastLinkMessage(message);
+    tickBatchCount = 0;
+    tickDecisionMask = 0;
+}
+
 // --- link: incoming messages and periodic status
 
 static void onTriggerReceived(uint16_t code)
@@ -127,11 +153,17 @@ static void updateProgram(void)
 
     if (!isUnicornEEGSourceConnected()) halt("Unicorn disconnected");
 
+    gpio_put(PROFILE_PIN, 1);
     uint64_t start = time_us_64();
     if (updateTinyBCIPipeline() != 0) halt("pipeline update failed");
     uint32_t elapsed = (uint32_t)(time_us_64() - start);
+    gpio_put(PROFILE_PIN, 0);
+
+    gpio_put(DECISION_PIN, hasTinyBCIInference());
+
     if (elapsed > maxTickUs) maxTickUs = elapsed;
 
+    if (engineState == BCI_ENGINE_READY) recordTick(elapsed, hasTinyBCIInference());
     serviceLink();
 }
 
@@ -148,6 +180,10 @@ int main(void)
     initializeLinkHub();                       // USB first, so logs and status show up early
     setPicoSerialIdleCallback(&serviceLink);   // keep USB alive during Bluetooth waits
 
+    // To measure energy per inference
+    gpio_init(PROFILE_PIN);  gpio_set_dir(PROFILE_PIN, GPIO_OUT);
+    gpio_init(DECISION_PIN); gpio_set_dir(DECISION_PIN, GPIO_OUT);
+
     if (cyw43_arch_init()) halt("radio init failed");
     setLed(true);
 
@@ -156,10 +192,15 @@ int main(void)
     connectUnicornEEGSource(UNICORN_NAME, 0);
     setLed(false);
 
+    uint8_t channelCount = getUnicornEEGSourceChannelCount();
+    uint32_t sampleRate = getUnicornEEGSourceSampleRate();
+    configureEEGTimestampAnchorSamplePeriod(sampleRate);
+
     if (initializeTinyBCIPipeline(
             STIMULUS_FREQUENCIES,
-            getUnicornEEGSourceChannelCount(),
-            getUnicornEEGSourceSampleRate()) != 0) halt("pipeline init failed");
+            channelCount,
+            sampleRate) != 0) halt("pipeline init failed");
+
     installEEGLinkTap();
     if (startTinyBCIPipeline() != 0) halt("pipeline start failed");
     pipelineRunning = true;

@@ -14,6 +14,7 @@ int startTinyBCIPipeline(void);
 int startTinyBCIPipelineInState(TBCI_State initialState);
 int updateTinyBCIPipeline(void);
 int stopTinyBCIPipeline(void);
+bool hasTinyBCIInference(void);
 
 int reportAndReturnPipelineStatus(TBCI_Status status, const char *actionLabel);
 

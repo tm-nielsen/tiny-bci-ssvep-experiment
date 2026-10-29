@@ -7,6 +7,8 @@
 # include "cli/eeg_source_selection.h"
 # include "cli/helpers.h"
 # include "lsl/eeg_outlet.h"
+# include "tick_logger.h"
+
 
 void initializePipelineWithEEGSourceParameters(void)
 {
@@ -34,7 +36,9 @@ void initializePipelineWithEEGSourceParameters(void)
 void updateEEGSourceAndPipeline(void (*cleanUpMethod)(void))
 {
     updateSelectedEEGSource();
+    uint64_t start = tickLoggerNowNs();
     TBCI_Status pipelineStatus = updateTinyBCIPipeline();
+    logTick(start, tickLoggerNowNs(), hasTinyBCIInference());
 
     if (pipelineStatus != TBCI_OK)
     {
