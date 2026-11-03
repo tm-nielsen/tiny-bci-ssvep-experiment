@@ -11,7 +11,11 @@
 # include "cli/eeg_source_selection.h"
 # include "cli/recording_options.h"
 # include "cli/helpers.h"
-#include "program/constants.h"
+
+#ifdef TBCI_MEASURE
+# include "tick_logger.h"
+# include "measurements/gpio_marker.h"
+#endif
 
 # define IDLE_TIMEOUT_MS 8
 
@@ -69,7 +73,7 @@ static void updateProgram(void)
     {
         handleDisconnection("EEG Source Disconnected");
     }
-
+    waitForSelectedEEGSourceData(IDLE_TIMEOUT_MS);
     updateEEGSourceAndPipeline(&cleanUp);
 }
 
@@ -97,6 +101,11 @@ int main(void)
     printHorizontalRule();
 
     awaitFilterStabilization(&cleanUp);
+
+#ifdef TBCI_MEASURE
+    initGpioMarkers();
+    initTickLogger("headless", 0.0);            // log from here on
+#endif
 
     while (!stopRequested)
     {
