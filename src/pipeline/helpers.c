@@ -40,7 +40,7 @@ void pushEEGSampleToTinyBCIPipelineWithTimestamp(
 // ---
 
 static uint64_t EEGSampleAnchorTimestamp = 0;
-static uint16_t EEGSampleAnchorIndex;
+static uint32_t EEGSampleAnchorIndex;
 
 static uint64_t EEGSamplePeriod = 0;
 
