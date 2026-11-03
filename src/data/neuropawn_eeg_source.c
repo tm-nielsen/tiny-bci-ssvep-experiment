@@ -46,13 +46,13 @@ static EXGStatus validateEXGFrame(SerialFrame frame)
     return EXG_STATUS_VALID;
 }
 
-static void parseEXG(uint8_t *frameBuffer, float *sampleBuffer)
+static void parseEXG(uint8_t *frameBuffer, float *sBuffer)
 {
     for (size_t channelIndex = 0; channelIndex < NEUROPAWN_EEG_CHANNEL_COUNT; channelIndex++)
     {
         int16_t raw = (int16_t)(((uint16_t)frameBuffer[1 + 2 * channelIndex] << 8) |
                                  (uint16_t)frameBuffer[2 + 2 * channelIndex]);
-        sampleBuffer[channelIndex] = (float)raw * eegScale;
+        sBuffer[channelIndex] = (float)raw * eegScale;
     }
 }
 
