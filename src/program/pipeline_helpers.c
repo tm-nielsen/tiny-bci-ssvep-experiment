@@ -9,6 +9,10 @@
 # include "lsl/eeg_outlet.h"
 # include "tick_logger.h"
 
+#ifdef TBCI_MEASURE
+# include "tick_logger.h"
+# include "measurements/gpio_marker.h"
+#endif
 
 void initializePipelineWithEEGSourceParameters(void)
 {
@@ -35,10 +39,21 @@ void initializePipelineWithEEGSourceParameters(void)
 
 void updateEEGSourceAndPipeline(void (*cleanUpMethod)(void))
 {
-    updateSelectedEEGSource();
+#ifdef TBCI_MEASURE
+    setProfileMarker(true);
     uint64_t start = tickLoggerNowNs();
+#endif
+
+    updateSelectedEEGSource();
     TBCI_Status pipelineStatus = updateTinyBCIPipeline();
-    logTick(start, tickLoggerNowNs(), hasTinyBCIInference());
+
+#ifdef TBCI_MEASURE
+    uint64_t end = tickLoggerNowNs();
+    setProfileMarker(false);
+    bool decision = hasTinyBCIInference();
+    setDecisionMarker(decision);
+    logTick(start, end, decision);
+#endif
 
     if (pipelineStatus != TBCI_OK)
     {
