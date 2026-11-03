@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.26)
 
 option(TBCI_PICO "Build the headless engine for the Raspberry Pi Pico 2 W" OFF)
+option(TBCI_MEASURE "Build tick logging and GPIO markers into the headless target" OFF)
 
 if (TBCI_PICO)
   # Must come before project(): selects the board and the ARM toolchain.
@@ -99,7 +100,6 @@ else()
 
       src/trial_conductor.c
       src/inference_logger.c
-      src/tick_logger.c
 
       src/program/helpers.c
       src/program/pipeline_helpers.c
@@ -143,6 +143,16 @@ else()
   add_dependencies(${PROJECT_NAME} copy_assets)
 
   add_target("headless_${PROJECT_NAME}" src/program/main_headless.c)
+  if (TBCI_MEASURE)
+    if (WIN32)
+      message(WARNING "TBCI_MEASURE is not supported on Windows; building without measurement hooks")
+    else()
+      target_sources("headless_${PROJECT_NAME}" PRIVATE
+              src/tick_logger.c
+              src/measurements/gpio_marker.c)
+      target_compile_definitions("headless_${PROJECT_NAME}" PRIVATE TBCI_MEASURE)
+    endif()
+  endif()
 
   set(SSVEP_BOX_TARGET "ssvep_box_${PROJECT_NAME}")
   add_target(${SSVEP_BOX_TARGET} src/program/main_ssvep_box.c)
