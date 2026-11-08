@@ -32,6 +32,9 @@
 # define BCI_LINK_MAX_CLASSES  6   // must be >= N_FREQS
 # define BCI_LINK_LOG_LENGTH   (BCI_LINK_PAYLOAD_SIZE - 1)
 
+# define BCI_LINK_STATUS_LINK_ID_OFFSET 22   // 0 = USB Link A, 1 = USB Link B, 2+ = TCP
+# define BCI_LINK_ID_VALID 0x80
+
 typedef enum
 {
     // client -> engine
@@ -104,6 +107,7 @@ typedef struct
     uint32_t framesDropped;        // 6  outgoing frames that didn't fit
     uint32_t maxTickUs;            // 10 worst pipeline tick since last status
     uint64_t engineTimeUs;         // 14
+    uint8_t linkId;                // 22 BCI_LINK_ID_VALID | link number, set per client by the hub
 } BCILinkStatus;
 
 typedef struct { uint8_t length; char text[BCI_LINK_LOG_LENGTH]; } BCILinkLog; // 0, 1

@@ -147,6 +147,7 @@ BCILinkMessage makeBCILinkStatus(BCILinkStatus v)
     BCILinkMessage m = emptyMessage(BCI_LINK_STATUS);
     m.payload[0] = v.state;
     m.payload[1] = v.clientCount;
+    m.payload[BCI_LINK_STATUS_LINK_ID_OFFSET] = v.linkId;
     putU32(&m.payload[2], v.samplesReceived);
     putU32(&m.payload[6], v.framesDropped);
     putU32(&m.payload[10], v.maxTickUs);
@@ -234,6 +235,7 @@ bool readBCILinkStatus(const BCILinkMessage *m, BCILinkStatus *out)
     out->framesDropped = getU32(&m->payload[6]);
     out->maxTickUs = getU32(&m->payload[10]);
     out->engineTimeUs = getU64(&m->payload[14]);
+    out->linkId = m->payload[BCI_LINK_STATUS_LINK_ID_OFFSET];
     return true;
 }
 
