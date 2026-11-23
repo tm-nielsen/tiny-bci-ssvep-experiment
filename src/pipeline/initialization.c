@@ -70,25 +70,30 @@ static void addCCANodesToTinyBCIPipeline(const float *frequencies)
     bp_init(&bandpassNode, &bandpassConfiguration);
 
     /* Register CCA node and model */
-    ccaConfiguration.n_freqs = N_FREQS;
+    ccaConfiguration.n_freqs = N_CLASSES;
     ccaConfiguration.n_harmonics = N_HARMONICS;
-    for (uint16_t i = 0; i < N_FREQS; i++)
+    for (uint16_t i = 0; i < N_CLASSES; i++)
     {
         ccaConfiguration.freqs[i] = frequencies[i];
     }
 
     cca_init(&ccaNode, &ccaConfiguration, refSignals, referenceSignalsCapacity);
 
-    ccaModelConfiguration.temperature = 0.1f;
-    ccaModelConfiguration.n_freqs = N_FREQS;
-    cca_model_init(&ccaModel, &ccaModelConfiguration);
+    //ccaModelConfiguration.temperature = 0.1f;
+    ccaModelConfiguration.n_freqs = N_CLASSES;
+    ccaModelConfiguration.n_freqs     = N_CLASSES;
+    ccaModelConfiguration.min_excess  = 0.15f;
+    ccaModelConfiguration.excess_temp = 0.05f;
 
-    trialAveragingConfiguration.n_reps = 3;
-    ta_init(&trialAveragingNode, &trialAveragingConfiguration);
+    TBCI_Status s = cca_model_init(&ccaModel, &ccaModelConfiguration);
+    if (s != TBCI_OK) {
+        fprintf(stderr, "cca_model_init failed: %d\n", s);
+    }
+
+    trialAveragingConfiguration.n_reps = 1;
 
     group_add_node(&tbciContext.preprocessing.group, (TBCI_Node *)&notchNode);
     group_add_node(&tbciContext.preprocessing.group, (TBCI_Node *)&bandpassNode);
     group_add_node(&tbciContext.features.group, (TBCI_Node *)&ccaNode);
     group_add_node(&tbciContext.decoder.group, (TBCI_Node *)&ccaModel);
-    group_add_node(&tbciContext.decoder.group, (TBCI_Node *)&trialAveragingNode);
 }

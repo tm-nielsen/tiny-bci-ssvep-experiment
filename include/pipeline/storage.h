@@ -59,8 +59,8 @@ extern TBCI_Config tbciConfiguration;
 extern TBCI_Context tbciContext;
 
 // CCA constants
-# ifndef N_FREQS
-#   define N_FREQS 6
+# ifndef N_CLASSES
+#   define N_CLASSES 6
 # endif
 # define N_HARMONICS 3
 # define N_COMPONENTS (N_HARMONICS * 2)

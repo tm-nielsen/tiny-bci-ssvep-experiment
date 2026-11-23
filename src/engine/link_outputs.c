@@ -3,7 +3,7 @@
 # include "inference_logger.h"
 # include "microsecond_timer.h"
 
-_Static_assert(N_FREQS <= BCI_LINK_MAX_CLASSES, "raise BCI_LINK_MAX_CLASSES");
+_Static_assert(N_CLASSES <= BCI_LINK_MAX_CLASSES, "raise BCI_LINK_MAX_CLASSES");
 
 static uint32_t eegSampleIndex = 0;   // same counter as the raw CSV's sample_idx
 
@@ -57,10 +57,10 @@ void sendInferenceToLink(TinyBCIInference inference, uint64_t timestamp)
         .trueLabel = record.true_label,
         .predictedLabel = record.predicted_label,
         .roundNumber = record.round_number,
-        .classCount = N_FREQS,
+        .classCount = N_CLASSES,
         .confidence = record.confidence,
     };
-    for (int i = 0; i < N_FREQS; i++) message.probabilities[i] = record.probabilities[i];
+    for (int i = 0; i < N_CLASSES; i++) message.probabilities[i] = record.probabilities[i];
     broadcastLinkMessage(makeBCILinkInference(&message));
 }
 

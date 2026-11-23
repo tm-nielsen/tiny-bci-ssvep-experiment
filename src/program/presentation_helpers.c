@@ -12,14 +12,14 @@ void initializeTrialPresentation(
 )
 {
     uint16_t initialTarget = initializeTrialConductor(
-        N_FREQS, TRIAL_COUNT,
+        N_CLASSES, TRIAL_COUNT,
         STIMULUS_DURATION, BREAK_DURATION
     );
     setTrialStartCallback(trialStartCallback);
     setTrialEndCallback(trialEndCallback);
     setAllTrialsCompletedCallback(allTrialsCompletedCallback);
 
-    initializePresentation((float[])FREQUENCIES, N_FREQS);
+    initializePresentation((float[])FREQUENCIES, N_CLASSES);
     setPresentationTarget(initialTarget);
 }
 

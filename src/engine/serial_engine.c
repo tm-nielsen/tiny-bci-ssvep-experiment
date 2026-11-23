@@ -44,7 +44,7 @@ static void queueInference(const BCILinkInference *received)
     slot->inference.predictedLabel = (uint16_t)(received->predictedLabel - 1);
     slot->inference.targetLabel = (uint16_t)(received->trueLabel - 1);
     slot->inference.confidence = received->confidence;
-    for (uint8_t i = 0; i < received->classCount && i < N_FREQS; i++)
+    for (uint8_t i = 0; i < received->classCount && i < N_CLASSES; i++)
         slot->inference.confidences[i] = received->probabilities[i];
     slot->timestampUs = received->timestampUs;
 

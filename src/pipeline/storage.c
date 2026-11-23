@@ -74,7 +74,7 @@ void allocateDynamicStorage(uint8_t channelCount, uint32_t sampleRate)
     featuresPool = malloc(epochPoolSize);
     outputPool = malloc(epochPoolSize);
 
-    referenceSignalsCapacity = N_FREQS * N_COMPONENTS * totalFrames;
+    referenceSignalsCapacity = N_CLASSES * N_COMPONENTS * totalFrames;
     refSignals = malloc(referenceSignalsCapacity * sizeof(float));
 }
 
