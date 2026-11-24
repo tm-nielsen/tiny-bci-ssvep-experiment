@@ -1,5 +1,6 @@
 # include "pipeline.h"
 # include "microsecond_timer.h"
+# include "tbci_build_config.h"
 
 bool tryGetTinyBCIInference(TinyBCIInference *out)
 {

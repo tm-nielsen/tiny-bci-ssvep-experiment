@@ -1,5 +1,6 @@
 # pragma once
 # include "pipeline.h"
+# include "tbci_build_config.h"
 
 typedef struct
 {

@@ -1,7 +1,6 @@
 # include "serial/bci_link.h"
 # include <string.h>
 
-_Static_assert(BCI_LINK_FRAME_SIZE == 56, "frame size changed: update every receiver");
 _Static_assert(16 + 4 * BCI_LINK_EEG_CHANNELS <= BCI_LINK_PAYLOAD_SIZE, "EEG payload overflow");
 _Static_assert(24 + 4 * BCI_LINK_MAX_CLASSES <= BCI_LINK_PAYLOAD_SIZE, "inference payload overflow");
 

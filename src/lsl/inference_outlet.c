@@ -1,6 +1,7 @@
 # include "lsl/inference_stream.h"
 # include "lsl/helpers.h"
 # include "lsl_c.h"
+# include "tbci_build_config.h"
 
 static lsl_outlet outlet = NULL;
 

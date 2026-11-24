@@ -58,24 +58,40 @@ TBCI_CCAModel ccaModel;
 TBCI_CCAModelConfig ccaModelConfiguration;
 TBCI_TrialAveragingNode trialAveragingNode;
 TBCI_TrialAveragingConfig trialAveragingConfiguration;
+TBCI_LabelEncoderNode   labelEncoderNode;
+TBCI_LabelEncoderConfig labelEncoderConfiguration;
+TBCI_TrialCycleNode     trialCycleNode;
+TBCI_TrialCycleConfig   trialCycleConfiguration;
+# if TBCI_WITH_ONNX
+#   include "<header that declares TBCI_ONNXModel>"
+TBCI_ONNXModel       onnxModel;
+TBCI_ONNXModelConfig onnxModelConfiguration;
+# endif
 
 // ---
 
-void allocateDynamicStorage(uint8_t channelCount, uint32_t sampleRate)
+bool allocateDynamicStorage(uint8_t channelCount, uint32_t sampleRate)
 {
     size_t signalStorageSize = SIG_CAPACITY * channelCount * sizeof(float);
     signalStorage = malloc(signalStorageSize);
     processedSignalStorage = malloc(signalStorageSize);
 
-    totalFrames = (size_t)(sampleRate * WINDOW_LENGTH_MS / 1000);
-    size_t epochPoolCapacity = EPOCH_CAPACITY * totalFrames * channelCount;
-    size_t epochPoolSize = epochPoolCapacity * sizeof(float);
+    totalFrames = (size_t)sampleRate * WINDOW_LENGTH_MS / 1000;
+    size_t epochPoolSize = EPOCH_CAPACITY * totalFrames * channelCount * sizeof(float);
     epochPool = malloc(epochPoolSize);
     featuresPool = malloc(epochPoolSize);
     outputPool = malloc(epochPoolSize);
 
+    bool ok = signalStorage && processedSignalStorage && epochPool && featuresPool && outputPool;
+
+# if TBCI_PARADIGM_ID == TBCI_PARADIGM_SSVEP_ID
     referenceSignalsCapacity = N_CLASSES * N_COMPONENTS * totalFrames;
     refSignals = malloc(referenceSignalsCapacity * sizeof(float));
+    ok = ok && refSignals;
+# endif
+
+    if (!ok) fprintf(stderr, "TinyBCI: out of memory allocating pipeline storage\n");
+    return ok;
 }
 
 void deallocateDynamicStorage(void)

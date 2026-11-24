@@ -1,5 +1,6 @@
 # include "program/helpers.h"
 # include "program/constants.h"
+# include "tbci_build_config.h"
 
 # include "pipeline.h"
 # include "microsecond_timer.h"

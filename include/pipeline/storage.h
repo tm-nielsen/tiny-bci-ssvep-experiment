@@ -9,6 +9,7 @@
 # include "nodes/decoder/tbci_cca_model.h"
 # include "nodes/decoder/tbci_label_encoder_node.h"
 # include "nodes/decoder/tbci_trial_averaging_node.h"
+# include "nodes/decoder/tbci_trial_cycle_node.h"
 
 # define SIG_CAPACITY 1024
 # define TRIG_CAPACITY 32
@@ -22,7 +23,7 @@
 
 // ---
 
-void allocateDynamicStorage(uint8_t channelCount, uint32_t sampleRate);
+bool allocateDynamicStorage(uint8_t channelCount, uint32_t sampleRate);
 void deallocateDynamicStorage(void);
 
 // ---
@@ -64,11 +65,6 @@ extern TBCI_Context tbciContext;
 # endif
 # define N_HARMONICS 3
 # define N_COMPONENTS (N_HARMONICS * 2)
-# if TBCI_PARADIGM_ID == TBCI_PARADIGM_P300_ID || TBCI_PARADIGM_ID == TBCI_PARADIGM_SSVEP_ID
-#   define N_OUTPUTS (N_CLASSES + 1)   // stimuli, then idle (check the trial cycle's order)
-# else
-#   define N_OUTPUTS N_CLASSES
-# endif
 extern size_t referenceSignalsCapacity;
 extern float *refSignals;
 
@@ -83,5 +79,14 @@ extern TBCI_CCAModel ccaModel;
 extern TBCI_CCAModelConfig ccaModelConfiguration;
 extern TBCI_TrialAveragingNode trialAveragingNode;
 extern TBCI_TrialAveragingConfig trialAveragingConfiguration;
+extern TBCI_LabelEncoderNode   labelEncoderNode;
+extern TBCI_LabelEncoderConfig labelEncoderConfiguration;
+extern TBCI_TrialCycleNode     trialCycleNode;
+extern TBCI_TrialCycleConfig   trialCycleConfiguration;
+# if TBCI_WITH_ONNX
+#   include "nodes/decoder/tbci_onnx_model.h"
+extern TBCI_ONNXModel       onnxModel;
+extern TBCI_ONNXModelConfig onnxModelConfiguration;
+# endif
 
 #endif

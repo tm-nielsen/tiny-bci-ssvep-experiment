@@ -7,7 +7,7 @@
 
 uint64_t getTimestamp(void);
 
-int initializeTinyBCIPipeline(const float *frequencies, uint8_t channelCount, uint32_t sampleRate);
+int initializeTinyBCIPipeline(const float *classes, uint8_t channelCount, uint32_t sampleRate);
 void cleanUpTinyBCIPipeline(void);
 
 int startTinyBCIPipeline(void);

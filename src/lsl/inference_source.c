@@ -1,5 +1,6 @@
 # include "lsl/inference_stream.h"
 # include "lsl/helpers.h"
+# include "tbci_build_config.h"
 
 static LSLDataSource dataSource;
 
