@@ -64,7 +64,7 @@ if(TBCI_PICO AND TBCI_WITH_ONNX)
     message(FATAL_ERROR "${TBCI_PARADIGM} needs a model backend; ONNX Runtime doesn't run on the Pico (see the MCU model backend)")
 endif()
 
-configure_file(${CMAKE_CURRENT_LIST_DIR}/../config/tbci_build_config.h.in
+configure_file(${CMAKE_CURRENT_LIST_DIR}/../include/config/tbci_build_config.h.in
         ${CMAKE_BINARY_DIR}/generated/tbci_build_config.h @ONLY)
 message(STATUS "TinyBCI: ${TBCI_PARADIGM}, ${TBCI_N_CLASSES_EFFECTIVE} classes, "
         "window ${TBCI_WINDOW_LENGTH_MS_EFFECTIVE} ms, overlap ${TBCI_WINDOW_OVERLAP_MS_EFFECTIVE} ms, "
