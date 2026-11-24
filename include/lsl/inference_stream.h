@@ -12,7 +12,7 @@
 [2 + N_FREQS]: targetLabel
 [3 + N_FREQS]: microsecond timestamp
 */
-# define INFERENCE_STREAM_CHANNEL_COUNT (4 + N_CLASSES)
+# define INFERENCE_STREAM_CHANNEL_COUNT (4 + N_OUTPUTS)
 # define INFERENCE_STREAM_NAME "Tiny_BCI_Inferences"
 # define INFERENCE_STREAM_TYPE "Inferences"
 # define INFERENCE_STREAM_SOURCE_ID "tiny_bci_ssvep_experiment_inferences"

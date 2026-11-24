@@ -60,7 +60,7 @@ void sendInferenceToLink(TinyBCIInference inference, uint64_t timestamp)
         .classCount = N_CLASSES,
         .confidence = record.confidence,
     };
-    for (int i = 0; i < N_CLASSES; i++) message.probabilities[i] = record.probabilities[i];
+    for (int i = 0; i < N_OUTPUTS; i++) message.probabilities[i] = record.probabilities[i];
     broadcastLinkMessage(makeBCILinkInference(&message));
 }
 

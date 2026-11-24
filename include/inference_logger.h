@@ -9,7 +9,7 @@ typedef struct
     uint16_t predicted_label;  // 1-based
     uint16_t round_number;
     float confidence;
-    float probabilities[N_CLASSES];
+    float probabilities[N_OUTPUTS];
 } InferenceRecord;
 
 InferenceRecord makeInferenceRecord(TinyBCIInference inference, uint64_t timestamp);
