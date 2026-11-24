@@ -19,6 +19,9 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 include(cmake/TinyBCI.cmake)
+include(cmake/TinyBCIConfig.cmake)
+include(cmake/OnnxRuntime.cmake)
+include_directories(${CMAKE_BINARY_DIR}/generated)
 
 # --- sources that build everywhere
 
@@ -156,5 +159,5 @@ else()
 
   set(SSVEP_BOX_TARGET "ssvep_box_${PROJECT_NAME}")
   add_target(${SSVEP_BOX_TARGET} src/program/main_ssvep_box.c)
-  target_compile_definitions(${SSVEP_BOX_TARGET} PRIVATE N_FREQS=4 FREQUENCIES={4.5f,5.0f,5.5f,6.0f})
+  target_compile_definitions(${SSVEP_BOX_TARGET} PRIVATE N_CLASSES=4 "FREQUENCIES={4.5f,5.0f,5.5f,6.0f}")
 endif()
