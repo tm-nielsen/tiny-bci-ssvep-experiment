@@ -32,13 +32,14 @@
 
 # include "engine/link_hub.h"
 # include "engine/link_outputs.h"
+# include "tbci_build_config.h"
 
 # define UNICORN_NAME      "UN-2024.09.14"
 # define IDLE_TIMEOUT_MS   8
 # define STATUS_PERIOD_US  1000000
 # define SELF_TEST_TARGET  0   // >0: push this trigger after stabilization (no presenter needed)
 
-static const float STIMULUS_FREQUENCIES[N_FREQS] = FREQUENCIES;
+static const float STIMULUS_FREQUENCIES[N_OUTPUTS] = FREQUENCIES;
 static BCIEngineState engineState = BCI_ENGINE_BOOTING;
 static bool pipelineRunning = false;
 static uint32_t maxTickUs = 0;
