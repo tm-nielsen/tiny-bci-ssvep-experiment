@@ -64,6 +64,11 @@ extern TBCI_Context tbciContext;
 # endif
 # define N_HARMONICS 3
 # define N_COMPONENTS (N_HARMONICS * 2)
+# if TBCI_PARADIGM_ID == TBCI_PARADIGM_P300_ID || TBCI_PARADIGM_ID == TBCI_PARADIGM_SSVEP_ID
+#   define N_OUTPUTS (N_CLASSES + 1)   // stimuli, then idle (check the trial cycle's order)
+# else
+#   define N_OUTPUTS N_CLASSES
+# endif
 extern size_t referenceSignalsCapacity;
 extern float *refSignals;
 

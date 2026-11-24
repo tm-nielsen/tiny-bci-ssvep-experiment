@@ -18,12 +18,12 @@ void pushLslInference(const TinyBCIInference *inference, uint64_t microsecondTim
     double sample[INFERENCE_STREAM_CHANNEL_COUNT];
     sample[0] = (double)inference->predictedLabel;
     sample[1] = (double)inference->confidence;
-    for (int i = 0; i < N_CLASSES; i++)
+    for (int i = 0; i < N_OUTPUTS; i++)
     {
         sample[2 + i] = (double)inference->confidences[i];
     }
-    sample[2 + N_CLASSES] = (double)targetLabel;
-    sample[3 + N_CLASSES] = (double)microsecondTimestamp;
+    sample[2 + N_OUTPUTS] = (double)targetLabel;
+    sample[3 + N_OUTPUTS] = (double)microsecondTimestamp;
 
     pushLslSample(outlet, sample);
 }

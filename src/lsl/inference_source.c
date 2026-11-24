@@ -16,7 +16,7 @@ bool pollLslInferenceSource(TinyBCIInference *out, uint64_t *microsecondTimestam
 
         out->predictedLabel = (uint16_t)sample[0];
         out->confidence = (float)sample[1];
-        for (int i = 0; i <= N_CLASSES; i++)
+        for (int i = 0; i < N_OUTPUTS; i++)
         {
             out->confidences[i] = (float)sample[2 + i];
         }

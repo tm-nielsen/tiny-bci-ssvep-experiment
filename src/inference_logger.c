@@ -16,7 +16,7 @@ InferenceRecord makeInferenceRecord(TinyBCIInference inference, uint64_t timesta
         .round_number = roundNumber,
         .confidence = inference.confidence,
     };
-    for (int i = 0; i < N_CLASSES; i++) record.probabilities[i] = inference.confidences[i];
+    for (int i = 0; i < N_OUTPUTS; i++) record.probabilities[i] = inference.confidences[i];
     return record;
 }
 
@@ -40,7 +40,7 @@ void initializeInferenceLogger(void)
 
     if (logFile) {
         fprintf(logFile, "timestamp_us,delta_time_us,true_label,predicted_label,confidence,round_number");
-        for (int i = 0; i < N_FREQS; i++)
+        for (int i = 0; i < N_OUTPUTS; i++)
         {
             fprintf(logFile, ",prob_%d", i);
         }
@@ -84,7 +84,7 @@ void logInference(TinyBCIInference inference, uint64_t timestamp)
     fprintf(logFile, "\n%" PRIu64 ",%" PRIu64 ",%u,%u,%.6f,%u",
         r.timestamp_us, r.delta_time_us, r.true_label, r.predicted_label,
         r.confidence, r.round_number);
-    for (int i = 0; i < N_CLASSES; i++) fprintf(logFile, ",%.6f", r.probabilities[i]);
+    for (int i = 0; i < N_OUTPUTS; i++) fprintf(logFile, ",%.6f", r.probabilities[i]);
     fflush(logFile);
 }
 

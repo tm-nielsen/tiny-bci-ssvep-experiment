@@ -31,7 +31,7 @@ void printInference(TinyBCIInference inference, uint64_t timestamp)
         "%" PRIu64 " | Output received: %d (%.0f%% confidence) [",
         timestamp, inference.predictedLabel, inference.confidence * 100
     );
-    for (int i = 0; i <= N_CLASSES; i++) printf(" %.2f", inference.confidences[i]);
+    for (int i = 0; i < N_OUTPUTS; i++) printf(" %.2f", inference.confidences[i]);
     printf(" ]\n");
 }
 

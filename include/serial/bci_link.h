@@ -29,7 +29,7 @@
 # define BCI_LINK_FRAME_SIZE   (4 + BCI_LINK_PAYLOAD_SIZE + 4)   // 56
 
 # define BCI_LINK_EEG_CHANNELS 8   // one EEG sample per frame
-# define BCI_LINK_MAX_CLASSES  6   // must be >= N_FREQS
+# define BCI_LINK_MAX_CLASSES  N_OUTPUTS   // must be >= N_FREQS
 # define BCI_LINK_LOG_LENGTH   (BCI_LINK_PAYLOAD_SIZE - 1)
 
 # define BCI_LINK_STATUS_LINK_ID_OFFSET 22   // 0 = USB Link A, 1 = USB Link B, 2+ = TCP
