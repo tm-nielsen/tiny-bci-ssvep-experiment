@@ -335,3 +335,4 @@ void stopPresentation(void)
 }
 
 bool isStartKeyPressed(void) { return IsKeyPressed(KEY_SPACE); }
+bool shouldClosePresentation(void) { return WindowShouldClose(); }

@@ -41,7 +41,7 @@ void displayMessageOrExit(const char *message, void (*cleanUpMethod)(void))
 
 void closeIfPromptedTo(void (*cleanUpMethod)(void))
 {
-    if (WindowShouldClose())
+    if (shouldClosePresentation())
     {
         if (cleanUpMethod != NULL) cleanUpMethod();
         exit(EXIT_SUCCESS);

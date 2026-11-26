@@ -54,3 +54,4 @@ void clearPresentationTarget(void);
 void displaySelection(uint16_t index);
 
 bool isStartKeyPressed(void);
+bool shouldClosePresentation(void);
