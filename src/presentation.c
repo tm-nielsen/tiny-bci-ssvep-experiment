@@ -333,3 +333,5 @@ void stopPresentation(void)
     UnloadTexture(stimulusTexture);
     CloseWindow();
 }
+
+bool isStartKeyPressed(void) { return IsKeyPressed(KEY_SPACE); }

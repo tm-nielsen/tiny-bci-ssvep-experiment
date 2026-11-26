@@ -147,7 +147,7 @@ void initializeProgram(ProgramMode mode)
 
 void awaitPromptedProgramStart(void)
 {
-    while (!IsKeyPressed(KEY_SPACE))
+    while (!isStartKeyPressed())
     {
         drawPreparationScreen("Press Spacebar to Start");
         IF_STANDALONE(

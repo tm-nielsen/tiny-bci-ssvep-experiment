@@ -52,3 +52,5 @@ void enableTextureStimulus(void);
 void setPresentationTarget(uint16_t index);
 void clearPresentationTarget(void);
 void displaySelection(uint16_t index);
+
+bool isStartKeyPressed(void);
